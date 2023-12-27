@@ -1,7 +1,12 @@
-import Router from "./shared/Router";
+import { SupabaseQueryProvider } from './hooks/useSupabase';
+import Router from './shared/Router';
 
 function App() {
-  return <Router />;
+  return (
+    <SupabaseQueryProvider>
+      <Router />
+    </SupabaseQueryProvider>
+  );
 }
 
 export default App;
