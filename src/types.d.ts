@@ -1,10 +1,23 @@
 declare type PostType = {
   id: string;
   title: string;
-  contents: string;
+  contents: string; // html 파일이어야 한다.
   email?: string;
   author: string;
+  category: string;
+  tags: string[];
 };
+declare type CategoryType =
+  | 'REACT'
+  | 'NODE'
+  | 'SPRING'
+  | 'AI'
+  | 'UI/UX'
+  | 'ANDROID'
+  | 'UNITY'
+  | 'IOS'
+  | 'ETC';
+
 declare type CommentType = {
   id: string;
   postId: string;
@@ -19,6 +32,6 @@ type ForeignKeyType = {
   userId: string;
 };
 
-declare type ReviewType = ForeignKeyType;
+declare type ReviewType = { content: string } & ForeignKeyType;
 declare type LikeType = ForeignKeyType;
 declare type BookmarkType = ForeignKeyType;
