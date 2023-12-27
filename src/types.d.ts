@@ -4,7 +4,19 @@ declare type PostType = {
   contents: string;
   email?: string;
   author: string;
+  category: CategoryType;
+  tags: string[];
 };
+declare type CategoryType =
+  | 'REACT'
+  | 'NODE'
+  | 'SPRING'
+  | 'AI'
+  | 'UI/UX'
+  | 'ANDROID'
+  | 'UNITY'
+  | 'IOS'
+  | 'ETC';
 declare type CommentType = {
   id: string;
   postId: string;
@@ -19,6 +31,6 @@ type ForeignKeyType = {
   userId: string;
 };
 
-declare type ReviewType = ForeignKeyType;
+declare type ReviewType = { content: string } & ForeignKeyType;
 declare type LikeType = ForeignKeyType;
 declare type BookmarkType = ForeignKeyType;
