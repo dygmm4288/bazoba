@@ -1,9 +1,44 @@
+export type PostType = {
+  id: string;
+  title: string;
+  contents: string;
+  email?: string;
+  author: string;
+  category: CategoryType;
+};
+export type CategoryType =
+  | 'REACT'
+  | 'NODE'
+  | 'SPRING'
+  | 'AI'
+  | 'UI/UX'
+  | 'ANDROID'
+  | 'UNITY'
+  | 'IOS'
+  | 'ETC';
+
+export type CommentType = {
+  id: string;
+  postId: string;
+  content: string;
+  userId?: string;
+};
+
+type ForeignKeyType = {
+  id: string;
+  postId: string;
+  userId: string;
+};
+
+export type ReviewType = { content: string } & ForeignKeyType;
+export type LikeType = ForeignKeyType;
+export type BookmarkType = ForeignKeyType;
 export type getPost = (id: string) => PostType | null;
 export type getPostsByPage = (page: number, option?: string) => PostType[];
 
 export type updatePostForContent = (
   id: number,
-  content: Partial<PostType>,
+  content: Partial<PostType>
 ) => void;
 export type updatePost = (id: string, contents: Partial<PostType>) => void;
 
@@ -24,5 +59,5 @@ export type removeComment = (id: string) => void;
 
 export type updateComment = (
   id: string,
-  updatedContent: Partial<CommentType>,
+  updatedContent: Partial<CommentType>
 ) => void;
