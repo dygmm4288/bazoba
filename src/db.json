@@ -1,4 +1,42 @@
 {
+  "users": [
+    {
+      "id": "Author 1",
+      "nickname": "User One",
+      "email": "user1@example.com",
+      "profileImage": "https://robohash.org/user1"
+    },
+    {
+      "id": "Author 2",
+      "nickname": "User Two",
+      "email": "user2@example.com",
+      "profileImage": "https://robohash.org/user2"
+    },
+    {
+      "id": "Author 3",
+      "nickname": "User Three",
+      "email": "user3@example.com",
+      "profileImage": "https://robohash.org/user3"
+    },
+    {
+      "id": "Author 4",
+      "nickname": "User Four",
+      "email": "user4@example.com",
+      "profileImage": "https://robohash.org/user4"
+    },
+    {
+      "id": "Author 5",
+      "nickname": "User Five",
+      "email": "user5@example.com",
+      "profileImage": "https://robohash.org/user5"
+    },
+    {
+      "id": "Author 6",
+      "nickname": "User Six",
+      "email": "user6@example.com",
+      "profileImage": "https://robohash.org/user6"
+    }
+  ],
   "posts": [
     {
       "id": "post1",
@@ -11,7 +49,7 @@
     {
       "id": "post2",
       "title": "Title 2",
-      "contents": "<p>Adipiscing elit, sed do eiusmod tempor</p>",
+      "contents": "<h1>This is Title</h1><p>Adipiscing elit, sed do eiusmod tempor</p>",
       "email": "email2@example.com",
       "author": "Author 2",
       "category": "NODE"
@@ -53,7 +91,7 @@
       "title": "Title 7",
       "contents": "<p>Consequat. Duis aute irure dolor in</p>",
       "email": "email7@example.com",
-      "author": "Author 7",
+      "author": "Author 3",
       "category": "UNITY"
     },
     {
@@ -61,7 +99,7 @@
       "title": "Title 8",
       "contents": "<p>Reprehenderit in voluptate velit esse cillum</p>",
       "email": "email8@example.com",
-      "author": "Author 8",
+      "author": "Author 2",
       "category": "IOS"
     },
     {
@@ -69,7 +107,7 @@
       "title": "Title 9",
       "contents": "<p>Dolore eu fugiat nulla pariatur. Excepteur</p>",
       "email": "email9@example.com",
-      "author": "Author 9",
+      "author": "Author 4",
       "category": "ETC"
     },
     {
@@ -77,7 +115,7 @@
       "title": "Title 10",
       "contents": "<p>Sint occaecat cupidatat non proident</p>",
       "email": "email10@example.com",
-      "author": "Author 10",
+      "author": "Author 1",
       "category": "REACT"
     }
   ],
