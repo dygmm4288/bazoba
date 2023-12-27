@@ -1,6 +1,5 @@
-import db from '../db.json';
+import { CategoryType } from '../supabase/supabase.types';
 
 export function useFilter(category: CategoryType) {
-  console.log(db);
   return {};
 }

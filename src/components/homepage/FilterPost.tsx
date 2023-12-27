@@ -1,3 +1,5 @@
+import { CategoryType } from '../../supabase/supabase.types';
+
 const CATEGORIES: CategoryType[] = [
   'REACT',
   'NODE',
