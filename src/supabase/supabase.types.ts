@@ -17,6 +17,8 @@ export type CategoryType =
   | 'IOS'
   | 'ETC';
 
+export type FetchPostsResultType = PostType & BookmarkType[] & LikeType[];
+
 export type CommentType = {
   id: string;
   postId: string;

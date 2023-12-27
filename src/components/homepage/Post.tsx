@@ -1,10 +1,10 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Viewer } from '@toast-ui/react-editor';
 import db from '../../db.json';
-import { PostType } from '../../supabase/supabase.types';
+import { FetchPostsResultType } from '../../supabase/supabase.types';
 
 interface Props {
-  post: PostType;
+  post: FetchPostsResultType;
 }
 
 type User = {

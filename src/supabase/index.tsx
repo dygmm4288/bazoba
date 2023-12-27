@@ -1,9 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
-import { BookmarkType, LikeType, PostType } from './supabase.types';
+import {
+  BookmarkType,
+  FetchPostsResultType,
+  LikeType,
+  PostType
+} from './supabase.types';
 import { Database } from './supabaseSchema.types';
 
 export const db = createClient<Database>(
-  process.env.REACT_APP_SUPABASE_API_KEY!,
+  process.env.REACT_APP_SUPABASE_URL!,
   process.env.REACT_APP_SUPABASE_API_KEY!
 );
 
@@ -25,7 +30,8 @@ type OptionType = {
 export const fetchPosts = async () => {
   const { data, error } = await db
     .from('post')
-    .select(`*, like(*), bookmark(*)`);
+    .select(`*, like(*), bookmark(*)`)
+    .returns<FetchPostsResultType[]>();
   if (error) throw error;
   return data;
 };
