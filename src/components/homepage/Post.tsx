@@ -1,6 +1,7 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Viewer } from '@toast-ui/react-editor';
 import db from '../../db.json';
+import { PostType } from '../../supabase/supabase.types';
 
 interface Props {
   post: PostType;
