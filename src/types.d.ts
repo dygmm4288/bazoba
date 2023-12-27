@@ -4,7 +4,19 @@ declare type PostType = {
   contents: string;
   email?: string;
   author: string;
+  category: string;
 };
+
+declare type CategoryType =
+  | 'REACT'
+  | 'NODE'
+  | 'SPRING'
+  | 'AI'
+  | 'UI/UX'
+  | 'ANDROID'
+  | 'UNITY'
+  | 'IOS'
+  | 'ETC';
 declare type CommentType = {
   id: string;
   postId: string;
