@@ -2,31 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { db } from '../supabase';
 import { AuthUser } from '@supabase/supabase-js';
 import { Card } from 'antd';
-import { AuthCard } from '@supabase/auth-ui-react';
+import Profile from '../components/Mypage/Profile';
 
-const Mypage = () => {
+export default function Mypage() {
   const [user, setUser] = useState<AuthUser>();
 
+  //TODO .. : 리액트 쿼리
   useEffect(() => {
     const getAuthUser = async () => {
       const { data, error } = await db.auth.getSession();
       setUser(data.session?.user);
     };
-
     getAuthUser();
   });
 
+  const handleFilterPost = () => {
+    console.log('TODO: filtering');
+  };
+
   return (
     <div>
-      mypage
-      <Card>ant card</Card>
-      <AuthCard> auth card 이건 뭔데</AuthCard>
-      <ul>
-        <li>{user?.email}</li>
-        {/* <li>{user?.user_metadata.xx}</li> */}
-      </ul>
+      <Profile user={user} />
+      <Card style={{ width: 400 }}>
+        <div onClick={handleFilterPost}> 내 게시물 보기 {'=>'} </div>
+      </Card>
+      <Card style={{ width: 400 }}>
+        <div onClick={handleFilterPost}> 찜한 게시물 보기 {'=>'} </div>
+      </Card>
     </div>
   );
-};
-
-export default Mypage;
+}
