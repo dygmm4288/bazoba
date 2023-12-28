@@ -17,16 +17,17 @@ export function useQueryPost(postId: string) {
   });
   return { post, error };
 }
-export function useQueryPosts() {
+export function useQueryPosts(option?: string) {
   const {
     data: posts,
     error,
     refetch: refetchPosts
   } = useQuery({
-    queryKey: POSTS_QUERY_KEY,
-    queryFn: fetchPosts,
-    enabled: false
+    queryKey: ['posts', option],
+    queryFn: () => fetchPosts(option)
+    // enabled: false
   });
+
   return { posts, error, refetchPosts };
 }
 

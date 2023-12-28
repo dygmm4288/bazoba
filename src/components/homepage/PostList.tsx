@@ -1,16 +1,17 @@
-import { useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { useFilter } from '../../hooks/useFilter';
 import { useQueryPosts } from '../../hooks/useSupabase';
+import { filterState } from '../../shared/atoms';
 import Post from './Post';
 
 const PostList = () => {
   // const posts = db.posts as PostType[];
-  const { posts, refetchPosts } = useQueryPosts();
+  const { posts } = useQueryPosts();
+  const [filter, _] = useRecoilState(filterState);
+  const { posts: postsFromFilter } = useFilter(filter);
 
-  useEffect(() => {
-    refetchPosts();
-  }, []);
-
-  console.log(posts);
+  // console.log(posts);
+  console.log(postsFromFilter);
   return (
     <div>
       {posts?.map((post) => (

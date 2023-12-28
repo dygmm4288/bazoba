@@ -1,10 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import {
-  BookmarkType,
-  FetchPostsResultType,
-  LikeType,
-  PostType
-} from './supabase.types';
+import { BookmarkType, LikeType, PostType } from './supabase.types';
 import { Database } from './supabaseSchema.types';
 
 export const db = createClient<Database>(
@@ -27,13 +22,23 @@ type OptionType = {
   };
 };
 
-export const fetchPosts = async () => {
-  const { data, error } = await db
-    .from('post')
-    .select(`*, like(*), bookmark(*)`)
-    .returns<FetchPostsResultType[]>();
-  if (error) throw error;
-  return data;
+export const fetchPosts = async (option?: string) => {
+  console.log(option);
+  if (option) {
+    const { data, error } = await db
+      .from('post')
+      .select(`*, like(*), bookmark(*)`)
+      .eq('category', option);
+    if (error) throw error;
+    return data;
+  } else {
+    const { data, error } = await db
+      .from('post')
+      .select(`*, like(*), bookmark(*)`);
+    // .returns<FetchPostsResultType[]>();
+    if (error) throw error;
+    return data;
+  }
 };
 
 type AddType<T> = (from: string, data: T) => void;

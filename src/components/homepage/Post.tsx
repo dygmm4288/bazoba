@@ -4,7 +4,8 @@ import db from '../../db.json';
 import { FetchPostsResultType } from '../../supabase/supabase.types';
 
 interface Props {
-  post: FetchPostsResultType;
+  // post: FetchPostsResultType;
+  post: any;
 }
 
 type User = {
@@ -16,13 +17,14 @@ type User = {
 
 const Post = ({ post }: Props) => {
   const { users } = db;
+  const { title, category, contents } = post as FetchPostsResultType;
   const user = users.find((user) => user.id === post.author);
 
   return (
     <div style={{ backgroundColor: '#eee' }}>
-      <h3>{post.title}</h3>
-      <span>{post.category}</span>
-      <Viewer initialValue={post.contents} />
+      <h3>{title}</h3>
+      <span>{category}</span>
+      <Viewer initialValue={contents} />
       <img
         src={user?.profileImage}
         alt="robohash"
