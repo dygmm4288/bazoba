@@ -1,15 +1,9 @@
-import { RecoilRoot } from 'recoil';
-import { SupabaseQueryProvider } from './hooks/useSupabase';
 import Router from './shared/Router';
+import useAuth from './hooks/useAuth';
 
 function App() {
-  return (
-    <SupabaseQueryProvider>
-      <RecoilRoot>
-        <Router />
-      </RecoilRoot>
-    </SupabaseQueryProvider>
-  );
+  const { isLogin } = useAuth();
+  return <Router isLogin={isLogin} />;
 }
 
 export default App;
