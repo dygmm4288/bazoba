@@ -1,10 +1,13 @@
+import { RecoilRoot } from 'recoil';
 import { SupabaseQueryProvider } from './hooks/useSupabase';
 import Router from './shared/Router';
 
 function App() {
   return (
     <SupabaseQueryProvider>
-      <Router />
+      <RecoilRoot>
+        <Router />
+      </RecoilRoot>
     </SupabaseQueryProvider>
   );
 }
