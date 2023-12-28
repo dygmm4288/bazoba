@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAddComment } from '../../hooks/useSupabase';
-
-import type { CommentType } from '../../supabase/supabase.types';
+import { NewCommentType } from '../../supabase';
 
 function DetailFormComment() {
   const [commentContent, setCommentContent] = useState('');
@@ -9,10 +8,10 @@ function DetailFormComment() {
 
   const handleAddComment = () => {
     if (commentContent.trim() !== '') {
-      const newComment: CommentType = {
-        id: '',
+      const newComment: NewCommentType = {
         content: commentContent,
-        postId: 'a38a1eb0-e793-472b-9f9a-f5dbd608afa8'
+        type: 0,
+        userId: 'leejinho'
       };
       addComment(newComment);
       setCommentContent('');
