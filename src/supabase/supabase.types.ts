@@ -21,6 +21,13 @@ export type FetchPostsResultType = PostType & { bookmark: BookmarkType[] } & {
   like: LikeType[];
 };
 
+export type UserType = {
+  id: string;
+  nickname: string;
+  email: string;
+  avatar_url: string;
+};
+
 export type CommentType = {
   id: string;
   postId: string;
