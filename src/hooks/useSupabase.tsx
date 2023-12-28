@@ -7,7 +7,7 @@ import { PropsWithChildren } from 'react';
 import { fetchPost, fetchPosts } from '../supabase';
 
 const POST_QUERY_KEY = (postId: string) => ['post', postId];
-const POSTS_QUERY_KEY = ['posts'];
+// const POSTS_QUERY_KEY = ['posts'];
 
 const client = new QueryClient();
 export function useQueryPost(postId: string) {
@@ -21,6 +21,8 @@ export function useQueryPosts(option?: string) {
   const {
     data: posts,
     error,
+    isLoading,
+    isError,
     refetch: refetchPosts
   } = useQuery({
     queryKey: ['posts', option],
@@ -28,7 +30,7 @@ export function useQueryPosts(option?: string) {
     // enabled: false
   });
 
-  return { posts, error, refetchPosts };
+  return { posts, error, isLoading, isError, refetchPosts };
 }
 
 export function SupabaseQueryProvider({ children }: PropsWithChildren) {

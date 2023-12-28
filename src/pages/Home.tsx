@@ -4,7 +4,7 @@ import Header from '../components/layout/Header';
 
 const Home = () => {
   return (
-    <main>
+    <main style={{ backgroundColor: '#eee' }}>
       <Header />
       <FilterPost />
       <PostList />

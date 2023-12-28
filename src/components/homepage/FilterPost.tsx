@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import { useRecoilState } from 'recoil';
-import { filterState } from '../../shared/atoms';
+import { filterState } from '../../recoil/filter';
 import { CategoryType } from '../../supabase/supabase.types';
 
 const CATEGORIES: CategoryType[] = [
@@ -16,7 +16,7 @@ const CATEGORIES: CategoryType[] = [
 ];
 
 const FilterPost = () => {
-  const [filter, setFilter] = useRecoilState(filterState);
+  const [_, setFilter] = useRecoilState(filterState);
   const onFilterBtnClickHandler = (category: string) => {
     setFilter(category);
   };
@@ -24,7 +24,16 @@ const FilterPost = () => {
   // console.log(filter);
   return (
     <div>
-      <ul>
+      <ul
+        style={{
+          listStyle: 'none',
+          display: 'flex',
+          gap: '12px',
+          margin: '0 auto',
+          width: 'fit-content',
+          padding: '0'
+        }}
+      >
         {CATEGORIES.map((category, idx) => (
           <li key={idx}>
             <Button key={idx} onClick={() => onFilterBtnClickHandler(category)}>

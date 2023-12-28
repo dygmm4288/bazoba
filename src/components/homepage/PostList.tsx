@@ -1,23 +1,36 @@
-import { useRecoilState } from 'recoil';
+import { List, Skeleton } from 'antd';
+import { useRecoilValue } from 'recoil';
 import { useFilter } from '../../hooks/useFilter';
-import { useQueryPosts } from '../../hooks/useSupabase';
-import { filterState } from '../../shared/atoms';
+import { filterState } from '../../recoil/filter';
 import Post from './Post';
 
 const PostList = () => {
   // const posts = db.posts as PostType[];
-  const { posts } = useQueryPosts();
-  const [filter, _] = useRecoilState(filterState);
-  const { posts: postsFromFilter } = useFilter(filter);
+  // const { posts } = useQueryPosts();
+  const filter = useRecoilValue(filterState);
+  const { posts, isLoading, isError } = useFilter(filter);
 
-  // console.log(posts);
-  console.log(postsFromFilter);
+  console.log(posts);
   return (
-    <div>
-      {posts?.map((post) => (
-        <Post key={post.id} post={post} />
-      ))}
-    </div>
+    <Skeleton
+      loading={isLoading}
+      active
+      paragraph={{ rows: 10 }}
+      style={{ width: '800px', margin: '0 auto' }}
+    >
+      <List
+        style={{ width: '800px', margin: '0 auto' }}
+        itemLayout="vertical"
+        dataSource={posts}
+        loading={isLoading}
+        size="large"
+        renderItem={(post) => (
+          <List.Item key={post.title}>
+            <Post post={post} />
+          </List.Item>
+        )}
+      />
+    </Skeleton>
   );
 };
 
