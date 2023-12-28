@@ -99,7 +99,7 @@ const Post = ({ post }: Props) => {
           }
         />
         <Viewer initialValue={contents} />
-        <Badge count={`${like.length} likes`} showZero />
+        <Badge count={`${like?.length} likes`} showZero />
       </Card>
     </Badge.Ribbon>
   );

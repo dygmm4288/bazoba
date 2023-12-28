@@ -16,10 +16,10 @@ import {
 } from '../supabase';
 import { SupabaseErrorTypes } from '../supabase/error.types';
 
-const POST_QUERY_KEY = (postId: string) => ['post', postId];
+const POST_QUERY_KEY = (postId: string) => ['posts', postId];
 
 const POSTS_QUERY_KEY = ['posts'];
-const COMMENT_QUERY_KEY = (postId: string) => ['comment', postId];
+const COMMENT_QUERY_KEY = (postId: string) => ['comments', postId];
 
 const client = new QueryClient();
 
