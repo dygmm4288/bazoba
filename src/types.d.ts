@@ -5,7 +5,6 @@ declare type PostType = {
   email?: string;
   author: string;
   category: CategoryType;
-  tags: string[];
 };
 declare type CategoryType =
   | 'REACT'

@@ -8,6 +8,7 @@ import {
 import { PropsWithChildren } from 'react';
 import {
   UpdateCommentType,
+  addComment,
   fetchComment,
   fetchPost,
   fetchPosts,
@@ -16,6 +17,7 @@ import {
 import { SupabaseErrorTypes } from '../supabase/error.types';
 
 const POST_QUERY_KEY = (postId: string) => ['post', postId];
+
 const POSTS_QUERY_KEY = ['posts'];
 const COMMENT_QUERY_KEY = (postId: string) => ['comment', postId];
 
@@ -30,20 +32,22 @@ export function useQueryPost(postId: string) {
       return failureCount < 2;
     }
   });
-
   return { post: data && data[0], error };
 }
-export function useQueryPosts() {
+export function useQueryPosts(option?: string) {
   const {
     data: posts,
     error,
+    isLoading,
+    isError,
     refetch: refetchPosts
   } = useQuery({
-    queryKey: POSTS_QUERY_KEY,
-    queryFn: fetchPosts,
-    enabled: false
+    queryKey: ['posts', option],
+    queryFn: () => fetchPosts(option)
+    // enabled: false
   });
-  return { posts, error, refetchPosts };
+
+  return { posts, error, isLoading, isError, refetchPosts };
 }
 
 export function useQueryComment(postId: string) {
@@ -54,12 +58,22 @@ export function useQueryComment(postId: string) {
   return { comments, error };
 }
 
-export function useUpdateComment(
-  postId: string,
-  commentContent: UpdateCommentType
-) {
+export function useAddComment(postId: string) {
+  const { mutate: insert } = useMutation({
+    mutationFn: (comment: CommentType) => addComment(comment),
+    onSuccess: () => {
+      console.log('success');
+      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+    }
+  });
+  return {
+    addComment: insert
+  };
+}
+export function useUpdateComment(postId: string) {
   const { mutate: update } = useMutation({
-    mutationFn: () => updateComment(commentContent),
+    mutationFn: (commentContent: UpdateCommentType) =>
+      updateComment(commentContent),
     onSuccess: () => {
       console.log('success');
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });

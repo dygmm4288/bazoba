@@ -2,7 +2,7 @@ export type PostType = {
   id: string;
   title: string;
   contents: string;
-  email?: string;
+  email?: string | null;
   author: string;
   category: CategoryType;
 };
@@ -16,6 +16,10 @@ export type CategoryType =
   | 'UNITY'
   | 'IOS'
   | 'ETC';
+
+export type FetchPostsResultType = PostType & { bookmark: BookmarkType[] } & {
+  like: LikeType[];
+};
 
 export type CommentType = {
   id: string;

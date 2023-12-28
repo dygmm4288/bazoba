@@ -1,12 +1,16 @@
 import { useEffect } from 'react';
-import { useQueryPost, useQueryPosts } from '../hooks/useSupabase';
+import {
+  useQueryPost,
+  useQueryPosts,
+  useQueryComment
+} from '../hooks/useSupabase';
 
 export default function Main() {
   const { posts, refetchPosts } = useQueryPosts();
 
-  const { post } = useQueryPost('a38a1eb0-e793-472b-9f9a-f5dbd608afa8');
+  const { comments } = useQueryComment('a38a1eb0-e793-472b-9f9a-f5dbd608afa8');
 
-  console.log('data is : ', post);
+  console.log('data is : ', comments);
   useEffect(() => {
     refetchPosts();
   }, []);

@@ -1,5 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
-import { BookmarkType, LikeType, PostType } from './supabase.types';
+import {
+  BookmarkType,
+  CommentType,
+  LikeType,
+  PostType
+} from './supabase.types';
 import { Database } from './supabaseSchema.types';
 
 export const db = createClient<Database>(
@@ -28,11 +33,21 @@ type OptionType = {
     desc: boolean;
   };
 };
+export const fetchPosts = async (option?: string) => {
+  console.log(option);
+  if (option) {
+    const { data, error } = await db
+      .from('post')
+      .select(`*, like(*), bookmark(*)`)
+      .eq('category', option);
+    if (error) return Promise.reject(error);
+    return data;
+  }
 
-export const fetchPosts = async () => {
   const { data, error } = await db
     .from('post')
     .select(`*, like(*), bookmark(*)`);
+
   if (error) return Promise.reject(error);
   return data;
 };
@@ -52,7 +67,10 @@ export const addPost = (post: PostType) => add('post', post);
 export const addBookmark = (bookmark: BookmarkType) =>
   add('bookmark', bookmark);
 export const addLike = (like: LikeType) => add('like', like);
-export const addComment = (comment: CommentType) => add('comment', comment.id);
+
+export type AddCommentType = (comment: CommentType) => Promise<void>;
+export const addComment: AddCommentType = async (comment: CommentType) =>
+  add('comment', comment.id);
 
 type UpdateType = (
   postContent: Partial<PostType> & Pick<PostType, 'id'>
@@ -67,7 +85,11 @@ export type UpdateCommentFunctionType = (
 export const updateComment: UpdateCommentFunctionType = async (
   commentContent
 ) => {
-  db.from('comment').update(commentContent).eq('id', commentContent.id);
+  await db
+    .from('comment')
+    .update(commentContent)
+    .eq('id', commentContent.id)
+    .select();
 };
 
 export const removePost = (post: PostType) => remove('post', post.id);
