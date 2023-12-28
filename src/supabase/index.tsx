@@ -55,7 +55,7 @@ export const fetchPosts = async (option?: string) => {
 type AddType<T> = (from: string, data: T) => void;
 
 export const add: AddType<unknown> = async (from, data) => {
-  db.from(from).insert(data);
+  return await db.from(from).insert(data);
 };
 
 type RemoveType = (from: string, id: string) => Promise<void>;
@@ -70,7 +70,7 @@ export const addLike = (like: LikeType) => add('like', like);
 
 export type AddCommentType = (comment: CommentType) => Promise<void>;
 export const addComment: AddCommentType = async (comment: CommentType) =>
-  add('comment', comment.id);
+  add('comment', comment);
 
 type UpdateType = (
   postContent: Partial<PostType> & Pick<PostType, 'id'>

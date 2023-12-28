@@ -9,6 +9,7 @@ import { PropsWithChildren } from 'react';
 import {
   UpdateCommentType,
   addComment,
+  db,
   fetchComment,
   fetchPost,
   fetchPosts,
@@ -60,7 +61,14 @@ export function useQueryComment(postId: string) {
 
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
-    mutationFn: (comment: CommentType) => addComment(comment),
+    mutationFn: async (comment: CommentType) => {
+      await db.from('comment').insert({
+        content: '안녕',
+        postId: 'a38a1eb0-e793-472b-9f9a-f5dbd608afa8',
+        type: 0,
+        userId: 'jhc'
+      });
+    },
     onSuccess: () => {
       console.log('success');
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });

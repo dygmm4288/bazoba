@@ -27,7 +27,7 @@ function DetailFormComment() {
         cols={50}
         value={commentContent}
         onChange={(e) => setCommentContent(e.target.value)}
-        placeholder="Type your comment here..."
+        placeholder="내용을 입력해 주세요"
       />
       <br />
       <button onClick={handleAddComment}>댓글 등록</button>
