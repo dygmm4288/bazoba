@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { BookmarkType, LikeType, PostType } from './supabase.types';
+import { BookmarkType, LikeType, PostType, UserType } from './supabase.types';
 import { Database } from './supabaseSchema.types';
 
 export const db = createClient<Database>(
@@ -31,19 +31,35 @@ type OptionType = {
 export const fetchPosts = async (option?: string) => {
   if (option) {
     const { data, error } = await db
-      .from('post')
-      .select(`*, like(*), bookmark(*)`)
+      .from('posts')
+      .select(`*, likes(*), bookmarks(*)`)
       .eq('category', option);
     if (error) return Promise.reject(error);
     return data;
   }
 
   const { data, error } = await db
-    .from('post')
-    .select(`*, like(*), bookmark(*)`);
+    .from('posts')
+    .select(`*, likes(*), bookmarks(*)`);
 
   if (error) return Promise.reject(error);
   return data;
+};
+// >>> addUser, fetchUser
+export const fetchUser = async (id: string) => {
+  const { data, error } = await db.from('users').select('*').eq('id', id);
+  if (error) return Promise.reject(error);
+  console.log(data);
+  return data ? data[0] : null;
+};
+
+export type AddUserType = (user: UserType) => Promise<void>;
+
+export const addUser: (user: UserType) => Promise<void> = async (
+  user: UserType
+) => {
+  const { error } = await db.from('users').insert(user);
+  if (error) return Promise.reject(error);
 };
 
 type AddType<T> = (from: string, data: T) => void;

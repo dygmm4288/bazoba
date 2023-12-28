@@ -10,12 +10,15 @@ import {
   NewCommentType,
   UpdateCommentType,
   addComment,
+  addUser,
   fetchComment,
   fetchPost,
   fetchPosts,
+  fetchUser,
   updateComment
 } from '../supabase';
 import { SupabaseErrorTypes } from '../supabase/error.types';
+import { UserType } from '../supabase/supabase.types';
 
 const POST_QUERY_KEY = (postId: string) => ['post', postId];
 
@@ -57,6 +60,35 @@ export function useQueryComment(postId: string) {
     queryFn: ({ queryKey }) => fetchComment(queryKey[1])
   });
   return { comments, error };
+}
+
+export function useQueryUser(author: string) {
+  const {
+    data: user,
+    error,
+    isLoading,
+    isError
+  } = useQuery({
+    queryKey: ['users', author],
+    queryFn: () => fetchUser(author)
+  });
+
+  return { user, error, isLoading, isError };
+}
+
+export function useAddUser() {
+  const { mutate: insert } = useMutation({
+    mutationFn: (user: UserType) => addUser(user),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ['users'] });
+    },
+    onError: (error) => {
+      console.error('몰?루', error);
+    }
+  });
+  return {
+    addUser: insert
+  };
 }
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
