@@ -22,12 +22,13 @@ export type FetchPostsResultType = PostType & { bookmark: BookmarkType[] } & {
 };
 
 // Read Functions
-type OptionType = {
+export type OptionType = {
   page?: number;
   order?: {
     column: string;
     desc: boolean;
   };
+  category?: CategoryType;
 };
 
 export type getPost = (id: string) => PostType | null;

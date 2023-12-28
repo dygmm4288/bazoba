@@ -231,6 +231,7 @@ export interface Database {
     };
   };
 }
+export type TableKeys = keyof Database['public']['Tables'];
 
 export type Tables<
   PublicTableNameOrOptions extends
@@ -277,7 +278,6 @@ export type TablesInsert<
     ? I
     : never
   : never;
-
 export type TablesUpdate<
   PublicTableNameOrOptions extends
     | keyof Database['public']['Tables']

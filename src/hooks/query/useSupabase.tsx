@@ -7,20 +7,15 @@ import {
 } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
 import {
-  NewCommentType,
-  UpdateCommentType,
   addComment,
   fetchComment,
   fetchPost,
   fetchPosts,
   updateComment
-} from '../supabase';
-import { SupabaseErrorTypes } from '../supabase/error.types';
-
-const POST_QUERY_KEY = (postId: string) => ['posts', postId];
-
-const POSTS_QUERY_KEY = ['posts'];
-const COMMENT_QUERY_KEY = (postId: string) => ['comments', postId];
+} from '../../supabase';
+import { SupabaseErrorTypes } from '../../supabase/error.types';
+import { TablesInsert } from '../../supabase/supabaseSchema.types';
+import { COMMENT_QUERY_KEY, POST_QUERY_KEY } from './keys.constant';
 
 const client = new QueryClient();
 
@@ -60,8 +55,8 @@ export function useQueryComment(postId: string) {
 }
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
-    mutationFn: (newComment: NewCommentType) =>
-      addComment({ postId, ...newComment }),
+    mutationFn: (newComment: Omit<TablesInsert<'comments'>, 'postId'>) =>
+      addComment({ ...newComment, postId }),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
     },
@@ -75,7 +70,7 @@ export function useAddComment(postId: string) {
 }
 export function useUpdateComment(postId: string) {
   const { mutate: update } = useMutation({
-    mutationFn: (commentContent: UpdateCommentType) =>
+    mutationFn: (commentContent: Omit<TablesInsert<'comments'>, 'postId'>) =>
       updateComment(commentContent),
     onSuccess: () => {
       console.log('success');
