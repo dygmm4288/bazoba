@@ -7,6 +7,7 @@ export default function Router() {
       <Routes>
         <Route path="/" element={<div>Home</div>} />
         <Route path="/detail" element={<div>detail page</div>} />
+        <Route path="/write" element={<EditorWrapper />} />
         <Route path="/write/:id" element={<EditorWrapper />} />
       </Routes>
     </BrowserRouter>

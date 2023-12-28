@@ -1,20 +1,45 @@
-import { useParams } from 'react-router-dom';
+import { Button, Flex, Layout } from 'antd';
+import { Footer, Header } from 'antd/es/layout/layout';
+import { Link, useParams } from 'react-router-dom';
+import EditorHeader from '../components/Editor/EditorHeader';
 import EditorMain from '../components/Editor/EditorMain';
 import useEditorForm from '../hooks/useEditorForm';
-// /write -> 글작성하기
-// /write/:id -> 글 수정하기 -> 서버로 부터 데이터를 받아와야하니까..
 
 export default function EditorWrapper() {
   const { id } = useParams();
-  const { handleForm, editorRef } = useEditorForm({ id });
+  const {
+    handleForm,
+    editorRef,
+    handleCategory,
+    handleTitle,
+    title,
+    category
+  } = useEditorForm({ id });
 
   return (
-    <form onSubmit={handleForm}>
-      <header></header>
-      <EditorMain editorRef={editorRef} />
-      <footer>
-        <button type="submit">제출</button>
-      </footer>
-    </form>
+    <Layout>
+      <Header>
+        <Link to="/">홈으로</Link>
+      </Header>
+      <form onSubmit={handleForm}>
+        <EditorHeader
+          handleCategory={handleCategory}
+          handleTitle={handleTitle}
+          title={title}
+          category={category}
+        />
+        <EditorMain editorRef={editorRef} />
+        <Footer>
+          <Flex justify="flex-end" align="center" gap="large">
+            <Button size="large" danger>
+              취소하기
+            </Button>
+            <Button type="primary" htmlType="submit" size="large">
+              게시하기
+            </Button>
+          </Flex>
+        </Footer>
+      </form>
+    </Layout>
   );
 }

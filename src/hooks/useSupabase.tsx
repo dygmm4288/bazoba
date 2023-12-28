@@ -1,21 +1,37 @@
+import { PostgrestError } from '@supabase/supabase-js';
 import {
   QueryClient,
   QueryClientProvider,
+  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
-import { fetchPost, fetchPosts } from '../supabase';
+import {
+  UpdateCommentType,
+  fetchComment,
+  fetchPost,
+  fetchPosts,
+  updateComment
+} from '../supabase';
+import { SupabaseErrorTypes } from '../supabase/error.types';
 
 const POST_QUERY_KEY = (postId: string) => ['post', postId];
 const POSTS_QUERY_KEY = ['posts'];
+const COMMENT_QUERY_KEY = (postId: string) => ['comment', postId];
 
 const client = new QueryClient();
+
 export function useQueryPost(postId: string) {
-  const { data: post, error } = useQuery({
+  const { data, error } = useQuery({
     queryKey: POST_QUERY_KEY(postId),
-    queryFn: ({ queryKey }) => fetchPost(queryKey[1])
+    queryFn: ({ queryKey }) => fetchPost(queryKey[1]),
+    retry: (failureCount, error: PostgrestError) => {
+      if (error.code === SupabaseErrorTypes.BAD_REQUEST) return false;
+      return failureCount < 2;
+    }
   });
-  return { post, error };
+
+  return { post: data && data[0], error };
 }
 export function useQueryPosts() {
   const {
@@ -28,6 +44,31 @@ export function useQueryPosts() {
     enabled: false
   });
   return { posts, error, refetchPosts };
+}
+
+export function useQueryComment(postId: string) {
+  const { data: comments, error } = useQuery({
+    queryKey: COMMENT_QUERY_KEY(postId),
+    queryFn: ({ queryKey }) => fetchComment(queryKey[1])
+  });
+  return { comments, error };
+}
+
+export function useUpdateComment(
+  postId: string,
+  commentContent: UpdateCommentType
+) {
+  const { mutate: update } = useMutation({
+    mutationFn: () => updateComment(commentContent),
+    onSuccess: () => {
+      console.log('success');
+      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+    }
+  });
+
+  return {
+    updateComment: update
+  };
 }
 
 export function SupabaseQueryProvider({ children }: PropsWithChildren) {

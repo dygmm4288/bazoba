@@ -8,12 +8,19 @@ export const db = createClient<Database>(
 );
 
 export const fetchPost = async (id: string) => {
-  const { data } = await db
+  const { data, error } = await db
     .from('post')
     .select('*,id,like(id), bookmark(id)')
     .eq('id', id);
+  if (error) return Promise.reject(error);
   return data;
 };
+
+export const fetchComment = async (postId: string) => {
+  const { data } = await db.from('comment').select('*').eq('postId', postId);
+  return data;
+};
+
 type OptionType = {
   page?: number;
   order?: {
@@ -26,7 +33,7 @@ export const fetchPosts = async () => {
   const { data, error } = await db
     .from('post')
     .select(`*, like(*), bookmark(*)`);
-  if (error) throw error;
+  if (error) return Promise.reject(error);
   return data;
 };
 
@@ -45,6 +52,7 @@ export const addPost = (post: PostType) => add('post', post);
 export const addBookmark = (bookmark: BookmarkType) =>
   add('bookmark', bookmark);
 export const addLike = (like: LikeType) => add('like', like);
+export const addComment = (comment: CommentType) => add('comment', comment.id);
 
 type UpdateType = (
   postContent: Partial<PostType> & Pick<PostType, 'id'>
@@ -52,8 +60,19 @@ type UpdateType = (
 export const updatePost: UpdateType = async (postContent) => {
   db.from('post').update(postContent).eq('id', postContent.id);
 };
+export type UpdateCommentType = Partial<CommentType> & Pick<CommentType, 'id'>;
+export type UpdateCommentFunctionType = (
+  commentContent: Partial<CommentType> & Pick<CommentType, 'id'>
+) => Promise<void>;
+export const updateComment: UpdateCommentFunctionType = async (
+  commentContent
+) => {
+  db.from('comment').update(commentContent).eq('id', commentContent.id);
+};
 
 export const removePost = (post: PostType) => remove('post', post.id);
 export const removeLike = (like: LikeType) => remove('like', like.id);
 export const removeBookmark = (bookmark: BookmarkType) =>
   remove('bookmark', bookmark.id);
+export const removeComment = (comment: CommentType) =>
+  remove('comment', comment.id);
