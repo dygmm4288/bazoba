@@ -2,20 +2,27 @@ import React, { useEffect } from 'react';
 import { db } from '../supabase';
 import { Outlet } from 'react-router';
 import { Space } from 'antd';
+import { useRecoilState } from 'recoil';
+import { loginState } from '../recoil/auth';
 
 export default function AuthTest() {
+  const [isLogin, setIsLogin] = useRecoilState(loginState);
   useEffect(() => {
     const subscription = db.auth.onAuthStateChange((event, session) => {
       console.log(event, session);
 
       if (event === 'SIGNED_IN') {
-        //TODO : isLogin 저장? 리코일?
-        if (window.location.pathname === '/login') window.location.replace('/');
+        setIsLogin(true);
+        //TODO : 임시방편
+        if (window.location.pathname === '/login') {
+          window.location.replace('/');
+        }
       } else if (event === 'SIGNED_OUT') {
         [window.localStorage, window.sessionStorage].forEach((storage) => {
           Object.entries(storage).forEach(([key]) => {
             storage.removeItem(key);
           });
+          setIsLogin(false);
         });
         window.location.replace('/');
       } else if (event === 'TOKEN_REFRESHED') {
@@ -33,8 +40,8 @@ export default function AuthTest() {
       {/* header 임시 */}
       <header>
         <Space align="center">
-          <a href="/login">login</a>
-          <a href="/mypage">mypage</a>
+          {!isLogin && <a href="/login">login</a>}
+          {isLogin && <a href="/mypage">mypage</a>}
         </Space>
       </header>
 

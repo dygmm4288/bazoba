@@ -3,6 +3,8 @@ import { db } from '../supabase';
 import { AuthUser } from '@supabase/supabase-js';
 import { Card } from 'antd';
 import Profile from '../components/Mypage/Profile';
+import { useRecoilValue } from 'recoil';
+import { loginState } from '../recoil/auth';
 
 export default function Mypage() {
   const [user, setUser] = useState<AuthUser>();
@@ -14,7 +16,7 @@ export default function Mypage() {
       setUser(data.session?.user);
     };
     getAuthUser();
-  });
+  }, []);
 
   const handleFilterPost = () => {
     console.log('TODO: filtering');
