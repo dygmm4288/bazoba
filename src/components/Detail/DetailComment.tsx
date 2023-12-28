@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQueryComment, useUpdateComment } from '../../hooks/useSupabase';
 
 import type { CommentType } from '../../supabase/supabase.types';

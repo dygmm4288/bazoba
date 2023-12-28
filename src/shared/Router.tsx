@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Home from '../pages/Home';
 import Detail from '../pages/Detail';
+import EditorWrapper from '../pages/EditorWrapper';
+import Home from '../pages/Home';
 
 export default function Router() {
   return (
@@ -8,6 +9,8 @@ export default function Router() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/detail" element={<Detail />} />
+        <Route path="/write" element={<EditorWrapper />} />
+        <Route path="/write/:id" element={<EditorWrapper />} />
       </Routes>
     </BrowserRouter>
   );

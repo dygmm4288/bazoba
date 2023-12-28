@@ -4,7 +4,7 @@ declare type PostType = {
   contents: string;
   email?: string;
   author: string;
-  category: string;
+  category: CategoryType;
 };
 declare type CategoryType =
   | 'REACT'
@@ -30,6 +30,6 @@ type ForeignKeyType = {
   userId: string;
 };
 
-declare type ReviewType = ForeignKeyType;
+declare type ReviewType = { content: string } & ForeignKeyType;
 declare type LikeType = ForeignKeyType;
 declare type BookmarkType = ForeignKeyType;

@@ -1,8 +1,9 @@
-/* import { ChangeEvent } from 'react';
+import { Input, Select, Space } from 'antd';
+import { ChangeEvent } from 'react';
 
 interface Props {
   title: string;
-  category: CategoryType;
+  category: string;
   handleTitle: (e: ChangeEvent<HTMLInputElement>) => void;
   handleCategory: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
@@ -25,25 +26,26 @@ export default function EditorHeader({
   category
 }: Props) {
   return (
-    <header>
-      <input
+    <Space>
+      <Input
+        style={{ fontWeight: 'bold', fontSize: '1.75rem' }}
+        bordered={false}
         onChange={handleTitle}
         value={title}
         required
-        placeholder="제목을 입력하세요"
+        placeholder="제목을 입력하세요."
+        size="large"
       />
-      <select onChange={handleCategory} value={category} required>
-        {categories.map((category) => (
-          <option key={category} value={category}>
-            {category}
-          </option>
-        ))}
-      </select>
-    </header>
+      <Select
+        onChange={handleCategory}
+        value={category as any}
+        style={{ width: 120 }}
+        options={categories.map((category) => ({
+          label: category,
+          value: category
+        }))}
+        size="large"
+      />
+    </Space>
   );
-}
- */
-
-export default function EditorHeader() {
-  return <div>EditorHeader</div>;
 }

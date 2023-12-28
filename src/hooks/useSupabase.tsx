@@ -1,3 +1,4 @@
+import { PostgrestError } from '@supabase/supabase-js';
 import {
   QueryClient,
   QueryClientProvider,
@@ -7,12 +8,13 @@ import {
 import { PropsWithChildren } from 'react';
 import {
   UpdateCommentType,
+  addComment,
   fetchComment,
   fetchPost,
   fetchPosts,
-  updateComment,
-  addComment
+  updateComment
 } from '../supabase';
+import { SupabaseErrorTypes } from '../supabase/error.types';
 
 const POST_QUERY_KEY = (postId: string) => ['post', postId];
 
@@ -20,10 +22,15 @@ const POSTS_QUERY_KEY = ['posts'];
 const COMMENT_QUERY_KEY = (postId: string) => ['comment', postId];
 
 const client = new QueryClient();
+
 export function useQueryPost(postId: string) {
   const { data, error } = useQuery({
     queryKey: POST_QUERY_KEY(postId),
-    queryFn: ({ queryKey }) => fetchPost(queryKey[1])
+    queryFn: ({ queryKey }) => fetchPost(queryKey[1]),
+    retry: (failureCount, error: PostgrestError) => {
+      if (error.code === SupabaseErrorTypes.BAD_REQUEST) return false;
+      return failureCount < 2;
+    }
   });
   return { post: data && data[0], error };
 }
@@ -51,20 +58,6 @@ export function useQueryComment(postId: string) {
   return { comments, error };
 }
 
-export function useUpdateComment(postId: string) {
-  const { mutate: update } = useMutation({
-    mutationFn: (commentContent: UpdateCommentType) =>
-      updateComment(commentContent),
-    onSuccess: () => {
-      console.log('success');
-      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
-    }
-  });
-  return {
-    updateComment: update
-  };
-}
-
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (comment: CommentType) => addComment(comment),
@@ -75,6 +68,20 @@ export function useAddComment(postId: string) {
   });
   return {
     addComment: insert
+  };
+}
+export function useUpdateComment(postId: string) {
+  const { mutate: update } = useMutation({
+    mutationFn: (commentContent: UpdateCommentType) =>
+      updateComment(commentContent),
+    onSuccess: () => {
+      console.log('success');
+      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+    }
+  });
+
+  return {
+    updateComment: update
   };
 }
 
