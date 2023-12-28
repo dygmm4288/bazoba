@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
 import {
+  NewCommentType,
   UpdateCommentType,
   addComment,
   fetchComment,
@@ -57,13 +58,15 @@ export function useQueryComment(postId: string) {
   });
   return { comments, error };
 }
-
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
-    mutationFn: (comment: CommentType) => addComment(comment),
+    mutationFn: (newComment: NewCommentType) =>
+      addComment({ postId, ...newComment }),
     onSuccess: () => {
-      console.log('success');
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
     }
   });
   return {
