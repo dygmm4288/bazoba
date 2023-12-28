@@ -6,7 +6,6 @@ declare type PostType = {
   author: string;
   category: string;
 };
-
 declare type CategoryType =
   | 'REACT'
   | 'NODE'

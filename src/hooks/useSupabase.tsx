@@ -15,6 +15,7 @@ import {
 } from '../supabase';
 
 const POST_QUERY_KEY = (postId: string) => ['post', postId];
+
 const POSTS_QUERY_KEY = ['posts'];
 const COMMENT_QUERY_KEY = (postId: string) => ['comment', postId];
 
@@ -26,17 +27,20 @@ export function useQueryPost(postId: string) {
   });
   return { post: data && data[0], error };
 }
-export function useQueryPosts() {
+export function useQueryPosts(option?: string) {
   const {
     data: posts,
     error,
+    isLoading,
+    isError,
     refetch: refetchPosts
   } = useQuery({
-    queryKey: POSTS_QUERY_KEY,
-    queryFn: fetchPosts,
-    enabled: false
+    queryKey: ['posts', option],
+    queryFn: () => fetchPosts(option)
+    // enabled: false
   });
-  return { posts, error, refetchPosts };
+
+  return { posts, error, isLoading, isError, refetchPosts };
 }
 
 export function useQueryComment(postId: string) {
