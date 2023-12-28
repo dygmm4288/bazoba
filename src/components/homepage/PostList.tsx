@@ -10,7 +10,6 @@ const PostList = () => {
   const filter = useRecoilValue(filterState);
   const { posts, isLoading, isError } = useFilter(filter);
 
-  console.log(posts);
   return (
     <Skeleton
       loading={isLoading}

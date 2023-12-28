@@ -34,7 +34,6 @@ type OptionType = {
   };
 };
 export const fetchPosts = async (option?: string) => {
-  console.log(option);
   if (option) {
     const { data, error } = await db
       .from('post')
