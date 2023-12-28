@@ -9,15 +9,15 @@ export const db = createClient<Database>(
 
 export const fetchPost = async (id: string) => {
   const { data, error } = await db
-    .from('post')
-    .select('*,id,like(id), bookmark(id)')
+    .from('posts')
+    .select('*,id,likes(id), bookmarks(id)')
     .eq('id', id);
   if (error) return Promise.reject(error);
   return data;
 };
 
 export const fetchComment = async (postId: string) => {
-  const { data } = await db.from('comment').select('*').eq('postId', postId);
+  const { data } = await db.from('comments').select('*').eq('postId', postId);
   return data;
 };
 
@@ -31,16 +31,16 @@ type OptionType = {
 export const fetchPosts = async (option?: string) => {
   if (option) {
     const { data, error } = await db
-      .from('post')
-      .select(`*, like(*), bookmark(*)`)
+      .from('posts')
+      .select(`*, likes(*), bookmarks(*)`)
       .eq('category', option);
     if (error) return Promise.reject(error);
     return data;
   }
 
   const { data, error } = await db
-    .from('post')
-    .select(`*, like(*), bookmark(*)`);
+    .from('posts')
+    .select(`*, likes(*), bookmarks(*)`);
 
   if (error) return Promise.reject(error);
   return data;
@@ -59,23 +59,24 @@ export const remove: RemoveType = async (from, id) => {
   db.from(from).delete().eq('id', id);
 };
 
-export const addPost = (post: PostType) => add('post', post);
+export const addPost = (post: PostType) => add('posts', post);
 export const addBookmark = (bookmark: BookmarkType) =>
-  add('bookmark', bookmark);
-export const addLike = (like: LikeType) => add('like', like);
+  add('bookmarks', bookmark);
+
+export const addLike = (like: LikeType) => add('likes', like);
 export type NewCommentType = Omit<Omit<CommentType, 'id'>, 'postId'>;
 export type AddCommentType = (
   newComment: Omit<CommentType, 'id'>
 ) => Promise<void>;
 
 export const addComment: AddCommentType = async (newComment) =>
-  add('comment', newComment);
+  add('comments', newComment);
 
 type UpdateType = (
   postContent: Partial<PostType> & Pick<PostType, 'id'>
 ) => Promise<void>;
 export const updatePost: UpdateType = async (postContent) => {
-  db.from('post').update(postContent).eq('id', postContent.id);
+  db.from('posts').update(postContent).eq('id', postContent.id);
 };
 export type UpdateCommentType = Partial<CommentType> & Pick<CommentType, 'id'>;
 export type UpdateCommentFunctionType = (
@@ -85,15 +86,15 @@ export const updateComment: UpdateCommentFunctionType = async (
   commentContent
 ) => {
   await db
-    .from('comment')
+    .from('comments')
     .update(commentContent)
     .eq('id', commentContent.id)
     .select();
 };
 
-export const removePost = (post: PostType) => remove('post', post.id);
-export const removeLike = (like: LikeType) => remove('like', like.id);
+export const removePost = (post: PostType) => remove('posts', post.id);
+export const removeLike = (like: LikeType) => remove('likes', like.id);
 export const removeBookmark = (bookmark: BookmarkType) =>
-  remove('bookmark', bookmark.id);
+  remove('bookmarks', bookmark.id);
 export const removeComment = (comment: CommentType) =>
-  remove('comment', comment.id);
+  remove('comments', comment.id);

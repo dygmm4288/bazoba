@@ -30,14 +30,14 @@ export interface Database {
         };
         Relationships: [
           {
-            foreignKeyName: 'bookmark_postId_fkey';
+            foreignKeyName: 'bookmarks_postId_fkey';
             columns: ['postId'];
             isOneToOne: false;
-            referencedRelation: 'post';
+            referencedRelation: 'posts';
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'bookmark_userId_fkey';
+            foreignKeyName: 'bookmarks_userId_fkey';
             columns: ['userId'];
             isOneToOne: false;
             referencedRelation: 'users';
@@ -72,7 +72,7 @@ export interface Database {
         };
         Relationships: [
           {
-            foreignKeyName: 'comment_postId_fkey';
+            foreignKeyName: 'comments_postId_fkey';
             columns: ['postId'];
             isOneToOne: false;
             referencedRelation: 'post';
@@ -98,14 +98,14 @@ export interface Database {
         };
         Relationships: [
           {
-            foreignKeyName: 'like_postId_fkey';
+            foreignKeyName: 'likes_postId_fkey';
             columns: ['postId'];
             isOneToOne: false;
             referencedRelation: 'post';
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'like_userId_fkey';
+            foreignKeyName: 'likes_userId_fkey';
             columns: ['userId'];
             isOneToOne: false;
             referencedRelation: 'users';
