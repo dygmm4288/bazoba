@@ -2,7 +2,6 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Viewer } from '@toast-ui/react-editor';
 import { Avatar, Badge, Card } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import db from '../../db.json';
 import { FetchPostsResultType } from '../../supabase/supabase.types';
 
 interface Props {
@@ -16,6 +15,15 @@ type User = {
   email?: string;
   profileImage: string;
 };
+
+const dummyUsers = [
+  {
+    id: '1',
+    nickname: '김철수',
+    email: '',
+    profileImage: ''
+  }
+];
 
 const getStyleByCategory = (category: CategoryType) => {
   switch (category) {
@@ -44,7 +52,7 @@ const getStyleByCategory = (category: CategoryType) => {
 
 const Post = ({ post }: Props) => {
   const navigate = useNavigate();
-  const { users } = db;
+  const users = dummyUsers;
   const { title, category, contents, like, bookmark } =
     post as FetchPostsResultType;
   const { Meta } = Card;
