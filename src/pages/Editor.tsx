@@ -6,7 +6,7 @@ import EditorHeader from '../components/Editor/EditorHeader';
 import EditorMain from '../components/Editor/EditorMain';
 import useEditorForm from '../hooks/useEditorForm';
 
-export default function EditorWrapper() {
+export default function Editor() {
   const { id } = useParams();
   const {
     handleForm,
