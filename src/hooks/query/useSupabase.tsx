@@ -2,6 +2,7 @@ import { PostgrestError } from '@supabase/supabase-js';
 import {
   QueryClient,
   QueryClientProvider,
+  useInfiniteQuery,
   useMutation,
   useQuery
 } from '@tanstack/react-query';
@@ -12,6 +13,7 @@ import {
   fetchComment,
   fetchPost,
   fetchPosts,
+  fetchPostsByPage,
   fetchUser,
   updateComment,
   removeComment,
@@ -56,6 +58,30 @@ export function useQueryPosts(option?: string) {
   });
 
   return { posts, error, isLoading, isError, refetchPosts };
+}
+
+export function useQueryPostsByPage() {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['posts'],
+    queryFn: ({ pageParam = 0 }) => fetchPostsByPage(pageParam),
+    getNextPageParam: (lastPage, pages) => pages.length + 1 || undefined,
+    initialPageParam: 0
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
 }
 
 export function useQueryComment(postId: string) {
