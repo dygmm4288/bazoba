@@ -1,4 +1,4 @@
-import { useQueryPosts } from './useSupabase';
+import { useQueryPosts } from './query/useSupabase';
 
 export function useFilter(category: string) {
   // console.log(category);

@@ -3,7 +3,10 @@ import { Viewer } from '@toast-ui/react-editor';
 import { Avatar, Badge, Card } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useQueryUser } from '../../hooks/useSupabase';
-import { FetchPostsResultType } from '../../supabase/supabase.types';
+import {
+  CategoryType,
+  FetchPostsResultType
+} from '../../supabase/supabase.types';
 
 interface Props {
   // post: FetchPostsResultType;
@@ -63,7 +66,10 @@ const Post = ({ post }: Props) => {
   console.log(user);
 
   return (
-    <Badge.Ribbon text={category} style={getStyleByCategory(category)}>
+    <Badge.Ribbon
+      text={category}
+      style={getStyleByCategory(category as CategoryType)}
+    >
       <Card
         title={title}
         hoverable
@@ -94,7 +100,7 @@ const Post = ({ post }: Props) => {
           }
         />
         <Viewer initialValue={contents} />
-        <Badge count={`${0} likes`} showZero />
+        <Badge count={`${like?.length} likes`} showZero />
       </Card>
     </Badge.Ribbon>
   );
