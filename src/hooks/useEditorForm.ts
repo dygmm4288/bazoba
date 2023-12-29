@@ -98,8 +98,13 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
     setCategory(e.target.value as CategoryType);
   };
-  const handleTogglePostMode = () => {
-    setPostMode(!isPostMode);
+  const handleTogglePostMode = (nextPostMode?: boolean) => () => {
+    if (nextPostMode === undefined) {
+      setPostMode(!isPostMode);
+      return;
+    }
+
+    setPostMode(nextPostMode);
   };
   const handleChangeThumbnail: UploadProps['onChange'] = async (
     info: UploadChangeParam<UploadFile>

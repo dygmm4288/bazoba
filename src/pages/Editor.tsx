@@ -34,10 +34,14 @@ export default function Editor() {
         <EditorMain editorRef={editorRef} />
         <Footer>
           <Flex justify="flex-end" align="center" gap="large">
-            <Button size="large" danger>
+            <Button size="large" danger onClick={handleTogglePostMode(false)}>
               취소하기
             </Button>
-            <Button type="primary" size="large" onClick={handleTogglePostMode}>
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleTogglePostMode(true)}
+            >
               게시하기
             </Button>
           </Flex>
