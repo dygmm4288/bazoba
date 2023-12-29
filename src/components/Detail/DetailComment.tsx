@@ -1,29 +1,46 @@
 import { useState } from 'react';
 import {
   useQueryComment,
-  useUpdateComment
+  useUpdateComment,
+  useRemoveComment
 } from '../../hooks/query/useSupabase';
+import { useRecoilValue } from 'recoil';
+import { loginState } from '../../recoil/auth';
+import { useQueryUser } from '../../hooks/query/useSupabase';
 
 import type { CommentType } from '../../supabase/supabase.types';
 
-function DetailComment() {
-  const { comments } = useQueryComment('a38a1eb0-e793-472b-9f9a-f5dbd608afa8');
-  const { updateComment } = useUpdateComment(
-    'a38a1eb0-e793-472b-9f9a-f5dbd608afa8'
-  );
+interface DetailCommentProps {
+  id: string;
+}
+
+function DetailComment({ id }: DetailCommentProps) {
+  const { comments } = useQueryComment(id);
+  const { updateComment } = useUpdateComment(id);
+  const { removeComment } = useRemoveComment(id);
 
   const [editedComments, setEditedComments] = useState<Record<string, string>>(
     {}
   );
 
+  const userLoginState = useRecoilValue(loginState);
+
+  const userId = userLoginState ? userLoginState.id : '';
+
+  const user = useQueryUser(userId)?.user;
+
+  const handleDelete = (commentId: string) => {
+    removeComment(commentId);
+  };
+
   const handleEdit = (commentId: string) => {
     const editedComment = editedComments[commentId];
-    if (editedComment) {
+    if (editedComment && user) {
       updateComment({
         id: commentId,
         content: editedComment,
         type: 0,
-        userId: '123'
+        userId: user.id
       });
       setEditedComments((prevComments) => {
         const { [commentId]: deletedKey, ...rest } = prevComments;
@@ -31,7 +48,6 @@ function DetailComment() {
       });
     }
   };
-
   const handleCancel = (commentId: string) => {
     setEditedComments((prevComments) => {
       const { [commentId]: deletedKey, ...rest } = prevComments;
@@ -74,6 +90,7 @@ function DetailComment() {
                 >
                   수정
                 </button>
+                <button onClick={() => handleDelete(comment.id)}>삭제</button>
               </div>
             )}
           </div>

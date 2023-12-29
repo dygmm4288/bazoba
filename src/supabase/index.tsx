@@ -94,6 +94,7 @@ export const update =
     if (error) return Promise.reject(error);
     return true;
   };
+
 export const updatePost = update('posts');
 export const updateComment = update('comments');
 

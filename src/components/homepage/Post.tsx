@@ -56,12 +56,12 @@ const getStyleByCategory = (category: CategoryType) => {
 
 const Post = ({ post }: Props) => {
   const navigate = useNavigate();
-  const { title, category, contents, author, like, bookmark } =
+  const { title, category, contents, author, like, bookmark, id } =
     post as FetchPostsResultType;
   const { user } = useQueryUser(author) as { user: User | null };
   const { Meta } = Card;
   const onPostCardClickHandler = () => {
-    navigate('/');
+    navigate(`/detail/${id}`);
   };
 
   return (

@@ -13,7 +13,8 @@ import {
   fetchPost,
   fetchPosts,
   fetchUser,
-  updateComment
+  updateComment,
+  removeComment
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { TablesInsert } from '../../supabase/supabaseSchema.types';
@@ -113,6 +114,23 @@ export function useUpdateComment(postId: string) {
 
   return {
     updateComment: update
+  };
+}
+
+export function useRemoveComment(postId: string) {
+  const { mutate: deleteComment } = useMutation({
+    mutationFn: async (commentId: string) => {
+      const result = await removeComment(commentId);
+      return result;
+    },
+    onSuccess: () => {
+      console.log('success');
+      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+    }
+  });
+
+  return {
+    removeComment: deleteComment
   };
 }
 
