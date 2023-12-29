@@ -73,7 +73,7 @@ export function useQueryUser(author: string) {
 
 export function useAddUser() {
   const { mutate: insert } = useMutation({
-    mutationFn: (user: UserType) => addUser(user),
+    mutationFn: (user: TablesInsert<'users'>) => addUser(user),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ['users'] });
     },
