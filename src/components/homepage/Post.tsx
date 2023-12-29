@@ -63,7 +63,6 @@ const Post = ({ post }: Props) => {
   const onPostCardClickHandler = () => {
     navigate(`/detail/${id}`);
   };
-  console.log(user);
 
   return (
     <Badge.Ribbon

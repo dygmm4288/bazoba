@@ -1,10 +1,19 @@
 import { Editor } from '@toast-ui/react-editor';
-import { ChangeEvent, FormEvent, useEffect } from 'react';
+import { message } from 'antd';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { extractText } from '../lib/extractText';
 import { loginState } from '../recoil/auth';
-import { categoryState, titleState } from '../recoil/editor';
-import { addPost } from '../supabase';
+import {
+  categoryState,
+  isLoadingState,
+  summaryState,
+  thumbnailUrlState,
+  titleState
+} from '../recoil/editor';
+import { addPost, uploadImage } from '../supabase';
+import { getDefaultImage } from '../supabase/data';
 import { CategoryType } from '../supabase/supabase.types';
 import { TablesInsert } from '../supabase/supabaseSchema.types';
 import { useQueryPost } from './query/useSupabase';
@@ -22,9 +31,17 @@ let editorRef: EditorRefType = { current: null };
 export default function useEditorForm({ id }: EditorFormType) {
   const [title, setTitle] = useRecoilState(titleState);
   const [category, setCategory] = useRecoilState(categoryState);
-  const navigate = useNavigate();
-  const { post, error } = useQueryPost(id || '');
+  const [thumbnailUrl, setThumbnailUrl] = useRecoilState(thumbnailUrlState);
+  const setLoading = useSetRecoilState(isLoadingState);
+  const [summary, setSummary] = useRecoilState(summaryState);
   const auth = useRecoilValue(loginState);
+
+  const { post, error } = useQueryPost(id || '');
+
+  const [isPostMode, setPostMode] = useState(false);
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!id) {
       initializeEditor();
@@ -35,6 +52,10 @@ export default function useEditorForm({ id }: EditorFormType) {
       setCategory(post?.category as CategoryType);
     }
     return () => {
+      if (!!title || !!thumbnailUrl || !!summary) {
+        console.log('아니 지우면 안되는데?');
+        return;
+      }
       initializeEditor();
     };
   }, [post]);
@@ -45,27 +66,31 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
   }, [error]);
 
-  function initializeEditor() {
-    setTitle('');
-    setCategory('REACT');
-  }
-
   const handleForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (editorRef.current && auth) {
       const contents = editorRef.current.getInstance().getHTML();
+      if (!extractText(contents).trim() || !title) {
+        message.error('제목과 내용을 모두 입력해주세요');
+        setPostMode(false);
+        return;
+      }
+
       const newPost: TablesInsert<'posts'> = {
         author: auth.id,
         category,
         contents,
         title,
-        email: auth.email
+        email: auth.email,
+        summary: summary || extractText(contents).slice(0, 150),
+        thumbnail_url: thumbnailUrl || getDefaultImage(category)!
       };
       try {
         await addPost(newPost);
-        console.log('해치움');
+        initializeEditor();
+        navigate('/');
       } catch (error) {
-        console.log('못 해치움 ㅜ');
+        console.error('등록하는 동안 에러 발생');
       }
 
       return;
@@ -83,13 +108,43 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
     setCategory(e.target.value as CategoryType);
   };
+  const handleTogglePostMode = (nextPostMode?: boolean) => () => {
+    if (nextPostMode === undefined) {
+      setPostMode(!isPostMode);
+      return;
+    }
+
+    setPostMode(nextPostMode);
+  };
+
+  const handleAction = async (file: File) => {
+    setLoading(true);
+    const { data, error } = await uploadImage(file);
+    setLoading(false);
+
+    if (error) {
+      return error;
+    }
+
+    setThumbnailUrl(data);
+    return data;
+  };
+
+  function initializeEditor() {
+    setTitle('');
+    setCategory('REACT');
+    setLoading(false);
+    setThumbnailUrl(null);
+    setSummary('');
+  }
 
   return {
     handleForm,
     editorRef,
     handleTitle,
     handleCategory,
-    title,
-    category
+    isPostMode,
+    handleTogglePostMode,
+    handleAction
   };
 }

@@ -1,10 +1,10 @@
 import { Input, Select, Space } from 'antd';
 import { ChangeEvent } from 'react';
+import { useRecoilValue } from 'recoil';
+import { categoryState, titleState } from '../../recoil/editor';
 import { CategoryType } from '../../supabase/supabase.types';
 
 interface Props {
-  title: string;
-  category: string;
   handleTitle: (e: ChangeEvent<HTMLInputElement>) => void;
   handleCategory: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
@@ -20,12 +20,10 @@ const categories: CategoryType[] = [
   'NODE'
 ];
 
-export default function EditorHeader({
-  handleCategory,
-  handleTitle,
-  title,
-  category
-}: Props) {
+export default function EditorHeader({ handleCategory, handleTitle }: Props) {
+  const title = useRecoilValue(titleState);
+  const category = useRecoilValue(categoryState);
+
   return (
     <Space>
       <Input

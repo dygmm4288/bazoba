@@ -79,7 +79,7 @@ export function useAddUser() {
       client.invalidateQueries({ queryKey: ['users'] });
     },
     onError: (error) => {
-      console.error('몰?루', error);
+      console.error(error);
     }
   });
   return {

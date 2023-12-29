@@ -125,6 +125,8 @@ export interface Database {
           created_at: string;
           email: string | null;
           id: string;
+          summary: string;
+          thumbnail_url: string;
           title: string;
         };
         Insert: {
@@ -134,6 +136,8 @@ export interface Database {
           created_at?: string;
           email?: string | null;
           id?: string;
+          summary: string;
+          thumbnail_url: string;
           title: string;
         };
         Update: {
@@ -143,6 +147,8 @@ export interface Database {
           created_at?: string;
           email?: string | null;
           id?: string;
+          summary?: string;
+          thumbnail_url?: string;
           title?: string;
         };
         Relationships: [
