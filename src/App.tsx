@@ -7,14 +7,13 @@ import { db } from './supabase';
 import { UserType } from './supabase/supabase.types';
 
 function App() {
-  const [isLogin, setIsLogin] = useRecoilState(loginState);
+  const [auth, setAuth] = useRecoilState(loginState);
   const { addUser } = useAddUser();
 
   useEffect(() => {
     const subscribe = db.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN') {
-        setIsLogin(true);
-        console.log(session?.user);
+        setAuth(session?.user!);
         const { id, email } = session?.user!;
         const user: UserType = {
           id,
@@ -24,7 +23,7 @@ function App() {
         };
         addUser(user);
       } else if (event === 'SIGNED_OUT') {
-        setIsLogin(false);
+        setAuth(null);
       } else if (event === 'TOKEN_REFRESHED') {
         // handle token refreshed event
       } else if (event === 'USER_UPDATED') {
@@ -36,7 +35,7 @@ function App() {
     };
   }, []);
 
-  return <Router isLogin={isLogin} />;
+  return <Router isLogin={!!auth} />;
 }
 
 export default App;
