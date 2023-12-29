@@ -52,14 +52,27 @@ export function useQueryPosts(option?: string) {
 }
 
 export function useQueryPostsByPage() {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ['posts'],
-      queryFn: ({ pageParam = 0 }) => fetchPostsByPage(pageParam),
-      getNextPageParam: (lastPage, pages) => pages.length + 1 || undefined,
-      initialPageParam: 0
-    });
-  return { data, fetchNextPage, hasNextPage, isFetchingNextPage };
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['posts'],
+    queryFn: ({ pageParam = 0 }) => fetchPostsByPage(pageParam),
+    getNextPageParam: (lastPage, pages) => pages.length + 1 || undefined,
+    initialPageParam: 0
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
 }
 
 export function useQueryComment(postId: string) {

@@ -9,11 +9,16 @@ const PostList = () => {
   // const posts = db.posts as PostType[];
   // const { posts } = useQueryPosts();
   const filter = useRecoilValue(filterState);
-  const { posts, isLoading, isError } = useFilter(filter);
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useQueryPostsByPage();
+  const { posts } = useFilter(filter);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useQueryPostsByPage();
 
-  console.log(data?.pages);
   return (
     <Skeleton
       loading={isLoading}
@@ -29,6 +34,7 @@ const PostList = () => {
           loading={isLoading}
           size="large"
           renderItem={(post) => <Post post={post} key={idx} />}
+          key={idx}
         />
       ))}
       <button
