@@ -1,5 +1,5 @@
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Space, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import type { RcFile, UploadProps } from 'antd/es/upload/interface';
 import { ChangeEvent } from 'react';
@@ -37,33 +37,42 @@ export default function EditorPost({ handleAction }: Props) {
     setSummary(e.target.value);
   };
 
+  const handleChangeInputFile = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+
+      if (!file || !isImageFile(file)) {
+        message.error('이미지 파일을 업로드 해주세요.');
+        return;
+      }
+
+      handleAction(file as RcFile);
+    }
+  };
+
   return (
     <div>
-      <input
-        type="file"
-        onChange={(e) => {
-          if (e.target.files) {
-            if (!e.target.files[0].type.includes('image')) return;
-            handleAction(e.target.files[0] as RcFile);
-          }
-        }}
-      />
+      <input type="file" />
       {!thumbnailUrl ? uploadButton : <img src={thumbnailUrl} />}
+
       <TextArea
         showCount
         maxLength={150}
         style={{ resize: 'none' }}
         onChange={handleChangeSummary}
+        placeholder="요약을 입력해주세요."
         value={summary}
       />
-      <div>
+      <Space>
         <Button size="large" danger>
           취소하기
         </Button>
         <Button size="large" type="primary" htmlType="submit">
           게시하기
         </Button>
-      </div>
+      </Space>
     </div>
   );
 }
+
+const isImageFile = (file: File) => file.type.includes('image');

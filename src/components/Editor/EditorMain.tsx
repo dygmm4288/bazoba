@@ -25,7 +25,7 @@ export default function EditorMain({ editorRef }: Props) {
         initialEditType="wysiwyg"
         hideModeSwitch={true}
         ref={editorRef}
-        height={'1200px'} // TODO : 임시로 넣은 값
+        height={'80vh'}
         hooks={{
           addImageBlobHook: handleImageUpload
         }}
