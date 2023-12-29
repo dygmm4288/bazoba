@@ -31,8 +31,8 @@ export default function useEditorForm({ id }: EditorFormType) {
   const [category, setCategory] = useRecoilState(categoryState);
   const [thumbnailUrl, setThumbnailUrl] = useRecoilState(thumbnailUrlState);
   const setLoading = useSetRecoilState(isLoadingState);
+  const [summary, setSummary] = useRecoilState(summaryState);
   const auth = useRecoilValue(loginState);
-  const summary = useRecoilValue(summaryState);
 
   const { post, error } = useQueryPost(id || '');
 
@@ -50,6 +50,9 @@ export default function useEditorForm({ id }: EditorFormType) {
       setCategory(post?.category as CategoryType);
     }
     return () => {
+      if (!!title || !!thumbnailUrl || !!summary) {
+        return;
+      }
       initializeEditor();
     };
   }, [post]);
@@ -60,15 +63,11 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
   }, [error]);
 
-  function initializeEditor() {
-    setTitle('');
-    setCategory('REACT');
-  }
-
   const handleForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (editorRef.current && auth) {
       const contents = editorRef.current.getInstance().getHTML();
+
       const newPost: TablesInsert<'posts'> = {
         author: auth.id,
         category,
@@ -80,9 +79,10 @@ export default function useEditorForm({ id }: EditorFormType) {
       };
       try {
         await addPost(newPost);
-        console.log('해치움');
+        initializeEditor();
+        navigate('/');
       } catch (error) {
-        console.log('못 해치움 ㅜ');
+        console.error('등록하는 동안 에러 발생');
       }
 
       return;
@@ -108,6 +108,7 @@ export default function useEditorForm({ id }: EditorFormType) {
 
     setPostMode(nextPostMode);
   };
+
   const handleAction = async (file: File) => {
     setLoading(true);
     const { data, error } = await uploadImage(file);
@@ -124,6 +125,14 @@ export default function useEditorForm({ id }: EditorFormType) {
 
     setThumbnailUrl(data);
   };
+
+  function initializeEditor() {
+    setTitle('');
+    setCategory('REACT');
+    setLoading(false);
+    setThumbnailUrl(null);
+    setSummary('');
+  }
 
   return {
     handleForm,
