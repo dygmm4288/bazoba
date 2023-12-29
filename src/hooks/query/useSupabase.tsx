@@ -13,6 +13,7 @@ import {
   fetchComment,
   fetchPost,
   fetchPosts,
+  fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
   removeComment,
@@ -60,6 +61,22 @@ export function useQueryPosts(option?: string) {
     queryKey: ['posts', option],
     queryFn: () => fetchPosts(option)
     // enabled: false
+  });
+
+  return { posts, error, isLoading, isError, refetchPosts };
+}
+
+export function useFilteredPosts(optionKey: string, optionValue: string) {
+  const {
+    data: posts,
+    error,
+    isLoading,
+    isError,
+    refetch: refetchPosts
+  } = useQuery({
+    queryKey: ['post', optionKey, optionValue],
+    queryFn: () => fetchfilteredPosts(optionKey, optionValue),
+    enabled: false
   });
 
   return { posts, error, isLoading, isError, refetchPosts };

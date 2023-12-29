@@ -49,6 +49,18 @@ export const fetchPosts = async (option?: string) => {
   return data;
 };
 
+export const fetchfilteredPosts = async (
+  optionKey: string,
+  optionVaule: string
+) => {
+  const { data, error } = await db
+    .from('posts')
+    .select(`*, likes(*), bookmarks(*)`)
+    .eq(optionKey, optionVaule);
+  if (error) return Promise.reject(error);
+  return data;
+};
+
 export const fetchPostsByPage = async (
   pageParam: number,
   postCategoryFilter: CategoryType[]
