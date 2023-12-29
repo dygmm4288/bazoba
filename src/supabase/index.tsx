@@ -97,6 +97,7 @@ export const update =
 
 export const updatePost = update('posts');
 export const updateComment = update('comments');
+export const updateUser = update('users');
 
 /* Storage */
 export const uploadImage = async (blob: Blob | File) => {

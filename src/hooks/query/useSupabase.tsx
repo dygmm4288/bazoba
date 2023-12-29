@@ -14,11 +14,19 @@ import {
   fetchPosts,
   fetchUser,
   updateComment,
-  removeComment
+  removeComment,
+  updateUser
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
-import { TablesInsert } from '../../supabase/supabaseSchema.types';
-import { COMMENT_QUERY_KEY, POST_QUERY_KEY } from './query.keys';
+import {
+  TablesInsert,
+  TablesUpdate
+} from '../../supabase/supabaseSchema.types';
+import {
+  COMMENT_QUERY_KEY,
+  POST_QUERY_KEY,
+  USER_QUERY_KEY
+} from './query.keys';
 
 const client = new QueryClient();
 
@@ -58,15 +66,15 @@ export function useQueryComment(postId: string) {
   return { comments, error };
 }
 
-export function useQueryUser(author: string) {
+export function useQueryUser(userId: string) {
   const {
     data: user,
     error,
     isLoading,
     isError
   } = useQuery({
-    queryKey: ['users', author],
-    queryFn: () => fetchUser(author)
+    queryKey: ['users', userId],
+    queryFn: () => fetchUser(userId)
   });
 
   return { user, error, isLoading, isError };
@@ -86,6 +94,21 @@ export function useAddUser() {
     addUser: insert
   };
 }
+
+export function useUpdateUser(userId: string) {
+  const { mutate: update } = useMutation({
+    mutationFn: (userData: TablesUpdate<'users'>) => updateUser(userData),
+    onSuccess: () => {
+      console.log('success');
+      client.invalidateQueries({ queryKey: USER_QUERY_KEY(userId) });
+    }
+  });
+
+  return {
+    updateUser: update
+  };
+}
+
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (newComment: Omit<TablesInsert<'comments'>, 'postId'>) =>
