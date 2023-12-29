@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { useQueryComment, useUpdateComment } from '../../hooks/useSupabase';
+import {
+  useQueryComment,
+  useUpdateComment
+} from '../../hooks/query/useSupabase';
 
 import type { CommentType } from '../../supabase/supabase.types';
 
@@ -16,7 +19,12 @@ function DetailComment() {
   const handleEdit = (commentId: string) => {
     const editedComment = editedComments[commentId];
     if (editedComment) {
-      updateComment({ id: commentId, content: editedComment });
+      updateComment({
+        id: commentId,
+        content: editedComment,
+        type: 0,
+        userId: '123'
+      });
       setEditedComments((prevComments) => {
         const { [commentId]: deletedKey, ...rest } = prevComments;
         return rest;

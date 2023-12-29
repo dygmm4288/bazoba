@@ -1,5 +1,6 @@
 import { Input, Select, Space } from 'antd';
 import { ChangeEvent } from 'react';
+import { CategoryType } from '../../supabase/supabase.types';
 
 interface Props {
   title: string;

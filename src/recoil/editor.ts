@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+import { CategoryType } from '../supabase/supabase.types';
 import { EDIT_INPUT_CATEGORY, EDIT_INPUT_TITLE } from './keys';
 
 export const titleState = atom<string>({

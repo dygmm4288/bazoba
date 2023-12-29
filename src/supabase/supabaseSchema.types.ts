@@ -9,21 +9,18 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      bookmark: {
+      bookmarks: {
         Row: {
-          created_at: string;
           id: string;
           postId: string;
           userId: string;
         };
         Insert: {
-          created_at?: string;
           id?: string;
           postId: string;
           userId: string;
         };
         Update: {
-          created_at?: string;
           id?: string;
           postId?: string;
           userId?: string;
@@ -45,7 +42,7 @@ export interface Database {
           }
         ];
       };
-      comment: {
+      comments: {
         Row: {
           content: string;
           created_at: string;
@@ -75,19 +72,26 @@ export interface Database {
             foreignKeyName: 'comments_postId_fkey';
             columns: ['postId'];
             isOneToOne: false;
-            referencedRelation: 'post';
+            referencedRelation: 'posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'comments_userId_fkey';
+            columns: ['userId'];
+            isOneToOne: false;
+            referencedRelation: 'users';
             referencedColumns: ['id'];
           }
         ];
       };
-      like: {
+      likes: {
         Row: {
           id: string;
           postId: string;
           userId: string;
         };
         Insert: {
-          id: string;
+          id?: string;
           postId: string;
           userId: string;
         };
@@ -101,7 +105,7 @@ export interface Database {
             foreignKeyName: 'likes_postId_fkey';
             columns: ['postId'];
             isOneToOne: false;
-            referencedRelation: 'post';
+            referencedRelation: 'posts';
             referencedColumns: ['id'];
           },
           {
@@ -113,7 +117,7 @@ export interface Database {
           }
         ];
       };
-      post: {
+      posts: {
         Row: {
           author: string;
           category: string;
@@ -141,7 +145,44 @@ export interface Database {
           id?: string;
           title?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'posts_author_fkey';
+            columns: ['author'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      users: {
+        Row: {
+          avatar_url: string;
+          email: string;
+          id: string;
+          nickname: string;
+        };
+        Insert: {
+          avatar_url: string;
+          email: string;
+          id: string;
+          nickname: string;
+        };
+        Update: {
+          avatar_url?: string;
+          email?: string;
+          id?: string;
+          nickname?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'users_id_fkey';
+            columns: ['id'];
+            isOneToOne: true;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
       };
     };
     Views: {
@@ -158,6 +199,7 @@ export interface Database {
     };
   };
 }
+export type TableKeys = keyof Database['public']['Tables'];
 
 export type Tables<
   PublicTableNameOrOptions extends
