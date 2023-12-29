@@ -15,7 +15,7 @@ import {
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { TablesInsert } from '../../supabase/supabaseSchema.types';
-import { COMMENT_QUERY_KEY, POST_QUERY_KEY } from './keys.constant';
+import { COMMENT_QUERY_KEY, POST_QUERY_KEY } from './query.keys';
 
 const client = new QueryClient();
 
@@ -30,6 +30,7 @@ export function useQueryPost(postId: string) {
   });
   return { post: data && data[0], error };
 }
+
 export function useQueryPosts(option?: string) {
   const {
     data: posts,
@@ -53,6 +54,7 @@ export function useQueryComment(postId: string) {
   });
   return { comments, error };
 }
+
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (newComment: Omit<TablesInsert<'comments'>, 'postId'>) =>
@@ -68,6 +70,7 @@ export function useAddComment(postId: string) {
     addComment: insert
   };
 }
+
 export function useUpdateComment(postId: string) {
   const { mutate: update } = useMutation({
     mutationFn: (commentContent: Omit<TablesInsert<'comments'>, 'postId'>) =>
