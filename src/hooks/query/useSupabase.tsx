@@ -15,11 +15,20 @@ import {
   fetchPosts,
   fetchPostsByPage,
   fetchUser,
-  updateComment
+  updateComment,
+  removeComment,
+  updateUser
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
-import { TablesInsert } from '../../supabase/supabaseSchema.types';
-import { COMMENT_QUERY_KEY, POST_QUERY_KEY } from './query.keys';
+import {
+  TablesInsert,
+  TablesUpdate
+} from '../../supabase/supabaseSchema.types';
+import {
+  COMMENT_QUERY_KEY,
+  POST_QUERY_KEY,
+  USER_QUERY_KEY
+} from './query.keys';
 
 const client = new QueryClient();
 
@@ -104,13 +113,28 @@ export function useAddUser() {
       client.invalidateQueries({ queryKey: ['users'] });
     },
     onError: (error) => {
-      console.error('몰?루', error);
+      console.error(error);
     }
   });
   return {
     addUser: insert
   };
 }
+
+export function useUpdateUser(userId: string) {
+  const { mutate: update } = useMutation({
+    mutationFn: (userData: TablesUpdate<'users'>) => updateUser(userData),
+    onSuccess: () => {
+      console.log('success');
+      client.invalidateQueries({ queryKey: USER_QUERY_KEY(userId) });
+    }
+  });
+
+  return {
+    updateUser: update
+  };
+}
+
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (newComment: Omit<TablesInsert<'comments'>, 'postId'>) =>
@@ -130,7 +154,7 @@ export function useAddComment(postId: string) {
 export function useUpdateComment(postId: string) {
   const { mutate: update } = useMutation({
     mutationFn: (commentContent: Omit<TablesInsert<'comments'>, 'postId'>) =>
-      updateComment(commentContent),
+      updateComment({ ...commentContent, postId }),
     onSuccess: () => {
       console.log('success');
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
@@ -139,6 +163,23 @@ export function useUpdateComment(postId: string) {
 
   return {
     updateComment: update
+  };
+}
+
+export function useRemoveComment(postId: string) {
+  const { mutate: deleteComment } = useMutation({
+    mutationFn: async (commentId: string) => {
+      const result = await removeComment(commentId);
+      return result;
+    },
+    onSuccess: () => {
+      console.log('success');
+      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+    }
+  });
+
+  return {
+    removeComment: deleteComment
   };
 }
 

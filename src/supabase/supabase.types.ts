@@ -59,3 +59,12 @@ export type removeLike = (id: string, userId: string) => void;
 export type removeBookmark = (id: string, userId: string) => void;
 export type removePost = (id: string) => void;
 export type removeComment = (id: string) => void;
+
+export type User = {
+  id: string;
+  user_metadata: {
+    avatar_url: string;
+    email: string;
+    user_name: string;
+  };
+};

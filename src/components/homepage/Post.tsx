@@ -72,7 +72,6 @@ const Post = ({ post }: Props) => {
   const onPostCardClickHandler = () => {
     navigate(`/detail/${id}`);
   };
-  // console.log(user);
 
   return (
     <List.Item>
@@ -123,11 +122,3 @@ const Post = ({ post }: Props) => {
 };
 
 export default Post;
-
-/* 
->>> TODO
->>> 1. Post table에 summary 라는 필드가 있으면 좋을 것 같다.
->>> 2. 에디터 말고 글 등록에서 사진을 몇 개 받으면 좋지 않을까? 아니면 글을 등록할 때 넣은 사진에서 사진 데이터만 뽑아낼 수 있으면 좋을 것 같다.
->>> 
-
-*/

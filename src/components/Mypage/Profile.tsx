@@ -1,32 +1,46 @@
-import { Avatar, Button, Card } from 'antd';
+import { Avatar, Button, Card, Input, Form } from 'antd';
 import Meta from 'antd/es/card/Meta';
-import React from 'react';
+import React, { useState } from 'react';
 import { db } from '../../supabase';
-import { AuthUser } from '@supabase/supabase-js';
+import { useQueryUser } from '../../hooks/query/useSupabase';
+import InputprofileForm from './InputProfileForm';
+import { loginState } from '../../recoil/auth';
+import { useRecoilValue } from 'recoil';
 
-interface Props {
-  user: AuthUser | undefined;
-}
+function Profile() {
+  const loginUser = useRecoilValue(loginState);
+  const userId = loginUser?.id ? loginUser.id : '';
+  const { user } = useQueryUser(userId);
+  const [isEditing, setIsEditing] = useState(false);
 
-function Profile({ user }: Props) {
   const handleLogout = async () => {
     const { error } = await db.auth.signOut();
+  };
+
+  const handleEditButton = () => {
+    setIsEditing(true);
   };
 
   return (
     <div>
       <Card style={{ width: 400 }}>
-        <h1>ANT CARD</h1>
-        <ul>
-          {/* TODO: deafault image OR 랜덤이미지 */}
-          {/* TODO: user data 업데이트 */}
-          {/*user?.user_metadata?.name</li> */}
-        </ul>
-        <Meta
-          avatar={<Avatar src={`${user?.user_metadata.avatar_url}`} />}
-          title={user?.email}
-          description="This is the description"
-        />
+        <h1>My Profile</h1>
+
+        {isEditing && (
+          <InputprofileForm handleComplete={() => setIsEditing(false)} />
+        )}
+
+        {!isEditing && (
+          <>
+            <Meta
+              avatar={<Avatar src={`${user?.avatar_url}`} />}
+              title={user?.nickname ?? '닉네임을 입력해주세요'}
+              description={`${user?.email}`}
+            />
+            {/* <li>{user?.email} </li> */}
+          </>
+        )}
+        {!isEditing && <Button onClick={handleEditButton}>프로필 수정</Button>}
         <Button onClick={handleLogout}>로그아웃</Button>
       </Card>
     </div>
