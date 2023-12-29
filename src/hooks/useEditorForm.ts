@@ -1,10 +1,18 @@
 import { Editor } from '@toast-ui/react-editor';
-import { ChangeEvent, FormEvent, useEffect } from 'react';
+import type { UploadChangeParam } from 'antd/es/upload';
+import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { loginState } from '../recoil/auth';
-import { categoryState, titleState } from '../recoil/editor';
-import { addPost } from '../supabase';
+import {
+  categoryState,
+  isLoadingState,
+  summaryState,
+  thumbnailUrlState,
+  titleState
+} from '../recoil/editor';
+import { addPost, db } from '../supabase';
 import { CategoryType } from '../supabase/supabase.types';
 import { TablesInsert } from '../supabase/supabaseSchema.types';
 import { useQueryPost } from './query/useSupabase';
@@ -22,6 +30,11 @@ let editorRef: EditorRefType = { current: null };
 export default function useEditorForm({ id }: EditorFormType) {
   const [title, setTitle] = useRecoilState(titleState);
   const [category, setCategory] = useRecoilState(categoryState);
+  const [isPostMode, setPostMode] = useState(false);
+  const [thumbnailUrl, setThumbnailUrl] = useRecoilState(thumbnailUrlState);
+  const summary = useRecoilValue(summaryState);
+  const setLoading = useSetRecoilState(isLoadingState);
+
   const navigate = useNavigate();
   const { post, error } = useQueryPost(id || '');
   const auth = useRecoilValue(loginState);
@@ -59,7 +72,9 @@ export default function useEditorForm({ id }: EditorFormType) {
         category,
         contents,
         title,
-        email: auth.email
+        email: auth.email,
+        summary,
+        thumbnail_url: thumbnailUrl!
       };
       try {
         await addPost(newPost);
@@ -83,13 +98,52 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
     setCategory(e.target.value as CategoryType);
   };
+  const handleTogglePostMode = () => {
+    setPostMode(!isPostMode);
+  };
+  const handleChangeThumbnail: UploadProps['onChange'] = async (
+    info: UploadChangeParam<UploadFile>
+  ) => {
+    const URL =
+      'https://borxwimnmhmdodedkkpv.supabase.co/storage/v1/object/public/post_images/';
+    console.log('file status is : ', info.file.status);
+    if (info.file.status === 'uploading') {
+      setLoading(true);
+    }
+    if (info.file.status === 'done') {
+      console.log('done');
+    }
+  };
+
+  const handleAction = async (file: RcFile) => {
+    const BASE_URL =
+      'https://borxwimnmhmdodedkkpv.supabase.co/storage/v1/object/public/post_images/';
+    setLoading(true);
+    const { data, error } = await db.storage
+      .from('post_images')
+      .upload(window.URL.createObjectURL(file), file);
+    if (error) {
+      console.error(error);
+    } else {
+      setThumbnailUrl(BASE_URL + data.path);
+    }
+    setLoading(false);
+  };
 
   return {
     handleForm,
     editorRef,
     handleTitle,
     handleCategory,
-    title,
-    category
+    isPostMode,
+    handleTogglePostMode,
+    handleChangeThumbnail,
+    handleAction
   };
 }
+
+const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+};
