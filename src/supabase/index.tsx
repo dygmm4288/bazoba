@@ -1,10 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import {
-  BookmarkType,
-  CommentType,
-  LikeType,
-  PostType
-} from './supabase.types';
+import { BookmarkType, LikeType, PostType } from './supabase.types';
 import { Database } from './supabaseSchema.types';
 
 export const db = createClient<Database>(
@@ -34,7 +29,6 @@ type OptionType = {
   };
 };
 export const fetchPosts = async (option?: string) => {
-  console.log(option);
   if (option) {
     const { data, error } = await db
       .from('post')
@@ -55,7 +49,9 @@ export const fetchPosts = async (option?: string) => {
 type AddType<T> = (from: string, data: T) => void;
 
 export const add: AddType<unknown> = async (from, data) => {
-  return await db.from(from).insert(data);
+  const { data: response, error } = await db.from(from).insert(data);
+  if (error) return Promise.reject(error);
+  return response;
 };
 
 type RemoveType = (from: string, id: string) => Promise<void>;
@@ -67,10 +63,13 @@ export const addPost = (post: PostType) => add('post', post);
 export const addBookmark = (bookmark: BookmarkType) =>
   add('bookmark', bookmark);
 export const addLike = (like: LikeType) => add('like', like);
+export type NewCommentType = Omit<Omit<CommentType, 'id'>, 'postId'>;
+export type AddCommentType = (
+  newComment: Omit<CommentType, 'id'>
+) => Promise<void>;
 
-export type AddCommentType = (comment: CommentType) => Promise<void>;
-export const addComment: AddCommentType = async (comment: CommentType) =>
-  add('comment', comment);
+export const addComment: AddCommentType = async (newComment) =>
+  add('comment', newComment);
 
 type UpdateType = (
   postContent: Partial<PostType> & Pick<PostType, 'id'>

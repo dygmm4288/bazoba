@@ -16,12 +16,14 @@ declare type CategoryType =
   | 'UNITY'
   | 'IOS'
   | 'ETC';
+
 declare type CommentType = {
   id: string;
   postId: string;
   content: string;
-  userId?: string;
+  userId: string;
   password?: string;
+  type: 0 | 1;
 };
 
 type ForeignKeyType = {
@@ -29,7 +31,5 @@ type ForeignKeyType = {
   postId: string;
   userId: string;
 };
-
-declare type ReviewType = { content: string } & ForeignKeyType;
 declare type LikeType = ForeignKeyType;
 declare type BookmarkType = ForeignKeyType;
