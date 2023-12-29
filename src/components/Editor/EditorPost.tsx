@@ -1,3 +1,4 @@
+import { StorageError } from '@supabase/storage-js';
 import { Button, Space, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { ChangeEvent } from 'react';
@@ -10,7 +11,7 @@ import {
 import EditorUploadLoading from './EditorUploadLoading';
 
 interface Props {
-  handleAction: (file: File) => Promise<void>;
+  handleAction: (file: File) => Promise<string | StorageError>;
 }
 
 export default function EditorPost({ handleAction }: Props) {
@@ -22,15 +23,20 @@ export default function EditorPost({ handleAction }: Props) {
     setSummary(e.target.value);
   };
 
-  const handleChangeInputFile = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeInputFile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
 
       if (!file || !isImageFile(file)) {
+        e.target.value = '';
         message.error('이미지 파일을 업로드 해주세요.');
         return;
       }
-      handleAction(file);
+      const result = await handleAction(file);
+      if (typeof result !== 'string') {
+        e.target.value = '';
+        message.error('이미지를 업로드 하는데 실패했습니다.');
+      }
     }
   };
 

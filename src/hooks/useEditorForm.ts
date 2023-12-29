@@ -1,5 +1,4 @@
 import { Editor } from '@toast-ui/react-editor';
-import { message } from 'antd';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -115,15 +114,11 @@ export default function useEditorForm({ id }: EditorFormType) {
     setLoading(false);
 
     if (error) {
-      try {
-        message.error('이미지 업로드에 실패했습니다.');
-      } catch (err) {
-        console.error(error, err);
-      }
-      return;
+      return error;
     }
 
     setThumbnailUrl(data);
+    return data;
   };
 
   function initializeEditor() {
