@@ -1,4 +1,3 @@
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Space, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import type { UploadProps } from 'antd/es/upload/interface';
@@ -9,8 +8,7 @@ import {
   summaryState,
   thumbnailUrlState
 } from '../../recoil/editor';
-
-const ICON_SIZE = '2rem';
+import EditorUploadLoading from './EditorUploadLoading';
 
 interface Props {
   handleChangeThumbnail: UploadProps['onChange'];
@@ -21,17 +19,6 @@ export default function EditorPost({ handleAction }: Props) {
   const isLoading = useRecoilValue(isLoadingState);
   const thumbnailUrl = useRecoilValue(thumbnailUrlState);
   const [summary, setSummary] = useRecoilState(summaryState);
-
-  const uploadButton = (
-    <div>
-      {isLoading ? (
-        <LoadingOutlined />
-      ) : (
-        <PlusOutlined style={{ fontSize: ICON_SIZE }} />
-      )}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
 
   const handleChangeSummary = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setSummary(e.target.value);
@@ -52,9 +39,8 @@ export default function EditorPost({ handleAction }: Props) {
   return (
     <div>
       <input type="file" onChange={handleChangeInputFile} />
-      {!thumbnailUrl ? (
-        uploadButton
-      ) : (
+      <EditorUploadLoading isShow={isLoading} />
+      {thumbnailUrl && (
         <img src={thumbnailUrl} alt={'프로젝트에 관련된 썸네일 이미지'} />
       )}
 
