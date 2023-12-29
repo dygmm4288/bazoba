@@ -78,7 +78,7 @@ export function useAddUser() {
       client.invalidateQueries({ queryKey: ['users'] });
     },
     onError: (error) => {
-      console.error('몰?루', error);
+      console.error(error);
     }
   });
   return {
@@ -104,7 +104,7 @@ export function useAddComment(postId: string) {
 export function useUpdateComment(postId: string) {
   const { mutate: update } = useMutation({
     mutationFn: (commentContent: Omit<TablesInsert<'comments'>, 'postId'>) =>
-      updateComment(commentContent),
+      updateComment({ ...commentContent, postId }),
     onSuccess: () => {
       console.log('success');
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
