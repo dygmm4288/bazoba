@@ -49,7 +49,9 @@ export default function useEditorForm({ id }: EditorFormType) {
       setCategory(post?.category as CategoryType);
     }
     return () => {
+      console.log('here', !!title || !!thumbnailUrl || !!summary);
       if (!!title || !!thumbnailUrl || !!summary) {
+        console.log('아니 지우면 안되는데?');
         return;
       }
       initializeEditor();

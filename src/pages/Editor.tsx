@@ -1,6 +1,6 @@
 import { Button, Flex, Layout } from 'antd';
 import { Footer, Header } from 'antd/es/layout/layout';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import EditorHeader from '../components/Editor/EditorHeader';
 import EditorMain from '../components/Editor/EditorMain';
@@ -9,6 +9,7 @@ import useEditorForm from '../hooks/useEditorForm';
 
 export default function Editor() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const {
     handleForm,
@@ -19,6 +20,8 @@ export default function Editor() {
     handleAction,
     isPostMode
   } = useEditorForm({ id });
+
+  const handleGoHome = () => navigate('/');
 
   return (
     <Layout>
@@ -33,7 +36,7 @@ export default function Editor() {
         <EditorMain editorRef={editorRef} />
         <Footer>
           <Flex justify="flex-end" align="center" gap="large">
-            <Button size="large" danger onClick={handleTogglePostMode(false)}>
+            <Button size="large" danger onClick={handleGoHome}>
               취소하기
             </Button>
             <Button
@@ -45,7 +48,12 @@ export default function Editor() {
             </Button>
           </Flex>
         </Footer>
-        {isPostMode && <EditorPost handleAction={handleAction} />}
+        {isPostMode && (
+          <EditorPost
+            handleAction={handleAction}
+            handleTogglePostMode={handleTogglePostMode}
+          />
+        )}
       </form>
     </Layout>
   );

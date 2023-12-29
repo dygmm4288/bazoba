@@ -12,9 +12,13 @@ import EditorUploadLoading from './EditorUploadLoading';
 
 interface Props {
   handleAction: (file: File) => Promise<string | StorageError>;
+  handleTogglePostMode: (isPostMode?: boolean) => () => void;
 }
 
-export default function EditorPost({ handleAction }: Props) {
+export default function EditorPost({
+  handleAction,
+  handleTogglePostMode
+}: Props) {
   const isLoading = useRecoilValue(isLoadingState);
   const thumbnailUrl = useRecoilValue(thumbnailUrlState);
   const [summary, setSummary] = useRecoilState(summaryState);
@@ -57,7 +61,7 @@ export default function EditorPost({ handleAction }: Props) {
         value={summary}
       />
       <Space>
-        <Button size="large" danger>
+        <Button size="large" danger onClick={handleTogglePostMode(false)}>
           취소하기
         </Button>
         <Button size="large" type="primary" htmlType="submit">

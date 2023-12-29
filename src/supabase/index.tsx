@@ -52,7 +52,6 @@ export const fetchPosts = async (option?: string) => {
 export const fetchUser = async (id: string) => {
   const { data, error } = await db.from('users').select('*').eq('id', id);
   if (error) return Promise.reject(error);
-  console.log(data);
   return data ? data[0] : null;
 };
 
