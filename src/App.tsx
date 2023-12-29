@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { useAddUser } from './hooks/useSupabase';
+import { useAddUser } from './hooks/query/useSupabase';
 import { loginState } from './recoil/auth';
 import Router from './shared/Router';
 import { db } from './supabase';
