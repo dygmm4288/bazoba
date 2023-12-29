@@ -1,6 +1,6 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Viewer } from '@toast-ui/react-editor';
-import { Avatar, Badge, Card } from 'antd';
+import { Avatar, Badge, Card, List } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useQueryUser } from '../../hooks/query/useSupabase';
 import {
@@ -56,53 +56,69 @@ const getStyleByCategory = (category: CategoryType) => {
 
 const Post = ({ post }: Props) => {
   const navigate = useNavigate();
-  const { title, category, contents, author, like, bookmark } =
-    post as FetchPostsResultType;
+  const {
+    id,
+    title,
+    category,
+    contents,
+    author,
+    like,
+    bookmark,
+    thumbnail_url,
+    summary
+  } = post as FetchPostsResultType;
   const { user } = useQueryUser(author) as { user: User | null };
   const { Meta } = Card;
   const onPostCardClickHandler = () => {
-    navigate('/');
+    navigate(`/detail/${id}`);
   };
-  console.log(user);
+  // console.log(user);
 
   return (
-    <Badge.Ribbon
-      text={category}
-      style={getStyleByCategory(category as CategoryType)}
-    >
-      <Card
-        title={title}
-        hoverable
-        onClick={onPostCardClickHandler}
-        headStyle={{ backgroundColor: '#fff' }}
-        cover={
-          <div style={{ backgroundColor: '#ffea00', height: '200px' }}>
-            placeholder for Thumbnail
-          </div>
-        }
+    <List.Item>
+      <Badge.Ribbon
+        text={category}
+        style={getStyleByCategory(category as CategoryType)}
       >
-        <Meta
+        <Card
           title={title}
-          avatar={
-            <Avatar
-              size={64}
-              src={
-                <img
-                  src={user?.avatar_url}
-                  alt={user?.nickname}
-                  style={{ backgroundColor: '#eee' }}
-                />
-              }
-            />
+          hoverable
+          onClick={onPostCardClickHandler}
+          headStyle={{ backgroundColor: '#fff' }}
+          cover={
+            <div
+              style={{
+                backgroundImage: `url(${thumbnail_url})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                width: 'inherit',
+                height: '400px'
+              }}
+            ></div>
           }
-          description={
-            '여기에 프로젝트에 대한 간략한 설명이 들어가면 좋을 것 같아요'
-          }
-        />
-        <Viewer initialValue={contents} />
-        <Badge count={`${like?.length} likes`} showZero />
-      </Card>
-    </Badge.Ribbon>
+        >
+          <Meta
+            title={user?.nickname}
+            avatar={
+              <Avatar
+                size={64}
+                src={
+                  <img
+                    src={user?.avatar_url}
+                    alt={user?.nickname}
+                    style={{ backgroundColor: '#eee' }}
+                  />
+                }
+              />
+            }
+            description={summary}
+          />
+          <Badge count={`${like?.length} likes`} showZero />
+          <Viewer initialValue={contents} />
+        </Card>
+      </Badge.Ribbon>
+    </List.Item>
   );
 };
 

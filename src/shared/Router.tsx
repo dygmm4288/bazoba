@@ -25,6 +25,7 @@ export default function Router({ isLogin }: Props) {
         <Route element={<AuthTest />}>
           <Route path="/" element={<Home />} />
           <Route path="/detail" element={<Detail />} />
+          <Route path="/detail/:id" element={<Detail />} />
           <Route path="/login" element={ifLogout(<Login />)} />
 
           <Route path="/mypage" element={ifLogin(<Mypage />)} />

@@ -1,5 +1,6 @@
 import { List, Skeleton } from 'antd';
 import { useRecoilValue } from 'recoil';
+import { useQueryPostsByPage } from '../../hooks/query/useSupabase';
 import { useFilter } from '../../hooks/useFilter';
 import { filterState } from '../../recoil/filter';
 import Post from './Post';
@@ -9,7 +10,10 @@ const PostList = () => {
   // const { posts } = useQueryPosts();
   const filter = useRecoilValue(filterState);
   const { posts, isLoading, isError } = useFilter(filter);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useQueryPostsByPage();
 
+  console.log(data?.pages);
   return (
     <Skeleton
       loading={isLoading}
@@ -23,12 +27,18 @@ const PostList = () => {
         dataSource={posts}
         loading={isLoading}
         size="large"
-        renderItem={(post) => (
-          <List.Item key={post.title}>
-            <Post post={post} />
-          </List.Item>
-        )}
+        renderItem={(post) => <Post post={post} />}
       />
+      <button
+        onClick={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetchingNextPage}
+      >
+        {isFetchingNextPage
+          ? 'Loading more...'
+          : hasNextPage
+          ? 'Load More'
+          : 'Nothing more to load'}
+      </button>
     </Skeleton>
   );
 };

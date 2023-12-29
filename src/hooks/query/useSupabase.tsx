@@ -2,6 +2,7 @@ import { PostgrestError } from '@supabase/supabase-js';
 import {
   QueryClient,
   QueryClientProvider,
+  useInfiniteQuery,
   useMutation,
   useQuery
 } from '@tanstack/react-query';
@@ -12,6 +13,7 @@ import {
   fetchComment,
   fetchPost,
   fetchPosts,
+  fetchPostsByPage,
   fetchUser,
   updateComment
 } from '../../supabase';
@@ -49,6 +51,17 @@ export function useQueryPosts(option?: string) {
   return { posts, error, isLoading, isError, refetchPosts };
 }
 
+export function useQueryPostsByPage() {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ['posts'],
+      queryFn: ({ pageParam = 0 }) => fetchPostsByPage(pageParam),
+      getNextPageParam: (lastPage, pages) => pages.length + 1 || undefined,
+      initialPageParam: 0
+    });
+  return { data, fetchNextPage, hasNextPage, isFetchingNextPage };
+}
+
 export function useQueryComment(postId: string) {
   const { data: comments, error } = useQuery({
     queryKey: COMMENT_QUERY_KEY(postId),
@@ -57,15 +70,15 @@ export function useQueryComment(postId: string) {
   return { comments, error };
 }
 
-export function useQueryUser(author: string) {
+export function useQueryUser(userId: string) {
   const {
     data: user,
     error,
     isLoading,
     isError
   } = useQuery({
-    queryKey: ['users', author],
-    queryFn: () => fetchUser(author)
+    queryKey: ['users', userId],
+    queryFn: () => fetchUser(userId)
   });
 
   return { user, error, isLoading, isError };

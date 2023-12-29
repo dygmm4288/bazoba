@@ -48,11 +48,24 @@ export const fetchPosts = async (option?: string) => {
   if (error) return Promise.reject(error);
   return data;
 };
+
+export const fetchPostsByPage = async (pageParam = 0) => {
+  const from = pageParam * 3;
+  const to = from + 2;
+
+  const { data, error } = await db
+    .from('posts')
+    .select('*')
+    .range(from, to)
+    .order('created_at');
+  if (error) return Promise.reject(error);
+
+  return data;
+};
 // >>> addUser, fetchUser
 export const fetchUser = async (id: string) => {
   const { data, error } = await db.from('users').select('*').eq('id', id);
   if (error) return Promise.reject(error);
-  console.log(data);
   return data ? data[0] : null;
 };
 

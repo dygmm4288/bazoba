@@ -59,7 +59,9 @@ export default function useEditorForm({ id }: EditorFormType) {
         category,
         contents,
         title,
-        email: auth.email
+        email: auth.email,
+        thumbnail_url: '',
+        summary: ''
       };
       try {
         await addPost(newPost);
