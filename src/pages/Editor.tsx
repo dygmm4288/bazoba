@@ -2,17 +2,14 @@ import { Button, Flex, Layout } from 'antd';
 import { Footer, Header } from 'antd/es/layout/layout';
 import { Link, useParams } from 'react-router-dom';
 
-import { useRecoilValue } from 'recoil';
 import EditorHeader from '../components/Editor/EditorHeader';
 import EditorMain from '../components/Editor/EditorMain';
 import EditorPost from '../components/Editor/EditorPost';
 import useEditorForm from '../hooks/useEditorForm';
-import { categoryState, titleState } from '../recoil/editor';
 
 export default function Editor() {
   const { id } = useParams();
-  const title = useRecoilValue(titleState);
-  const category = useRecoilValue(categoryState);
+
   const {
     handleForm,
     editorRef,
@@ -20,7 +17,8 @@ export default function Editor() {
     handleTitle,
     handleTogglePostMode,
     handleChangeThumbnail,
-    handleAction
+    handleAction,
+    isPostMode
   } = useEditorForm({ id });
 
   return (
@@ -32,8 +30,6 @@ export default function Editor() {
         <EditorHeader
           handleCategory={handleCategory}
           handleTitle={handleTitle}
-          title={title}
-          category={category}
         />
         <EditorMain editorRef={editorRef} />
         <Footer>
@@ -46,10 +42,12 @@ export default function Editor() {
             </Button>
           </Flex>
         </Footer>
-        <EditorPost
-          handleChangeThumbnail={handleChangeThumbnail}
-          handleAction={handleAction}
-        />
+        {isPostMode && (
+          <EditorPost
+            handleChangeThumbnail={handleChangeThumbnail}
+            handleAction={handleAction}
+          />
+        )}
       </form>
     </Layout>
   );
