@@ -1,17 +1,31 @@
 import { useState } from 'react';
 import { useAddComment } from '../../hooks/query/useSupabase';
-import { TablesInsert } from '../../supabase/supabaseSchema.types';
+import { useRecoilValue } from 'recoil';
+import { loginState } from '../../recoil/auth';
+import { useQueryUser } from '../../hooks/query/useSupabase';
 
-function DetailFormComment() {
+import type { TablesInsert } from '../../supabase/supabaseSchema.types';
+
+interface DetailFormContentProps {
+  id: string;
+}
+
+function DetailFormComment({ id }: DetailFormContentProps) {
   const [commentContent, setCommentContent] = useState('');
-  const { addComment } = useAddComment('a38a1eb0-e793-472b-9f9a-f5dbd608afa8');
+  const { addComment } = useAddComment(id);
+
+  const userLoginState = useRecoilValue(loginState);
+
+  const userId = userLoginState ? userLoginState.id : '';
+
+  const { user } = useQueryUser(userId);
 
   const handleAddComment = () => {
-    if (commentContent.trim() !== '') {
+    if (commentContent.trim() !== '' && user) {
       const newComment: Omit<TablesInsert<'comments'>, 'postId'> = {
         content: commentContent,
         type: 0,
-        userId: 'leejinho'
+        userId: user.id
       };
       addComment(newComment);
       setCommentContent('');
