@@ -3,7 +3,8 @@ import { ChangeEvent, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { categoryState, titleState } from '../recoil/editor';
-import { useQueryPost } from './useSupabase';
+import { CategoryType } from '../supabase/supabase.types';
+import { useQueryPost } from './query/useSupabase';
 
 export type EditorRefType = {
   current: Editor | null;

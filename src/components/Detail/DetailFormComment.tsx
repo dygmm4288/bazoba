@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useAddComment } from '../../hooks/useSupabase';
-import { NewCommentType } from '../../supabase';
+import { useAddComment } from '../../hooks/query/useSupabase';
+import { TablesInsert } from '../../supabase/supabaseSchema.types';
 
 function DetailFormComment() {
   const [commentContent, setCommentContent] = useState('');
@@ -8,7 +8,7 @@ function DetailFormComment() {
 
   const handleAddComment = () => {
     if (commentContent.trim() !== '') {
-      const newComment: NewCommentType = {
+      const newComment: Omit<TablesInsert<'comments'>, 'postId'> = {
         content: commentContent,
         type: 0,
         userId: 'leejinho'
