@@ -21,14 +21,16 @@ const PostList = () => {
       paragraph={{ rows: 10 }}
       style={{ width: '800px', margin: '0 auto' }}
     >
-      <List
-        style={{ width: '800px', margin: '0 auto' }}
-        itemLayout="vertical"
-        dataSource={posts}
-        loading={isLoading}
-        size="large"
-        renderItem={(post) => <Post post={post} />}
-      />
+      {data?.pages.map((posts, idx) => (
+        <List
+          style={{ width: '800px', margin: '0 auto' }}
+          itemLayout="vertical"
+          dataSource={posts}
+          loading={isLoading}
+          size="large"
+          renderItem={(post) => <Post post={post} key={idx} />}
+        />
+      ))}
       <button
         onClick={() => fetchNextPage()}
         disabled={!hasNextPage || isFetchingNextPage}
@@ -42,5 +44,11 @@ const PostList = () => {
     </Skeleton>
   );
 };
-
+// {data.pages.map((group, i) => (
+//   <React.Fragment key={i}>
+//     {group.map(ticket => (
+//       <div key={ticket.id}>{/* Render ticket */}</div>
+//     ))}
+//   </React.Fragment>
+// ))}
 export default PostList;
