@@ -97,3 +97,15 @@ export const update =
   };
 export const updatePost = update('posts');
 export const updateComment = update('comments');
+
+/* Storage */
+export const uploadImage = async (blob: Blob | File) => {
+  const BASE_URL =
+    'https://borxwimnmhmdodedkkpv.supabase.co/storage/v1/object/public/post_images/';
+  const BUCKET_NAME = 'post_images';
+
+  const { data, error } = await db.storage
+    .from(BUCKET_NAME)
+    .upload(window.URL.createObjectURL(blob), blob);
+  return { data: BASE_URL + data?.path, error };
+};
