@@ -1,6 +1,5 @@
 import { Button, Space, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import type { UploadProps } from 'antd/es/upload/interface';
 import { ChangeEvent } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -11,7 +10,6 @@ import {
 import EditorUploadLoading from './EditorUploadLoading';
 
 interface Props {
-  handleChangeThumbnail: UploadProps['onChange'];
   handleAction: (file: File) => Promise<void>;
 }
 

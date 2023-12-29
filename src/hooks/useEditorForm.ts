@@ -1,7 +1,5 @@
 import { Editor } from '@toast-ui/react-editor';
 import { message } from 'antd';
-import type { UploadChangeParam } from 'antd/es/upload';
-import type { UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -110,20 +108,6 @@ export default function useEditorForm({ id }: EditorFormType) {
 
     setPostMode(nextPostMode);
   };
-  const handleChangeThumbnail: UploadProps['onChange'] = async (
-    info: UploadChangeParam<UploadFile>
-  ) => {
-    const URL =
-      'https://borxwimnmhmdodedkkpv.supabase.co/storage/v1/object/public/post_images/';
-    console.log('file status is : ', info.file.status);
-    if (info.file.status === 'uploading') {
-      setLoading(true);
-    }
-    if (info.file.status === 'done') {
-      console.log('done');
-    }
-  };
-
   const handleAction = async (file: File) => {
     setLoading(true);
     const { data, error } = await uploadImage(file);
@@ -148,7 +132,6 @@ export default function useEditorForm({ id }: EditorFormType) {
     handleCategory,
     isPostMode,
     handleTogglePostMode,
-    handleChangeThumbnail,
     handleAction
   };
 }

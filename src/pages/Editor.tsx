@@ -16,7 +16,6 @@ export default function Editor() {
     handleCategory,
     handleTitle,
     handleTogglePostMode,
-    handleChangeThumbnail,
     handleAction,
     isPostMode
   } = useEditorForm({ id });
@@ -46,12 +45,7 @@ export default function Editor() {
             </Button>
           </Flex>
         </Footer>
-        {isPostMode && (
-          <EditorPost
-            handleChangeThumbnail={handleChangeThumbnail}
-            handleAction={handleAction}
-          />
-        )}
+        {isPostMode && <EditorPost handleAction={handleAction} />}
       </form>
     </Layout>
   );
