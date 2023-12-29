@@ -1,6 +1,7 @@
 import { Editor } from '@toast-ui/react-editor';
+import { message } from 'antd';
 import type { UploadChangeParam } from 'antd/es/upload';
-import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
+import type { UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -12,7 +13,7 @@ import {
   thumbnailUrlState,
   titleState
 } from '../recoil/editor';
-import { addPost, db } from '../supabase';
+import { addPost, uploadImage } from '../supabase';
 import { CategoryType } from '../supabase/supabase.types';
 import { TablesInsert } from '../supabase/supabaseSchema.types';
 import { useQueryPost } from './query/useSupabase';
@@ -30,14 +31,17 @@ let editorRef: EditorRefType = { current: null };
 export default function useEditorForm({ id }: EditorFormType) {
   const [title, setTitle] = useRecoilState(titleState);
   const [category, setCategory] = useRecoilState(categoryState);
-  const [isPostMode, setPostMode] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useRecoilState(thumbnailUrlState);
-  const summary = useRecoilValue(summaryState);
   const setLoading = useSetRecoilState(isLoadingState);
+  const auth = useRecoilValue(loginState);
+  const summary = useRecoilValue(summaryState);
+
+  const { post, error } = useQueryPost(id || '');
+
+  const [isPostMode, setPostMode] = useState(false);
 
   const navigate = useNavigate();
-  const { post, error } = useQueryPost(id || '');
-  const auth = useRecoilValue(loginState);
+
   useEffect(() => {
     if (!id) {
       initializeEditor();
@@ -120,19 +124,21 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
   };
 
-  const handleAction = async (file: RcFile) => {
-    const BASE_URL =
-      'https://borxwimnmhmdodedkkpv.supabase.co/storage/v1/object/public/post_images/';
+  const handleAction = async (file: File) => {
     setLoading(true);
-    const { data, error } = await db.storage
-      .from('post_images')
-      .upload(window.URL.createObjectURL(file), file);
-    if (error) {
-      console.error(error);
-    } else {
-      setThumbnailUrl(BASE_URL + data.path);
-    }
+    const { data, error } = await uploadImage(file);
     setLoading(false);
+
+    if (error) {
+      try {
+        message.error('이미지 업로드에 실패했습니다.');
+      } catch (err) {
+        console.error(error, err);
+      }
+      return;
+    }
+
+    setThumbnailUrl(data);
   };
 
   return {
@@ -146,9 +152,3 @@ export default function useEditorForm({ id }: EditorFormType) {
     handleAction
   };
 }
-
-const getBase64 = (img: RcFile, callback: (url: string) => void) => {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result as string));
-  reader.readAsDataURL(img);
-};

@@ -1,7 +1,7 @@
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Space, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import type { RcFile, UploadProps } from 'antd/es/upload/interface';
+import type { UploadProps } from 'antd/es/upload/interface';
 import { ChangeEvent } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -14,7 +14,7 @@ const ICON_SIZE = '2rem';
 
 interface Props {
   handleChangeThumbnail: UploadProps['onChange'];
-  handleAction: (file: RcFile) => void;
+  handleAction: (file: File) => Promise<void>;
 }
 
 export default function EditorPost({ handleAction }: Props) {
@@ -45,15 +45,18 @@ export default function EditorPost({ handleAction }: Props) {
         message.error('이미지 파일을 업로드 해주세요.');
         return;
       }
-
-      handleAction(file as RcFile);
+      handleAction(file);
     }
   };
 
   return (
     <div>
       <input type="file" onChange={handleChangeInputFile} />
-      {!thumbnailUrl ? uploadButton : <img src={thumbnailUrl} />}
+      {!thumbnailUrl ? (
+        uploadButton
+      ) : (
+        <img src={thumbnailUrl} alt={'프로젝트에 관련된 썸네일 이미지'} />
+      )}
 
       <TextArea
         showCount
