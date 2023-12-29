@@ -155,38 +155,6 @@ export interface Database {
           }
         ];
       };
-      profiles: {
-        Row: {
-          avatar_url: string | null;
-          email: string | null;
-          id: string;
-          name: string | null;
-          user_name: string | null;
-        };
-        Insert: {
-          avatar_url?: string | null;
-          email?: string | null;
-          id: string;
-          name?: string | null;
-          user_name?: string | null;
-        };
-        Update: {
-          avatar_url?: string | null;
-          email?: string | null;
-          id?: string;
-          name?: string | null;
-          user_name?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'profiles_id_fkey';
-            columns: ['id'];
-            isOneToOne: true;
-            referencedRelation: 'users';
-            referencedColumns: ['id'];
-          }
-        ];
-      };
       users: {
         Row: {
           avatar_url: string;
@@ -278,6 +246,7 @@ export type TablesInsert<
     ? I
     : never
   : never;
+
 export type TablesUpdate<
   PublicTableNameOrOptions extends
     | keyof Database['public']['Tables']
