@@ -1,7 +1,9 @@
 import { Editor } from '@toast-ui/react-editor';
+import { message } from 'antd';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { extractText } from '../lib/extractText';
 import { loginState } from '../recoil/auth';
 import {
   categoryState,
@@ -11,6 +13,7 @@ import {
   titleState
 } from '../recoil/editor';
 import { addPost, uploadImage } from '../supabase';
+import { getDefaultImage } from '../supabase/data';
 import { CategoryType } from '../supabase/supabase.types';
 import { TablesInsert } from '../supabase/supabaseSchema.types';
 import { useQueryPost } from './query/useSupabase';
@@ -49,7 +52,6 @@ export default function useEditorForm({ id }: EditorFormType) {
       setCategory(post?.category as CategoryType);
     }
     return () => {
-      console.log('here', !!title || !!thumbnailUrl || !!summary);
       if (!!title || !!thumbnailUrl || !!summary) {
         console.log('아니 지우면 안되는데?');
         return;
@@ -68,6 +70,11 @@ export default function useEditorForm({ id }: EditorFormType) {
     e.preventDefault();
     if (editorRef.current && auth) {
       const contents = editorRef.current.getInstance().getHTML();
+      if (!extractText(contents).trim() || !title) {
+        message.error('제목과 내용을 모두 입력해주세요');
+        setPostMode(false);
+        return;
+      }
 
       const newPost: TablesInsert<'posts'> = {
         author: auth.id,
@@ -75,8 +82,8 @@ export default function useEditorForm({ id }: EditorFormType) {
         contents,
         title,
         email: auth.email,
-        summary,
-        thumbnail_url: thumbnailUrl!
+        summary: summary || extractText(contents).slice(0, 150),
+        thumbnail_url: thumbnailUrl || getDefaultImage(category)!
       };
       try {
         await addPost(newPost);
