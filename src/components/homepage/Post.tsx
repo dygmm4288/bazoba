@@ -114,7 +114,6 @@ const Post = ({ post }: Props) => {
             description={summary}
           />
           <Badge count={`${like?.length} likes`} showZero />
-          <Viewer initialValue={contents} />
         </Card>
       </Badge.Ribbon>
     </List.Item>
