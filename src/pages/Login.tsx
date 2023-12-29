@@ -1,7 +1,7 @@
-import { ThemeSupa } from '@supabase/auth-ui-shared';
-import { db } from '../supabase';
 import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { styled } from 'styled-components';
+import { db } from '../supabase';
 
 export default function Login() {
   return (

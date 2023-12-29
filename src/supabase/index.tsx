@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { UserType } from './supabase.types';
 import {
   Database,
   TableKeys,
@@ -46,6 +47,22 @@ export const fetchPosts = async (option?: string) => {
 
   if (error) return Promise.reject(error);
   return data;
+};
+// >>> addUser, fetchUser
+export const fetchUser = async (id: string) => {
+  const { data, error } = await db.from('users').select('*').eq('id', id);
+  if (error) return Promise.reject(error);
+  console.log(data);
+  return data ? data[0] : null;
+};
+
+export type AddUserType = (user: UserType) => Promise<void>;
+
+export const addUser: (user: UserType) => Promise<void> = async (
+  user: UserType
+) => {
+  const { error } = await db.from('users').insert(user);
+  if (error) return Promise.reject(error);
 };
 
 /* Create */

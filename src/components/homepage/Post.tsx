@@ -2,6 +2,7 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Viewer } from '@toast-ui/react-editor';
 import { Avatar, Badge, Card } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useQueryUser } from '../../hooks/query/useSupabase';
 import {
   CategoryType,
   FetchPostsResultType
@@ -15,8 +16,8 @@ interface Props {
 type User = {
   id: string;
   nickname: string;
-  email?: string;
-  profileImage: string;
+  email: string;
+  avatar_url: string;
 };
 
 const dummyUsers = [
@@ -55,14 +56,14 @@ const getStyleByCategory = (category: CategoryType) => {
 
 const Post = ({ post }: Props) => {
   const navigate = useNavigate();
-  const users = dummyUsers;
-  const { title, category, contents, like, bookmark } =
+  const { title, category, contents, author, like, bookmark } =
     post as FetchPostsResultType;
+  const { user } = useQueryUser(author) as { user: User | null };
   const { Meta } = Card;
-  const user = users.find((user) => user.id === post.author);
   const onPostCardClickHandler = () => {
     navigate('/');
   };
+  console.log(user);
 
   return (
     <Badge.Ribbon
@@ -83,22 +84,16 @@ const Post = ({ post }: Props) => {
         <Meta
           title={title}
           avatar={
-            user?.profileImage ? (
-              <Avatar
-                size={64}
-                src={
-                  <img
-                    src={user?.profileImage}
-                    alt={user?.nickname}
-                    style={{ backgroundColor: '#eee' }}
-                  />
-                }
-              />
-            ) : (
-              <Avatar size={64} style={{ backgroundColor: '#87d068' }}>
-                U
-              </Avatar>
-            )
+            <Avatar
+              size={64}
+              src={
+                <img
+                  src={user?.avatar_url}
+                  alt={user?.nickname}
+                  style={{ backgroundColor: '#eee' }}
+                />
+              }
+            />
           }
           description={
             '여기에 프로젝트에 대한 간략한 설명이 들어가면 좋을 것 같아요'

@@ -1,9 +1,12 @@
 import { Editor } from '@toast-ui/react-editor';
 import { ChangeEvent, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { loginState } from '../recoil/auth';
 import { categoryState, titleState } from '../recoil/editor';
+import { addPost } from '../supabase';
 import { CategoryType } from '../supabase/supabase.types';
+import { TablesInsert } from '../supabase/supabaseSchema.types';
 import { useQueryPost } from './query/useSupabase';
 
 export type EditorRefType = {
@@ -21,7 +24,7 @@ export default function useEditorForm({ id }: EditorFormType) {
   const [category, setCategory] = useRecoilState(categoryState);
   const navigate = useNavigate();
   const { post, error } = useQueryPost(id || '');
-
+  const auth = useRecoilValue(loginState);
   useEffect(() => {
     if (!id) {
       initializeEditor();
@@ -47,19 +50,23 @@ export default function useEditorForm({ id }: EditorFormType) {
     setCategory('REACT');
   }
 
-  const handleForm = (e: FormEvent<HTMLFormElement>) => {
+  const handleForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (editorRef.current) {
+    if (editorRef.current && auth) {
       const contents = editorRef.current.getInstance().getHTML();
-      /* const newPost:PostType = {
-        author:,
+      const newPost: TablesInsert<'posts'> = {
+        author: auth.id,
         category,
         contents,
         title,
-        email: '',
-      } */
-
-      console.log(editorRef.current.getInstance().getHTML());
+        email: auth.email
+      };
+      try {
+        await addPost(newPost);
+        console.log('해치움');
+      } catch (error) {
+        console.log('못 해치움 ㅜ');
+      }
 
       return;
     }
