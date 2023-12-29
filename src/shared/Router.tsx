@@ -11,10 +11,10 @@ interface Props {
 
 export default function Router({ isLogin }: Props) {
   function ifLogin(Element: JSX.Element) {
-    return isLogin ? Element : <Navigate to={'/login'} />;
+    return isLogin ? Element : <Navigate replace to={'/login'} />;
   }
   function ifLogout(Element: JSX.Element) {
-    return !isLogin ? Element : <Navigate to={'/'} />;
+    return !isLogin ? Element : <Navigate replace to={'/'} />;
   }
   return (
     <BrowserRouter>
@@ -23,6 +23,7 @@ export default function Router({ isLogin }: Props) {
           <Route path="/" element={<Home />} />
           <Route path="/detail/:id" element={<Detail />} />
           <Route path="/login" element={ifLogout(<Login />)} />
+          <Route path="*" element={<Navigate replace to="/" />} />
 
           <Route path="/mypage" element={ifLogin(<Mypage />)} />
           <Route path="/write" element={ifLogin(<Editor />)} />
