@@ -52,7 +52,7 @@ export default function EditorPost({ handleAction }: Props) {
 
   return (
     <div>
-      <input type="file" />
+      <input type="file" onChange={handleChangeInputFile} />
       {!thumbnailUrl ? uploadButton : <img src={thumbnailUrl} />}
 
       <TextArea
