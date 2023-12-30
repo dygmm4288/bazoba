@@ -77,7 +77,9 @@ export default function InputprofileForm({ setComplete }: Props) {
   };
 
   const handleCancleEdit = () => {
-    //다 초기화
+    setNickname(user?.nickname);
+    setPreviewURL(user?.avatar_url);
+    setComplete();
   };
 
   return (
