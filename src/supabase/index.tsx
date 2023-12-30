@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { UserType } from './supabase.types';
+import { CategoryType, UserType } from './supabase.types';
 import {
   Database,
   TableKeys,
@@ -49,18 +49,35 @@ export const fetchPosts = async (option?: string) => {
   return data;
 };
 
-export const fetchPostsByPage = async (pageParam = 0) => {
-  const from = pageParam * 3;
-  const to = from + 2;
-
-  const { data, error } = await db
-    .from('posts')
-    .select('*')
-    .range(from, to)
-    .order('created_at');
-  if (error) return Promise.reject(error);
-
-  return data;
+export const fetchPostsByPage = async (
+  pageParam: number,
+  category: CategoryType[]
+) => {
+  // console.log(category);
+  if (category.length === 0) {
+    const from = pageParam * 3;
+    const to = from + 2;
+    // console.log('here');
+    const { data, error } = await db
+      .from('posts')
+      .select('*, likes(*), bookmarks(*)')
+      .range(from, to)
+      .order('created_at', { ascending: false });
+    if (error) return Promise.reject(error);
+    return data;
+  } else {
+    const from = pageParam * 3;
+    const to = from + 2;
+    // console.log('or here');
+    const { data, error } = await db
+      .from('posts')
+      .select('*, likes(*), bookmarks(*)')
+      .in('category', category)
+      .range(from, to)
+      .order('created_at', { ascending: false });
+    if (error) return Promise.reject(error);
+    return data;
+  }
 };
 // >>> addUser, fetchUser
 export const fetchUser = async (id: string) => {

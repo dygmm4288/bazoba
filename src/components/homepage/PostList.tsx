@@ -1,15 +1,15 @@
 import { List, Skeleton } from 'antd';
 import { useRecoilValue } from 'recoil';
 import { useQueryPostsByPage } from '../../hooks/query/useSupabase';
-import { useFilter } from '../../hooks/useFilter';
-import { filterState } from '../../recoil/filter';
+import { filterArrayState } from '../../recoil/filter';
 import Post from './Post';
 
 const PostList = () => {
   // const posts = db.posts as PostType[];
   // const { posts } = useQueryPosts();
-  const filter = useRecoilValue(filterState);
-  const { posts } = useFilter(filter);
+  // const filter = useRecoilValue(filterState);
+  const filterArray = useRecoilValue(filterArrayState);
+  // const { posts } = useFilter(filter);
   const {
     data,
     fetchNextPage,
@@ -17,8 +17,9 @@ const PostList = () => {
     isFetchingNextPage,
     isLoading,
     isError
-  } = useQueryPostsByPage();
+  } = useQueryPostsByPage(filterArray);
 
+  // console.log(filter);
   return (
     <Skeleton
       loading={isLoading}

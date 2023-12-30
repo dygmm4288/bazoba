@@ -15,11 +15,12 @@ import {
   fetchPosts,
   fetchPostsByPage,
   fetchUser,
-  updateComment,
   removeComment,
+  updateComment,
   updateUser
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
+import { CategoryType } from '../../supabase/supabase.types';
 import {
   TablesInsert,
   TablesUpdate
@@ -60,7 +61,7 @@ export function useQueryPosts(option?: string) {
   return { posts, error, isLoading, isError, refetchPosts };
 }
 
-export function useQueryPostsByPage() {
+export function useQueryPostsByPage(category: CategoryType[]) {
   const {
     data,
     fetchNextPage,
@@ -69,9 +70,10 @@ export function useQueryPostsByPage() {
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ['posts'],
-    queryFn: ({ pageParam = 0 }) => fetchPostsByPage(pageParam),
-    getNextPageParam: (lastPage, pages) => pages.length + 1 || undefined,
+    queryKey: ['posts', category],
+    queryFn: ({ pageParam }) => fetchPostsByPage(pageParam, category),
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length + 1 : undefined,
     initialPageParam: 0
   });
   return {
@@ -83,6 +85,29 @@ export function useQueryPostsByPage() {
     isError
   };
 }
+// export function useQueryPostsByPage(category?: string) {
+//   const {
+//     data,
+//     fetchNextPage,
+//     hasNextPage,
+//     isFetchingNextPage,
+//     isLoading,
+//     isError
+//   } = useInfiniteQuery({
+//     queryKey: ['posts', category],
+//     queryFn: ({ pageParam = 0 }) => fetchPostsByPage(pageParam, category!),
+//     getNextPageParam: (lastPage, pages) => pages.length + 1 || undefined,
+//     initialPageParam: 0
+//   });
+//   return {
+//     data,
+//     fetchNextPage,
+//     hasNextPage,
+//     isFetchingNextPage,
+//     isLoading,
+//     isError
+//   };
+// }
 
 export function useQueryComment(postId: string) {
   const { data: comments, error } = useQuery({

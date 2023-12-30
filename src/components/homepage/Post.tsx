@@ -1,5 +1,4 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
-import { Viewer } from '@toast-ui/react-editor';
 import { Avatar, Badge, Card, List } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useQueryUser } from '../../hooks/query/useSupabase';
@@ -20,35 +19,27 @@ type User = {
   avatar_url: string;
 };
 
-const dummyUsers = [
-  {
-    id: '1',
-    nickname: '김철수',
-    email: '',
-    profileImage: ''
-  }
-];
-
-const getStyleByCategory = (category: CategoryType) => {
+export const getStyleByCategory = (category: CategoryType) => {
+  const style = {
+    fontWeight: '700'
+  };
   switch (category) {
     case 'REACT':
-      return { backgroundColor: '#0091ff' };
+      return { backgroundColor: '#54b4fd', color: '#fff', ...style };
     case 'NODE':
-      return { backgroundColor: '#31a431' };
+      return { backgroundColor: '#31a431', color: '#fff', ...style };
     case 'AI':
-      return { backgroundColor: '#40a0ee' };
+      return { backgroundColor: '#40a0ee', color: '#fff', ...style };
     case 'ANDROID':
-      return { backgroundColor: '#40ee40' };
+      return { backgroundColor: '#40ee40', color: '#fff', ...style };
     case 'IOS':
-      return { backgroundColor: '#04080a', color: '#fff' };
+      return { backgroundColor: '#04080a', color: '#fff', ...style };
     case 'SPRING':
-      return { backgroundColor: '#d4ff00' };
+      return { backgroundColor: '#f6ff00', color: '#000', ...style };
     case 'UI/UX':
-      return { backgroundColor: '#6443d0' };
+      return { backgroundColor: '#6443d0', color: '#fff', ...style };
     case 'UNITY':
-      return { backgroundColor: '#0e2230', color: '#fff' };
-    case 'ETC':
-      return { backgroundColor: '#00ffb3' };
+      return { backgroundColor: '#0e2230', color: '#fff', ...style };
     default:
       break;
   }
@@ -62,8 +53,8 @@ const Post = ({ post }: Props) => {
     category,
     contents,
     author,
-    like,
-    bookmark,
+    likes,
+    bookmarks,
     thumbnail_url,
     summary
   } = post as FetchPostsResultType;
@@ -113,8 +104,7 @@ const Post = ({ post }: Props) => {
             }
             description={summary}
           />
-          <Badge count={`${like?.length} likes`} showZero />
-          <Viewer initialValue={contents} />
+          <Badge count={`${likes?.length} Likes`} showZero />
         </Card>
       </Badge.Ribbon>
     </List.Item>
