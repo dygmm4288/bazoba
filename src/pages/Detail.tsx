@@ -12,7 +12,7 @@ function Detail() {
     <div>
       <DetailHeader />
       <DetailContent id={id || ''} />
-      <DetailActions />
+      <DetailActions id={id || ''} />
       <DetailFormComment id={id || ''} />
       <DetailComment id={id || ''} />
     </div>
