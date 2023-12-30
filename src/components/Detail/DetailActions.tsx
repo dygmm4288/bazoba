@@ -25,7 +25,7 @@ function DetailActions({ id }: DetailActionsProps) {
   const [isBookmarked, setBookmarked] = useState(false);
 
   const userLoginState = useRecoilValue(loginState);
-  const userId = userLoginState ? userLoginState.id : '';
+  const userId = userLoginState?.id || '';
   const { user } = useQueryUser(userId);
   const isLogin = !!userLoginState;
 

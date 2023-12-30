@@ -15,7 +15,7 @@ function DetailFormComment({ id }: DetailFormContentProps) {
   const { addComment } = useAddComment(id);
 
   const userLoginState = useRecoilValue(loginState);
-  const userId = userLoginState ? userLoginState.id : '';
+  const userId = userLoginState?.id || '';
   const { user } = useQueryUser(userId);
 
   const handleAddComment = () => {
