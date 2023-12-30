@@ -19,32 +19,6 @@ type User = {
   avatar_url: string;
 };
 
-export const getStyleByCategory = (category: CategoryType) => {
-  const style = {
-    fontWeight: '700'
-  };
-  switch (category) {
-    case 'REACT':
-      return { backgroundColor: '#54b4fd', color: '#fff', ...style };
-    case 'NODE':
-      return { backgroundColor: '#31a431', color: '#fff', ...style };
-    case 'AI':
-      return { backgroundColor: '#40a0ee', color: '#fff', ...style };
-    case 'ANDROID':
-      return { backgroundColor: '#40ee40', color: '#fff', ...style };
-    case 'IOS':
-      return { backgroundColor: '#04080a', color: '#fff', ...style };
-    case 'SPRING':
-      return { backgroundColor: '#f6ff00', color: '#000', ...style };
-    case 'UI/UX':
-      return { backgroundColor: '#6443d0', color: '#fff', ...style };
-    case 'UNITY':
-      return { backgroundColor: '#0e2230', color: '#fff', ...style };
-    default:
-      break;
-  }
-};
-
 const Post = ({ post }: Props) => {
   const navigate = useNavigate();
   const {
@@ -109,6 +83,31 @@ const Post = ({ post }: Props) => {
       </Badge.Ribbon>
     </List.Item>
   );
+};
+export const getStyleByCategory = (category: CategoryType) => {
+  const style = {
+    fontWeight: '700'
+  };
+  switch (category) {
+    case 'REACT':
+      return { backgroundColor: '#54b4fd', color: '#fff', ...style };
+    case 'NODE':
+      return { backgroundColor: '#31a431', color: '#fff', ...style };
+    case 'AI':
+      return { backgroundColor: '#40a0ee', color: '#fff', ...style };
+    case 'ANDROID':
+      return { backgroundColor: '#40ee40', color: '#fff', ...style };
+    case 'IOS':
+      return { backgroundColor: '#04080a', color: '#fff', ...style };
+    case 'SPRING':
+      return { backgroundColor: '#f6ff00', color: '#000', ...style };
+    case 'UI/UX':
+      return { backgroundColor: '#6443d0', color: '#fff', ...style };
+    case 'UNITY':
+      return { backgroundColor: '#0e2230', color: '#fff', ...style };
+    default:
+      break;
+  }
 };
 
 export default Post;
