@@ -18,7 +18,8 @@ import {
   removeComment,
   updateComment,
   updateUser,
-  addLike
+  addLike,
+  removeLike
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -194,6 +195,7 @@ export function useAddLike(postId: string) {
       addLike({ ...newLike, postId }),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+      client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
     },
     onError: (error) => {
       console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
@@ -201,6 +203,26 @@ export function useAddLike(postId: string) {
   });
   return {
     addLike: insert
+  };
+}
+
+export function useRemoveLike(postId: string) {
+  const { mutate: deleteLike } = useMutation({
+    mutationFn: async (likeId: string) => {
+      const result = await removeLike(likeId);
+      return result;
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+      client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+
+  return {
+    removeLike: deleteLike
   };
 }
 

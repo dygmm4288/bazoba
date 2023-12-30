@@ -16,7 +16,7 @@ export const db = createClient<Database>(
 export const fetchPost = async (id: string) => {
   const { data, error } = await db
     .from('posts')
-    .select('*,id,likes(id), bookmarks(id)')
+    .select(`*, likes(*), bookmarks(*)`)
     .eq('id', id);
   if (error) return Promise.reject(error);
   return data;
