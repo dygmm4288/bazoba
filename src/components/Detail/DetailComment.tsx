@@ -1,14 +1,15 @@
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   useQueryComment,
-  useUpdateComment,
-  useRemoveComment,
+  useQueryPost,
   useQueryUser,
-  useQueryPost
+  useRemoveComment,
+  useUpdateComment
 } from '../../hooks/query/useSupabase';
-import { useRecoilValue } from 'recoil';
 import { loginState } from '../../recoil/auth';
 
+import { assoc, dissoc } from 'ramda';
 import type { CommentType } from '../../supabase/supabase.types';
 
 interface DetailCommentProps {
@@ -26,7 +27,7 @@ function DetailComment({ id }: DetailCommentProps) {
   );
 
   const userLoginState = useRecoilValue(loginState);
-  const userId = userLoginState ? userLoginState.id : '';
+  const userId = userLoginState?.id || '';
   const user = useQueryUser(userId)?.user;
 
   const handleDelete = (commentId: string) => {
@@ -34,54 +35,42 @@ function DetailComment({ id }: DetailCommentProps) {
 
     if (confirmDelete) {
       removeComment(commentId);
-    } else {
     }
   };
 
   const handleEdit = (commentId: string) => {
-    const editedComment = editedComments[commentId];
-
     if (comments && comments.length > 0) {
-      const commentToUpdate = comments.find(
-        (comment) => comment.id === commentId
-      );
+      const comment = comments.find((comment) => comment.id === commentId);
+      const editedComment = editedComments[commentId];
+      const isCanEdit = comment && user && editedComment;
 
-      if (editedComment && user && commentToUpdate) {
-        if (editedComment !== commentToUpdate.content) {
-          const confirmSave = window.confirm('변경된 내용을 저장하시겠습니까?');
-
-          if (confirmSave) {
-            updateComment({
-              id: commentId,
-              content: editedComment,
-              type: commentToUpdate.type,
-              userId: user.id
-            });
-            setEditedComments((prevComments) => {
-              const { [commentId]: deletedKey, ...rest } = prevComments;
-              return rest;
-            });
-          } else {
-          }
-        } else {
+      if (isCanEdit) {
+        if (comment.content === editedComment) {
           alert('수정된 내용이 없습니다.');
+          return;
         }
+
+        const confirmToSave = window.confirm('변경된 내용을 저장하시겠습니까?');
+        if (!confirmToSave) return;
+
+        updateComment({
+          id: commentId,
+          content: editedComment,
+          type: comment.type,
+          userId: user.id
+        });
+
+        setEditedComments(deleteComment(commentId));
       }
     }
   };
 
   const handleCancel = (commentId: string) => {
-    setEditedComments((prevComments) => {
-      const { [commentId]: deletedKey, ...rest } = prevComments;
-      return rest;
-    });
+    setEditedComments(deleteComment(commentId));
   };
 
   const handleInputChange = (commentId: string, content: string) => {
-    setEditedComments((prevComments) => ({
-      ...prevComments,
-      [commentId]: content
-    }));
+    setEditedComments(addComment(commentId, content));
   };
 
   return (
@@ -189,4 +178,10 @@ function DetailComment({ id }: DetailCommentProps) {
     </div>
   );
 }
+const deleteComment =
+  (commentId: string) => (comments: Record<string, string>) =>
+    dissoc(commentId, comments);
+const addComment =
+  (commentId: string, content: string) => (comments: Record<string, string>) =>
+    assoc(commentId, content, comments);
 export default DetailComment;

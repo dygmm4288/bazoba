@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { useAddComment } from '../../hooks/query/useSupabase';
 import { useRecoilValue } from 'recoil';
+import { useAddComment, useQueryUser } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
-import { useQueryUser } from '../../hooks/query/useSupabase';
 
 import type { TablesInsert } from '../../supabase/supabaseSchema.types';
 
