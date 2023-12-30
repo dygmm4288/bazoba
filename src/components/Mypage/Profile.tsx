@@ -27,7 +27,7 @@ function Profile() {
         <h1>My Profile</h1>
 
         {isEditing && (
-          <InputprofileForm handleComplete={() => setIsEditing(false)} />
+          <InputprofileForm setComplete={() => setIsEditing(false)} />
         )}
 
         {!isEditing && (
@@ -40,6 +40,10 @@ function Profile() {
             {/* <li>{user?.email} </li> */}
           </>
         )}
+
+        {/* <Button onClick={handleEditButton}>
+          { ? '프로필 수정' : '수정 완료'}
+        </Button> */}
         {!isEditing && <Button onClick={handleEditButton}>프로필 수정</Button>}
         <Button onClick={handleLogout}>로그아웃</Button>
       </Card>

@@ -149,3 +149,13 @@ export const uploadImage = async (blob: Blob | File) => {
     .upload(window.URL.createObjectURL(blob), blob);
   return { data: BASE_URL + data?.path, error };
 };
+
+/** strorage에 본인 userId 폴더만 접근 가능하게 함*/
+export const uploadUserImage = async (subUrl: string, file: File) => {
+  const BASE_URL = `https://borxwimnmhmdodedkkpv.supabase.co/storage/v1/object/public/user_images/`;
+
+  const { data, error } = await db.storage
+    .from('user_images')
+    .upload(`${subUrl}`, file, { upsert: true });
+  return { data: BASE_URL + data?.path, error };
+};

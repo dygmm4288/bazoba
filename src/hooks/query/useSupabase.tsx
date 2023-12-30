@@ -122,7 +122,7 @@ export function useQueryUser(userId: string) {
     isLoading,
     isError
   } = useQuery({
-    queryKey: ['users', userId],
+    queryKey: USER_QUERY_KEY(userId),
     queryFn: () => fetchUser(userId)
   });
 

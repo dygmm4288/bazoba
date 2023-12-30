@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { db } from '../supabase';
-import { Card } from 'antd';
+import React, { useState } from 'react';
+import { Card, Flex } from 'antd';
 import Profile from '../components/Mypage/Profile';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { loginState } from '../recoil/auth';
-import { useQueryUser } from '../hooks/query/useSupabase';
-import { User } from '@supabase/supabase-js';
 import FilteredPosts from '../components/Mypage/FilteredPosts';
 
 export default function Mypage() {
@@ -19,19 +16,22 @@ export default function Mypage() {
 
   return (
     <div>
-      <Profile />
-      <Card style={{ width: 400 }}>
-        <div onClick={handleFilterPost}> 내 게시물 보기 {'=>'} </div>
-      </Card>
-      <Card style={{ width: 400 }}>
-        <div onClick={handleFilterPost}> 찜한 게시물 보기 {'=>'} </div>
-      </Card>
-
-      <FilteredPosts
-        optionKey={'author'}
-        optionValue={userId}
-        refetchTrigger={enableRefetch}
-      />
+      <Flex vertical={false} justify={'center'}>
+        <div style={{ paddingTop: 16 }}>
+          <Profile />
+          <Card style={{ width: 400 }}>
+            <div onClick={handleFilterPost}> 내 게시물 보기 {'=>'} </div>
+          </Card>
+          <Card style={{ width: 400 }}>
+            <div onClick={handleFilterPost}> 찜한 게시물 보기 {'=>'} </div>
+          </Card>
+        </div>
+        <FilteredPosts
+          optionKey={'author'}
+          optionValue={userId}
+          refetchTrigger={enableRefetch}
+        />
+      </Flex>
     </div>
   );
 }
