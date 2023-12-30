@@ -1,5 +1,4 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
-import { Viewer } from '@toast-ui/react-editor';
 import { Avatar, Badge, Card, List } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useQueryUser } from '../../hooks/query/useSupabase';
@@ -114,7 +113,6 @@ const Post = ({ post }: Props) => {
             description={summary}
           />
           <Badge count={`${like?.length} likes`} showZero />
-          <Viewer initialValue={contents} />
         </Card>
       </Badge.Ribbon>
     </List.Item>
