@@ -15,11 +15,13 @@ import {
   fetchPosts,
   fetchPostsByPage,
   fetchUser,
-  updateComment,
   removeComment,
-  updateUser
+  updateComment,
+  updateUser,
+  addLike
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
+import { CategoryType } from '../../supabase/supabase.types';
 import {
   TablesInsert,
   TablesUpdate
@@ -60,7 +62,7 @@ export function useQueryPosts(option?: string) {
   return { posts, error, isLoading, isError, refetchPosts };
 }
 
-export function useQueryPostsByPage() {
+export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   const {
     data,
     fetchNextPage,
@@ -69,9 +71,10 @@ export function useQueryPostsByPage() {
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ['posts'],
-    queryFn: ({ pageParam = 0 }) => fetchPostsByPage(pageParam),
-    getNextPageParam: (lastPage, pages) => pages.length + 1 || undefined,
+    queryKey: ['posts', postCategoryFilter],
+    queryFn: ({ pageParam }) => fetchPostsByPage(pageParam, postCategoryFilter),
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length + 1 : undefined,
     initialPageParam: 0
   });
   return {
@@ -135,6 +138,7 @@ export function useUpdateUser(userId: string) {
   };
 }
 
+/* Comment */
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (newComment: Omit<TablesInsert<'comments'>, 'postId'>) =>
@@ -180,6 +184,23 @@ export function useRemoveComment(postId: string) {
 
   return {
     removeComment: deleteComment
+  };
+}
+
+/* Like */
+export function useAddLike(postId: string) {
+  const { mutate: insert } = useMutation({
+    mutationFn: (newLike: Omit<TablesInsert<'likes'>, 'postId'>) =>
+      addLike({ ...newLike, postId }),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+  return {
+    addLike: insert
   };
 }
 
