@@ -51,13 +51,12 @@ export const fetchPosts = async (option?: string) => {
 
 export const fetchPostsByPage = async (
   pageParam: number,
-  category: CategoryType[]
+  postCategoryFilter: CategoryType[]
 ) => {
-  // console.log(category);
-  if (category.length === 0) {
-    const from = pageParam * 3;
-    const to = from + 2;
-    // console.log('here');
+  const from = pageParam * 3;
+  const to = from + 2;
+
+  if (postCategoryFilter.length === 0) {
     const { data, error } = await db
       .from('posts')
       .select('*, likes(*), bookmarks(*)')
@@ -66,20 +65,17 @@ export const fetchPostsByPage = async (
     if (error) return Promise.reject(error);
     return data;
   } else {
-    const from = pageParam * 3;
-    const to = from + 2;
-    // console.log('or here');
     const { data, error } = await db
       .from('posts')
       .select('*, likes(*), bookmarks(*)')
-      .in('category', category)
+      .in('category', postCategoryFilter)
       .range(from, to)
       .order('created_at', { ascending: false });
     if (error) return Promise.reject(error);
     return data;
   }
 };
-// >>> addUser, fetchUser
+
 export const fetchUser = async (id: string) => {
   const { data, error } = await db.from('users').select('*').eq('id', id);
   if (error) return Promise.reject(error);

@@ -1,15 +1,11 @@
 import { List, Skeleton } from 'antd';
 import { useRecoilValue } from 'recoil';
 import { useQueryPostsByPage } from '../../hooks/query/useSupabase';
-import { filterArrayState } from '../../recoil/filter';
+import { postCategoryFilterState } from '../../recoil/filter';
 import Post from './Post';
 
 const PostList = () => {
-  // const posts = db.posts as PostType[];
-  // const { posts } = useQueryPosts();
-  // const filter = useRecoilValue(filterState);
-  const filterArray = useRecoilValue(filterArrayState);
-  // const { posts } = useFilter(filter);
+  const postCategoryFilter = useRecoilValue(postCategoryFilterState);
   const {
     data,
     fetchNextPage,
@@ -17,9 +13,8 @@ const PostList = () => {
     isFetchingNextPage,
     isLoading,
     isError
-  } = useQueryPostsByPage(filterArray);
+  } = useQueryPostsByPage(postCategoryFilter);
 
-  // console.log(filter);
   return (
     <Skeleton
       loading={isLoading}
@@ -43,19 +38,12 @@ const PostList = () => {
         disabled={!hasNextPage || isFetchingNextPage}
       >
         {isFetchingNextPage
-          ? 'Loading more...'
+          ? '불러오는 중...'
           : hasNextPage
-          ? 'Load More'
-          : 'Nothing more to load'}
+          ? '더 보기'
+          : '더 불러올 문서가 없습니다'}
       </button>
     </Skeleton>
   );
 };
-// {data.pages.map((group, i) => (
-//   <React.Fragment key={i}>
-//     {group.map(ticket => (
-//       <div key={ticket.id}>{/* Render ticket */}</div>
-//     ))}
-//   </React.Fragment>
-// ))}
 export default PostList;

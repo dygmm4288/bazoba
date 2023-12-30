@@ -2,7 +2,7 @@ import { Button, ButtonProps } from 'antd';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { filterArrayState } from '../../recoil/filter';
+import { postCategoryFilterState } from '../../recoil/filter';
 import { CategoryType } from '../../supabase/supabase.types';
 
 const CATEGORIES: CategoryType[] = [
@@ -33,7 +33,9 @@ interface StFilterButtonProps extends ButtonProps {
 }
 
 const FilterPost = () => {
-  const [filterArray, setFilterArray] = useRecoilState(filterArrayState);
+  const [postCategoryFilter, setPostCategoryFilter] = useRecoilState(
+    postCategoryFilterState
+  );
   const [activeButtons, setActiveButtons] = useState<boolean[]>(
     Array(CATEGORIES.length).fill(false)
   );
@@ -45,12 +47,14 @@ const FilterPost = () => {
       newState[index] = !newState[index];
       return newState;
     });
-    if (filterArray.includes(category)) {
-      setFilterArray(filterArray.filter((item) => item !== category));
+    if (postCategoryFilter.includes(category)) {
+      setPostCategoryFilter(
+        postCategoryFilter.filter((item) => item !== category)
+      );
     } else {
-      setFilterArray([...filterArray, category]);
+      setPostCategoryFilter([...postCategoryFilter, category]);
     }
-    console.log(filterArray);
+    console.log(postCategoryFilter);
   };
 
   const onFilterClearBtnClickHandler = () => {
@@ -58,7 +62,7 @@ const FilterPost = () => {
       const newState = prevState.map((state) => (state = false));
       return newState;
     });
-    setFilterArray([]);
+    setPostCategoryFilter([]);
   };
 
   return (
@@ -79,7 +83,7 @@ const FilterPost = () => {
               key={idx}
               onClick={() => onFilterBtnClickHandler(category, idx)}
               style={{ fontWeight: '700' }}
-              $isActive={filterArray.includes(category)}
+              $isActive={postCategoryFilter.includes(category)}
               $category={category}
             >
               {category}
@@ -87,7 +91,7 @@ const FilterPost = () => {
           </li>
         ))}
         <Button
-          type={filterArray.length ? 'primary' : 'default'}
+          type={postCategoryFilter.length ? 'primary' : 'default'}
           danger
           onClick={onFilterClearBtnClickHandler}
         >
@@ -100,12 +104,6 @@ const FilterPost = () => {
 
 export default FilterPost;
 
-// const StFilterButton = styled(Button)<StFilterButtonProps>`
-//   background-color: ${(props) =>
-//     props.$isActive
-//       ? '#eee'
-//       : '#f00'}
-// `;
 const StFilterButton = styled(Button)<StFilterButtonProps>`
   ${(props) =>
     props.$isActive
@@ -117,8 +115,3 @@ const StFilterButton = styled(Button)<StFilterButtonProps>`
     border-color: white !important;
   }
 `;
-
-// background-color: ${(props) =>
-//   props.$isActive
-//     ? FILTER_BG_MAP[props.$category!][1]
-//     : FILTER_BG_MAP[props.$category!][0]};
