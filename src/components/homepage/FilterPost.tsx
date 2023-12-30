@@ -1,5 +1,17 @@
 import { Button, ButtonProps } from 'antd';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
+import {
+  DiAndroid,
+  DiApple,
+  DiDjango,
+  DiNodejs,
+  DiPython,
+  DiReact,
+  DiUnitySmall
+} from 'react-icons/di';
+import { FaUser } from 'react-icons/fa';
+import { MdOutlineDevices } from 'react-icons/md';
+import { SiSpring } from 'react-icons/si';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { postCategoryFilterState } from '../../recoil/filter';
@@ -31,6 +43,39 @@ interface StFilterButtonProps extends ButtonProps {
   $isActive?: boolean;
   $category?: CategoryType;
 }
+
+const getIconByCategory = (category: CategoryType): ReactNode => {
+  switch (category) {
+    case 'REACT':
+      return <DiReact />;
+    case 'NODE':
+      return <DiNodejs />;
+    case 'AI':
+      return (
+        <>
+          <DiDjango />
+          <DiPython />{' '}
+        </>
+      );
+    case 'ANDROID':
+      return <DiAndroid />;
+    case 'IOS':
+      return <DiApple />;
+    case 'SPRING':
+      return <SiSpring />;
+    case 'UI/UX':
+      return (
+        <>
+          <FaUser />
+          <MdOutlineDevices />{' '}
+        </>
+      );
+    case 'UNITY':
+      return <DiUnitySmall />;
+    default:
+      break;
+  }
+};
 
 const FilterPost = () => {
   const [postCategoryFilter, setPostCategoryFilter] = useRecoilState(
@@ -85,6 +130,7 @@ const FilterPost = () => {
               style={{ fontWeight: '700' }}
               $isActive={postCategoryFilter.includes(category)}
               $category={category}
+              icon={getIconByCategory(category)}
             >
               {category}
             </StFilterButton>
