@@ -17,8 +17,8 @@ export type CategoryType =
   | 'IOS'
   | 'ETC';
 
-export type FetchPostsResultType = PostType & { bookmark: BookmarkType[] } & {
-  like: LikeType[];
+export type FetchPostsResultType = PostType & { bookmarks: BookmarkType[] } & {
+  likes: LikeType[];
 };
 
 // Read Functions
