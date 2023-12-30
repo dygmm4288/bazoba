@@ -2,10 +2,11 @@ import { Button, Flex, Layout } from 'antd';
 import { Footer } from 'antd/es/layout/layout';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import EditorHeader from '../components/Editor/EditorHeader';
 import EditorMain from '../components/Editor/EditorMain';
 import EditorPost from '../components/Editor/EditorPost';
+import useAnimated from '../hooks/useAnimated';
 import useEditorForm from '../hooks/useEditorForm';
 
 export default function Editor() {
@@ -21,6 +22,8 @@ export default function Editor() {
     handleAction,
     isPostMode
   } = useEditorForm({ id });
+
+  const [shouldRenderPostMode, handleAnimationEnd] = useAnimated(isPostMode);
 
   const handleGoHome = () => navigate('/');
 
@@ -47,8 +50,11 @@ export default function Editor() {
               </Button>
             </Flex>
           </Footer>
-          {isPostMode && (
-            <StEditorOverlay>
+          {shouldRenderPostMode && (
+            <StEditorOverlay
+              isUp={isPostMode}
+              onAnimationEnd={handleAnimationEnd}
+            >
               <EditorPost
                 handleAction={handleAction}
                 handleTogglePostMode={handleTogglePostMode}
@@ -60,9 +66,23 @@ export default function Editor() {
     </Layout>
   );
 }
+const slideUp = keyframes`
+  from{
+    transform: translateY(100%);
+  } to {
+    transform: translateY(0%);
+  }
+`;
+const slideDown = keyframes`
+  from{
+    transform: translateY(0%);
+    } to {
+      transform: translateY(100%);
+      }
+      `;
 
-const StEditorOverlay = styled.div`
-  box-sizing: 0;
+const StEditorOverlay = styled.div<{ isUp: boolean }>`
+  box-sizing: border-box;
   position: absolute;
   inset: 0;
   z-index: 100000;
@@ -72,5 +92,6 @@ const StEditorOverlay = styled.div`
   & > * {
     margin: auto;
   }
-  transform: translateY(0);
+
+  animation: ${({ isUp }) => (isUp ? slideUp : slideDown)} 0.5s forwards;
 `;
