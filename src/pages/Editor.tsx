@@ -85,12 +85,13 @@ const StEditorOverlay = styled.div<{ isUp: boolean }>`
   box-sizing: border-box;
   position: absolute;
   inset: 0;
-  z-index: 100000;
+  z-index: 100;
   background-color: lightblue;
 
   display: flex;
   & > * {
     margin: auto;
+    min-width: 450px;
   }
 
   animation: ${({ isUp }) => (isUp ? slideUp : slideDown)} 0.5s forwards;
