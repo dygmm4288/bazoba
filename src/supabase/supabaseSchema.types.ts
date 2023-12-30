@@ -50,6 +50,7 @@ export interface Database {
           postId: string;
           type: number;
           userId: string;
+          nickname: string;
         };
         Insert: {
           content: string;
@@ -58,6 +59,7 @@ export interface Database {
           postId: string;
           type: number;
           userId: string;
+          nickname?: string;
         };
         Update: {
           content?: string;
@@ -66,6 +68,7 @@ export interface Database {
           postId?: string;
           type?: number;
           userId?: string;
+          nickname?: string;
         };
         Relationships: [
           {

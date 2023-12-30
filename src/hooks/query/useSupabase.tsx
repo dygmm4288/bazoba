@@ -17,7 +17,8 @@ import {
   fetchUser,
   removeComment,
   updateComment,
-  updateUser
+  updateUser,
+  addLike
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -137,6 +138,7 @@ export function useUpdateUser(userId: string) {
   };
 }
 
+/* Comment */
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (newComment: Omit<TablesInsert<'comments'>, 'postId'>) =>
@@ -182,6 +184,23 @@ export function useRemoveComment(postId: string) {
 
   return {
     removeComment: deleteComment
+  };
+}
+
+/* Like */
+export function useAddLike(postId: string) {
+  const { mutate: insert } = useMutation({
+    mutationFn: (newLike: Omit<TablesInsert<'likes'>, 'postId'>) =>
+      addLike({ ...newLike, postId }),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+  return {
+    addLike: insert
   };
 }
 
