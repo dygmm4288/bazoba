@@ -53,7 +53,6 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
     return () => {
       if (!!title || !!thumbnailUrl || !!summary) {
-        console.log('아니 지우면 안되는데?');
         return;
       }
       initializeEditor();
