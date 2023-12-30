@@ -19,7 +19,9 @@ import {
   updateComment,
   updateUser,
   addLike,
-  removeLike
+  removeLike,
+  addBookmark,
+  removeBookmark
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -194,7 +196,6 @@ export function useAddLike(postId: string) {
     mutationFn: (newLike: Omit<TablesInsert<'likes'>, 'postId'>) =>
       addLike({ ...newLike, postId }),
     onSuccess: () => {
-      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
       client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
     },
     onError: (error) => {
@@ -213,7 +214,6 @@ export function useRemoveLike(postId: string) {
       return result;
     },
     onSuccess: () => {
-      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
       client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
     },
     onError: (error) => {
@@ -223,6 +223,42 @@ export function useRemoveLike(postId: string) {
 
   return {
     removeLike: deleteLike
+  };
+}
+
+/* Bookmark */
+export function useAddBookmark(postId: string) {
+  const { mutate: insert } = useMutation({
+    mutationFn: (newBookmark: Omit<TablesInsert<'bookmarks'>, 'postId'>) =>
+      addBookmark({ ...newBookmark, postId }),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+  return {
+    addBookmark: insert
+  };
+}
+
+export function useRemoveBookmark(postId: string) {
+  const { mutate: deleteBookmark } = useMutation({
+    mutationFn: async (likeId: string) => {
+      const result = await removeBookmark(likeId);
+      return result;
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+
+  return {
+    removeBookmark: deleteBookmark
   };
 }
 
