@@ -1,4 +1,5 @@
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
 
 interface Props {
   isShow: boolean;
@@ -10,13 +11,29 @@ export default function EditorUploadLoading({ isShow }: Props) {
     fontSize: ICON_SIZE
   };
   return (
-    <div>
+    <StWrapper>
       {isShow ? (
         <LoadingOutlined style={styleObject} />
       ) : (
         <PlusOutlined style={styleObject} />
       )}
       <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
+    </StWrapper>
   );
 }
+const StWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 2rem;
+
+  border-radius: 1rem;
+  border: 1px dashed black;
+
+  &:hover > :not(div) {
+    transition: all 0.2s ease-in;
+    scale: 1.2;
+  }
+`;
