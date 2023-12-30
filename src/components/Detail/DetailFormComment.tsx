@@ -43,6 +43,7 @@ function DetailFormComment({ id }: DetailFormContentProps) {
   };
 
   const isDisabled = !userLoginState;
+
   return (
     <div>
       <h2>댓글 작성하기</h2>

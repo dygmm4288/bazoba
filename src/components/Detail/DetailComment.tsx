@@ -2,11 +2,11 @@ import { useState } from 'react';
 import {
   useQueryComment,
   useUpdateComment,
-  useRemoveComment
+  useRemoveComment,
+  useQueryUser
 } from '../../hooks/query/useSupabase';
 import { useRecoilValue } from 'recoil';
 import { loginState } from '../../recoil/auth';
-import { useQueryUser } from '../../hooks/query/useSupabase';
 
 import type { CommentType } from '../../supabase/supabase.types';
 
