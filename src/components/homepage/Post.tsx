@@ -86,25 +86,26 @@ const Post = ({ post }: Props) => {
 };
 export const getStyleByCategory = (category: CategoryType) => {
   const style = {
-    fontWeight: '700'
+    fontWeight: '700',
+    color: '#fff'
   };
   switch (category) {
     case 'REACT':
-      return { backgroundColor: '#54b4fd', color: '#fff', ...style };
+      return { ...style, backgroundColor: '#54b4fd' };
     case 'NODE':
-      return { backgroundColor: '#31a431', color: '#fff', ...style };
+      return { ...style, backgroundColor: '#31a431' };
     case 'AI':
-      return { backgroundColor: '#40a0ee', color: '#fff', ...style };
+      return { ...style, backgroundColor: '#40a0ee' };
     case 'ANDROID':
-      return { backgroundColor: '#40ee40', color: '#fff', ...style };
+      return { ...style, backgroundColor: '#40ee40' };
     case 'IOS':
-      return { backgroundColor: '#04080a', color: '#fff', ...style };
+      return { ...style, backgroundColor: '#04080a' };
     case 'SPRING':
-      return { backgroundColor: '#f6ff00', color: '#000', ...style };
+      return { ...style, backgroundColor: '#f6ff00', color: '#000' };
     case 'UI/UX':
-      return { backgroundColor: '#6443d0', color: '#fff', ...style };
+      return { ...style, backgroundColor: '#6443d0' };
     case 'UNITY':
-      return { backgroundColor: '#0e2230', color: '#fff', ...style };
+      return { ...style, backgroundColor: '#0e2230' };
     default:
       break;
   }
