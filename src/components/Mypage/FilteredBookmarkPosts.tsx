@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   useFilteredPosts,
+  useQueryBookmarkPostsByPage,
   useQueryMYPostsByPage
 } from '../../hooks/query/useSupabase';
 import { List, Skeleton } from 'antd';
@@ -12,7 +13,7 @@ interface Props {
   filterValue: string;
 }
 
-function FilteredPosts({ db, filterKey, filterValue }: Props) {
+function FilteredBookmarkPosts({ filterKey, filterValue }: Props) {
   const {
     data,
     fetchNextPage,
@@ -20,7 +21,9 @@ function FilteredPosts({ db, filterKey, filterValue }: Props) {
     isFetchingNextPage,
     isLoading,
     isError
-  } = useQueryMYPostsByPage(filterKey, filterValue);
+  } = useQueryBookmarkPostsByPage(filterKey, filterValue);
+
+  console.log('FilteredBookmarkPosts', data?.pages[0][0]);
 
   return (
     <div>
@@ -37,7 +40,7 @@ function FilteredPosts({ db, filterKey, filterValue }: Props) {
             dataSource={posts}
             loading={isLoading}
             size="large"
-            renderItem={(post) => <Post post={post} key={idx} />}
+            renderItem={(item) => <Post post={item.posts} key={idx} />}
             key={idx}
           />
         ))}
@@ -56,4 +59,4 @@ function FilteredPosts({ db, filterKey, filterValue }: Props) {
   );
 }
 
-export default FilteredPosts;
+export default FilteredBookmarkPosts;

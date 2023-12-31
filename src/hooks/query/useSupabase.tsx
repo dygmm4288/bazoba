@@ -23,7 +23,8 @@ import {
   removeLike,
   addBookmark,
   removeBookmark,
-  fetchFilteredPostsByPage
+  fetchMyPostsByPage,
+  fetchMyBookmarkPostsByPage
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -36,6 +37,7 @@ import {
   POST_QUERY_KEY,
   USER_QUERY_KEY
 } from './query.keys';
+import { P } from 'ts-toolbelt/out/Object/_api';
 
 const client = new QueryClient();
 
@@ -108,7 +110,34 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   };
 }
 
-export function useQueryFilteredPostsByPage(
+export function useQueryMYPostsByPage(filterKey: string, filterValue: string) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['posts', filterKey],
+    queryFn: ({ pageParam }) => {
+      return fetchMyPostsByPage(pageParam, filterKey, filterValue);
+    },
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length : undefined,
+    initialPageParam: 0
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
+}
+
+export function useQueryBookmarkPostsByPage(
   filterKey: string,
   filterValue: string
 ) {
@@ -122,11 +151,10 @@ export function useQueryFilteredPostsByPage(
   } = useInfiniteQuery({
     queryKey: ['posts', filterKey],
     queryFn: ({ pageParam }) => {
-      console.log('queryFn : ', pageParam);
-      return fetchFilteredPostsByPage(pageParam, filterKey, filterValue);
+      return fetchMyBookmarkPostsByPage(pageParam, filterKey, filterValue);
     },
     getNextPageParam: (lastPage, allpages) =>
-      lastPage.length ? allpages.length + 1 : undefined,
+      lastPage.length ? allpages.length : undefined,
     initialPageParam: 0
   });
   return {

@@ -4,14 +4,19 @@ import Profile from '../components/Mypage/Profile';
 import { useRecoilValue } from 'recoil';
 import { loginState } from '../recoil/auth';
 import FilteredPosts from '../components/Mypage/FilteredPosts';
+import FilteredBookmarkPosts from '../components/Mypage/FilteredBookmarkPosts';
 
 export default function Mypage() {
-  const [enableRefetch, setEnableRefetch] = useState(false);
   const user = useRecoilValue(loginState);
+  const [filter, setFilter] = useState('myposts');
+
   const userId = user?.id!;
-  const handleFilterPost = () => {
-    setEnableRefetch(true);
-    console.log('TODO: filtering');
+  const handleMyPosts = () => {
+    setFilter('myposts');
+  };
+
+  const handleBookmarkedPosts = () => {
+    setFilter('bookmarks');
   };
 
   return (
@@ -20,17 +25,27 @@ export default function Mypage() {
         <div style={{ paddingTop: 16 }}>
           <Profile />
           <Card style={{ width: 400 }}>
-            <div onClick={handleFilterPost}> 내 게시물 보기 {'=>'} </div>
+            <div onClick={handleMyPosts}> 내 게시물 보기 {'=>'} </div>
           </Card>
           <Card style={{ width: 400 }}>
-            <div onClick={handleFilterPost}> 찜한 게시물 보기 {'=>'} </div>
+            <div onClick={handleBookmarkedPosts}> 찜한 게시물 보기 {'=>'} </div>
           </Card>
         </div>
-        <FilteredPosts
-          filterKey={'author'}
-          filterValue={userId}
-          refetchTrigger={enableRefetch}
-        />
+
+        {filter === 'bookmarks' && (
+          <FilteredBookmarkPosts
+            db={'bookmarks'}
+            filterKey={'userId'}
+            filterValue={userId}
+          />
+        )}
+        {filter === 'myposts' && (
+          <FilteredPosts
+            db={'posts'}
+            filterKey={'author'}
+            filterValue={userId}
+          />
+        )}
       </Flex>
     </div>
   );
