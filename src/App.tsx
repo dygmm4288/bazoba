@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
+import GlobalStyle from './GlobalStyle';
 import { useAddUser } from './hooks/query/useSupabase';
 import { loginState } from './recoil/auth';
 import Router from './shared/Router';
@@ -35,7 +36,12 @@ function App() {
     };
   }, []);
 
-  return <Router isLogin={!!auth} />;
+  return (
+    <>
+      <GlobalStyle />
+      <Router isLogin={!!auth} />;
+    </>
+  );
 }
 
 export default App;

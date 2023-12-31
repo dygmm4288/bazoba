@@ -88,6 +88,32 @@ export const fetchPostsByPage = async (
   }
 };
 
+export async function getBookmarkedPosts(userId: string) {
+  const { data, error } = await db
+    .from('bookmarks')
+    .select('postId')
+    .eq('userId', userId);
+
+  if (error) {
+    console.error('Error fetching bookmarks:', error);
+    return;
+  }
+
+  const postIds = data.map((bookmark) => bookmark.postId);
+
+  const { data: posts, error: postsError } = await db
+    .from('posts')
+    .select('*')
+    .in('id', postIds);
+
+  if (postsError) {
+    console.error('Error fetching posts:', postsError);
+    return;
+  }
+
+  return posts;
+}
+
 /**
  * @param pageParam page 정보
  * @param filterKey 'author' , 'bookmarks'
