@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   useQueryComment,
+  useQueryUser,
   useRemoveComment,
-  useUpdateComment,
-  useQueryUser
+  useUpdateComment
 } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
 
 import { assoc, dissoc } from 'ramda';
-import type { CommentType } from '../../supabase/supabase.types';
 
 interface DetailCommentProps {
   id: string;
@@ -75,39 +74,41 @@ function DetailComment({ id }: DetailCommentProps) {
     <div>
       <h2>댓글</h2>
       {comments
-        ?.filter((comment: CommentType) => comment.type === 0)
-        .map((comment: CommentType) => {
-          const isEdited = !!editedComments[comment.id];
-          const isOwner = comment.userId === userId;
+        ?.filter((comment) => comment.type === 0)
+        .map((comment) => {
+          const { id: commentId, userId: commentUserId, content } = comment;
+          const { avatar_url, nickname } = comment.users!;
+
+          const isEdited = !!editedComments[commentId];
+          const isOwner = commentUserId === userId;
+
           return (
-            <div key={comment.id}>
-              <img src={comment.avatar_url} alt="Avatar" />
-              <p>Nickname: {comment.nickname}</p>
+            <div key={commentId}>
+              <img src={avatar_url} alt="Avatar" />
+              <p>Nickname: {nickname}</p>
               {isEdited ? (
                 <div>
                   <input
                     type="text"
-                    value={editedComments[comment.id] || ''}
+                    value={editedComments[commentId] || ''}
                     onChange={(e) =>
-                      handleInputChange(comment.id, e.target.value)
+                      handleInputChange(commentId, e.target.value)
                     }
                   />
-                  <button onClick={() => handleEdit(comment.id)}>저장</button>
-                  <button onClick={() => handleCancel(comment.id)}>취소</button>
+                  <button onClick={() => handleEdit(commentId)}>저장</button>
+                  <button onClick={() => handleCancel(commentId)}>취소</button>
                 </div>
               ) : (
                 <div>
-                  <p>Content: {comment.content}</p>
+                  <p>Content: {content}</p>
                   {isOwner && (
                     <>
                       <button
-                        onClick={() =>
-                          handleInputChange(comment.id, comment.content)
-                        }
+                        onClick={() => handleInputChange(commentId, content)}
                       >
                         수정
                       </button>
-                      <button onClick={() => handleDelete(comment.id)}>
+                      <button onClick={() => handleDelete(commentId)}>
                         삭제
                       </button>
                     </>

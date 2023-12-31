@@ -25,7 +25,7 @@ export const fetchPost = async (id: string) => {
 export const fetchComment = async (postId: string) => {
   const { data, error } = await db
     .from('comments')
-    .select('*')
+    .select('*, users(*)')
     .eq('postId', postId);
   if (error) return Promise.reject(error);
   return data;
