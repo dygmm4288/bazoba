@@ -51,6 +51,7 @@ export interface Database {
           type: number;
           userId: string;
           nickname: string;
+          avatar_url: string;
         };
         Insert: {
           content: string;
@@ -60,6 +61,7 @@ export interface Database {
           type: number;
           userId: string;
           nickname?: string;
+          avatar_url?: string;
         };
         Update: {
           content?: string;
@@ -69,6 +71,7 @@ export interface Database {
           type?: number;
           userId?: string;
           nickname?: string;
+          avatar_url?: string;
         };
         Relationships: [
           {
