@@ -13,6 +13,7 @@ import {
   fetchComment,
   fetchPost,
   fetchPosts,
+  removePost,
   fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
@@ -36,6 +37,7 @@ import {
   POST_QUERY_KEY,
   USER_QUERY_KEY
 } from './query.keys';
+import { useNavigate } from 'react-router-dom';
 
 const client = new QueryClient();
 
@@ -66,6 +68,27 @@ export function useQueryPosts(option?: string) {
   });
 
   return { posts, error, isLoading, isError, refetchPosts };
+}
+
+export function useRemovePost(postId: string) {
+  const navigate = useNavigate();
+  const { mutate: deletePost } = useMutation({
+    mutationFn: async (likeId: string) => {
+      const result = await removePost(likeId);
+      return result;
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
+      navigate('/');
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+
+  return {
+    removePost: deletePost
+  };
 }
 
 export function useFilteredPosts(optionKey: string, optionValue: string) {

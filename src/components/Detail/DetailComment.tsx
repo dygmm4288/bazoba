@@ -7,6 +7,8 @@ import {
   useQueryUser
 } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
+import { Flex, Input } from 'antd';
+import styled from 'styled-components';
 
 import { assoc, dissoc } from 'ramda';
 import type { CommentType } from '../../supabase/supabase.types';
@@ -23,6 +25,8 @@ function DetailComment({ id }: DetailCommentProps) {
   const [editedComments, setEditedComments] = useState<Record<string, string>>(
     {}
   );
+
+  const { TextArea } = Input;
 
   const userLoginState = useRecoilValue(loginState);
   const userId = userLoginState?.id || '';
@@ -72,54 +76,71 @@ function DetailComment({ id }: DetailCommentProps) {
   };
 
   return (
-    <div>
-      <h2>댓글</h2>
+    <Container>
+      <CommentTitle>댓글</CommentTitle>
       {comments
         ?.filter((comment: CommentType) => comment.type === 0)
         .map((comment: CommentType) => {
           const isEdited = !!editedComments[comment.id];
           const isOwner = comment.userId === userId;
           return (
-            <div key={comment.id}>
-              <img src={comment.avatar_url} alt="Avatar" />
-              <p>Nickname: {comment.nickname}</p>
-              {isEdited ? (
-                <div>
-                  <input
-                    type="text"
-                    value={editedComments[comment.id] || ''}
-                    onChange={(e) =>
-                      handleInputChange(comment.id, e.target.value)
-                    }
-                  />
-                  <button onClick={() => handleEdit(comment.id)}>저장</button>
-                  <button onClick={() => handleCancel(comment.id)}>취소</button>
-                </div>
-              ) : (
-                <div>
-                  <p>Content: {comment.content}</p>
-                  {isOwner && (
-                    <>
-                      <button
-                        onClick={() =>
-                          handleInputChange(comment.id, comment.content)
-                        }
-                      >
-                        수정
-                      </button>
-                      <button onClick={() => handleDelete(comment.id)}>
-                        삭제
-                      </button>
-                    </>
+            <CommentContainer key={comment.id}>
+              <CommentContent>
+                <Avatar src={comment.avatar_url} alt="Avatar" />
+                <CommentInfo>
+                  <NicknameText>{comment.nickname}</NicknameText>
+                  {isEdited ? (
+                    <div>
+                      <Flex vertical gap={32}>
+                        <TextArea
+                          showCount
+                          rows={4}
+                          maxLength={100}
+                          value={editedComments[comment.id] || ''}
+                          onChange={(e) =>
+                            handleInputChange(comment.id, e.target.value)
+                          }
+                        />
+                      </Flex>
+                      <ActionButtonsContainer>
+                        <EditButton onClick={() => handleEdit(comment.id)}>
+                          저장
+                        </EditButton>
+                        <DeleteButton onClick={() => handleCancel(comment.id)}>
+                          취소
+                        </DeleteButton>
+                      </ActionButtonsContainer>
+                    </div>
+                  ) : (
+                    <div>
+                      <ContentText>{comment.content}</ContentText>
+                      {isOwner && (
+                        <ActionButtonsContainer>
+                          <EditButton
+                            onClick={() =>
+                              handleInputChange(comment.id, comment.content)
+                            }
+                          >
+                            수정
+                          </EditButton>
+                          <DeleteButton
+                            onClick={() => handleDelete(comment.id)}
+                          >
+                            삭제
+                          </DeleteButton>
+                        </ActionButtonsContainer>
+                      )}
+                    </div>
                   )}
-                </div>
-              )}
-            </div>
+                </CommentInfo>
+              </CommentContent>
+            </CommentContainer>
           );
         })}
-    </div>
+    </Container>
   );
 }
+
 const deleteComment =
   (commentId: string) => (comments: Record<string, string>) =>
     dissoc(commentId, comments);
@@ -127,3 +148,87 @@ const addComment =
   (commentId: string, content: string) => (comments: Record<string, string>) =>
     assoc(commentId, content, comments);
 export default DetailComment;
+
+const Container = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+`;
+
+const CommentContainer = styled.div`
+  margin-bottom: 20px;
+`;
+
+const CommentTitle = styled.h2`
+  font-size: 30px;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+const Avatar = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  padding: 5px;
+  margin: 15px;
+  border: 2px solid #134f2c;
+`;
+
+const NicknameText = styled.p`
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  margin-left: 5px;
+`;
+
+const ContentText = styled.p`
+  font-size: 15px;
+  margin-left: 5px;
+`;
+
+const CommentContent = styled.div`
+  display: flex;
+  padding: 5px;
+  align-items: center;
+  border-radius: 5px;
+  border: 2px solid #134f2c;
+`;
+
+const CommentInfo = styled.div`
+  width: 100%;
+`;
+
+const ActionButtonsContainer = styled.div`
+  text-align: right;
+  margin-top: 20px;
+`;
+
+const EditButton = styled.button`
+  border: none;
+  background-color: #3498db;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+
+  &:hover {
+    background-color: #45aaf2;
+    transform: scale(1.05);
+  }
+`;
+
+const DeleteButton = styled.button`
+  border: none;
+  background-color: #ff4d4f;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+
+  &:hover {
+    background-color: #ff6666;
+    transform: scale(1.05);
+  }
+`;
