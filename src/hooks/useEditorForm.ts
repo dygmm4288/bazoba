@@ -42,6 +42,9 @@ export default function useEditorForm({ id }: EditorFormType) {
 
   const navigate = useNavigate();
 
+  const isCanAccess = !post?.author || !auth || post?.author !== auth?.id;
+  const isWorkingEdit = !!title || !!thumbnailUrl || !!summary;
+
   useEffect(() => {
     const isEditMode = !!id;
     if (!isEditMode) {
@@ -49,7 +52,7 @@ export default function useEditorForm({ id }: EditorFormType) {
       return;
     }
     if (post) {
-      if (!post.author || !auth || post?.author !== auth?.id) {
+      if (isCanAccess) {
         message.error('권한이 없습니다.');
         navigate('/');
         return;
@@ -59,7 +62,7 @@ export default function useEditorForm({ id }: EditorFormType) {
       setThumbnailUrl(post?.thumbnail_url);
     }
     return () => {
-      if (!!title || !!thumbnailUrl || !!summary) {
+      if (isWorkingEdit) {
         return;
       }
       initializeEditorState();
