@@ -4,6 +4,7 @@ import DetailContent from '../components/Detail/DetailContent';
 import DetailFormComment from '../components/Detail/DetailFormComment';
 import DetailComment from '../components/Detail/DetailComment';
 import DetailActions from '../components/Detail/DetailActions';
+import DetailReviewComment from '../components/Detail/DetailReviewComment';
 
 function Detail() {
   const { id } = useParams<{ id?: string }>();
@@ -15,6 +16,7 @@ function Detail() {
       <DetailActions id={id || ''} />
       <DetailFormComment id={id || ''} />
       <DetailComment id={id || ''} />
+      <DetailReviewComment id={id || ''} />
     </div>
   );
 }

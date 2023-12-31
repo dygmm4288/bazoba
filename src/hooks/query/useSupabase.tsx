@@ -13,13 +13,17 @@ import {
   fetchComment,
   fetchPost,
   fetchPosts,
+  fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
   removeComment,
   updateComment,
   updateUser,
   addLike,
-  removeLike
+  removeLike,
+  addBookmark,
+  removeBookmark,
+  fetchFilteredPostsByPage
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -63,6 +67,22 @@ export function useQueryPosts(option?: string) {
   return { posts, error, isLoading, isError, refetchPosts };
 }
 
+export function useFilteredPosts(optionKey: string, optionValue: string) {
+  const {
+    data: posts,
+    error,
+    isLoading,
+    isError,
+    refetch: refetchPosts
+  } = useQuery({
+    queryKey: ['post', optionKey, optionValue],
+    queryFn: () => fetchfilteredPosts(optionKey, optionValue),
+    enabled: false
+  });
+
+  return { posts, error, isLoading, isError, refetchPosts };
+}
+
 export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   const {
     data,
@@ -74,6 +94,37 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   } = useInfiniteQuery({
     queryKey: ['posts', postCategoryFilter],
     queryFn: ({ pageParam }) => fetchPostsByPage(pageParam, postCategoryFilter),
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length + 1 : undefined,
+    initialPageParam: 0
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
+}
+
+export function useQueryFilteredPostsByPage(
+  filterKey: string,
+  filterValue: string
+) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['posts', filterKey],
+    queryFn: ({ pageParam }) => {
+      console.log('queryFn : ', pageParam);
+      return fetchFilteredPostsByPage(pageParam, filterKey, filterValue);
+    },
     getNextPageParam: (lastPage, allpages) =>
       lastPage.length ? allpages.length + 1 : undefined,
     initialPageParam: 0
@@ -103,7 +154,7 @@ export function useQueryUser(userId: string) {
     isLoading,
     isError
   } = useQuery({
-    queryKey: ['users', userId],
+    queryKey: USER_QUERY_KEY(userId),
     queryFn: () => fetchUser(userId)
   });
 
@@ -194,7 +245,6 @@ export function useAddLike(postId: string) {
     mutationFn: (newLike: Omit<TablesInsert<'likes'>, 'postId'>) =>
       addLike({ ...newLike, postId }),
     onSuccess: () => {
-      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
       client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
     },
     onError: (error) => {
@@ -213,7 +263,6 @@ export function useRemoveLike(postId: string) {
       return result;
     },
     onSuccess: () => {
-      client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
       client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
     },
     onError: (error) => {
@@ -223,6 +272,42 @@ export function useRemoveLike(postId: string) {
 
   return {
     removeLike: deleteLike
+  };
+}
+
+/* Bookmark */
+export function useAddBookmark(postId: string) {
+  const { mutate: insert } = useMutation({
+    mutationFn: (newBookmark: Omit<TablesInsert<'bookmarks'>, 'postId'>) =>
+      addBookmark({ ...newBookmark, postId }),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+  return {
+    addBookmark: insert
+  };
+}
+
+export function useRemoveBookmark(postId: string) {
+  const { mutate: deleteBookmark } = useMutation({
+    mutationFn: async (likeId: string) => {
+      const result = await removeBookmark(likeId);
+      return result;
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+
+  return {
+    removeBookmark: deleteBookmark
   };
 }
 

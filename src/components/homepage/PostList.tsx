@@ -7,14 +7,8 @@ import Post from './Post';
 
 const PostList = () => {
   const postCategoryFilter = useRecoilValue(postCategoryFilterState);
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError
-  } = useQueryPostsByPage(postCategoryFilter);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useQueryPostsByPage(postCategoryFilter);
 
   const observer = new IntersectionObserver(
     (entries) => {
