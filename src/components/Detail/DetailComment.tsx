@@ -105,12 +105,14 @@ function DetailComment({ id }: DetailCommentProps) {
                           }
                         />
                       </Flex>
-                      <EditButton onClick={() => handleEdit(commentId)}>
-                        저장
-                      </EditButton>
-                      <DeleteButton onClick={() => handleCancel(commentId)}>
-                        취소
-                      </DeleteButton>
+                      <ActionButtonsContainer>
+                        <EditButton onClick={() => handleEdit(commentId)}>
+                          저장
+                        </EditButton>
+                        <DeleteButton onClick={() => handleCancel(commentId)}>
+                          취소
+                        </DeleteButton>
+                      </ActionButtonsContainer>
                     </div>
                   ) : (
                     <div>
