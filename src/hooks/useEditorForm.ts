@@ -42,6 +42,9 @@ export default function useEditorForm({ id }: EditorFormType) {
 
   const navigate = useNavigate();
 
+  const isCanAccess = !post?.author || !auth || post?.author !== auth?.id;
+  const isWorkingEdit = !!title || !!thumbnailUrl || !!summary;
+
   useEffect(() => {
     const isEditMode = !!id;
     if (!isEditMode) {
@@ -49,17 +52,19 @@ export default function useEditorForm({ id }: EditorFormType) {
       return;
     }
     if (post) {
-      if (!post.author || !auth || post?.author !== auth?.id) {
+      if (isCanAccess) {
         message.error('권한이 없습니다.');
         navigate('/');
         return;
       }
       setTitle(post?.title);
       setCategory(post?.category as CategoryType);
+      setSummary(post?.summary);
+      editorRef.current?.getInstance().setHTML(post?.contents);
       setThumbnailUrl(post?.thumbnail_url);
     }
     return () => {
-      if (!!title || !!thumbnailUrl || !!summary) {
+      if (isWorkingEdit) {
         return;
       }
       initializeEditorState();
@@ -119,7 +124,6 @@ export default function useEditorForm({ id }: EditorFormType) {
       setPostMode(!isPostMode);
       return;
     }
-
     setPostMode(nextPostMode);
   };
 
