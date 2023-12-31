@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import {
-  useAddLike,
-  useRemoveLike,
-  useAddBookmark,
-  useRemoveBookmark
-} from '../../hooks/query/useSupabase';
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import {
+  useAddBookmark,
+  useAddLike,
+  useQueryPost,
+  useQueryUser,
+  useRemoveBookmark,
+  useRemoveLike
+} from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
-import { useQueryUser, useQueryPost } from '../../hooks/query/useSupabase';
 import { IoIosHeart, IoIosHeartDislike } from 'react-icons/io';
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6';
 import styled from 'styled-components';
@@ -32,6 +33,7 @@ function DetailActions({ id }: DetailActionsProps) {
   const { user } = useQueryUser(userId);
   const isLogin = !!userLoginState;
 
+  // ? : 서버에서 모든 데이터를 가져오는 것이 아닌 데이터는 필요한 부분만 가져오고 (여기에서는 좋아요, 북마크 카운트.) 현재 유저가 좋아요를 눌렀는지, 북마크를 눌렀는지도 서버에서 확인하는 것이 낫지 않나?
   useEffect(() => {
     if (post?.likes && user) {
       const userLiked = post.likes.some((like) => like.userId === user.id);

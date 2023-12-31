@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   useQueryComment,
-  useQueryUser,
   useRemoveComment,
-  useUpdateComment
+  useUpdateComment,
+  useQueryUser
 } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
 
@@ -126,5 +126,4 @@ const deleteComment =
 const addComment =
   (commentId: string, content: string) => (comments: Record<string, string>) =>
     assoc(commentId, content, comments);
-
 export default DetailComment;
