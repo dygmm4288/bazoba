@@ -1,14 +1,14 @@
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   useQueryComment,
-  useUpdateComment,
   useRemoveComment,
-  useQueryUser,
-  useQueryPost
+  useUpdateComment,
+  useQueryUser
 } from '../../hooks/query/useSupabase';
-import { useRecoilValue } from 'recoil';
 import { loginState } from '../../recoil/auth';
 
+import { assoc, dissoc } from 'ramda';
 import type { CommentType } from '../../supabase/supabase.types';
 
 interface DetailCommentProps {
@@ -16,7 +16,6 @@ interface DetailCommentProps {
 }
 
 function DetailComment({ id }: DetailCommentProps) {
-  const { post } = useQueryPost(id);
   const { comments } = useQueryComment(id);
   const { updateComment } = useUpdateComment(id);
   const { removeComment } = useRemoveComment(id);
@@ -26,7 +25,7 @@ function DetailComment({ id }: DetailCommentProps) {
   );
 
   const userLoginState = useRecoilValue(loginState);
-  const userId = userLoginState ? userLoginState.id : '';
+  const userId = userLoginState?.id || '';
   const user = useQueryUser(userId)?.user;
 
   const handleDelete = (commentId: string) => {
@@ -34,159 +33,97 @@ function DetailComment({ id }: DetailCommentProps) {
 
     if (confirmDelete) {
       removeComment(commentId);
-    } else {
     }
   };
 
   const handleEdit = (commentId: string) => {
-    const editedComment = editedComments[commentId];
-
     if (comments && comments.length > 0) {
-      const commentToUpdate = comments.find(
-        (comment) => comment.id === commentId
-      );
+      const comment = comments.find((comment) => comment.id === commentId);
+      const editedComment = editedComments[commentId];
+      const isCanEdit = comment && user && editedComment;
 
-      if (editedComment && user && commentToUpdate) {
-        if (editedComment !== commentToUpdate.content) {
-          const confirmSave = window.confirm('변경된 내용을 저장하시겠습니까?');
-
-          if (confirmSave) {
-            updateComment({
-              id: commentId,
-              content: editedComment,
-              type: commentToUpdate.type,
-              userId: user.id
-            });
-            setEditedComments((prevComments) => {
-              const { [commentId]: deletedKey, ...rest } = prevComments;
-              return rest;
-            });
-          } else {
-          }
-        } else {
+      if (isCanEdit) {
+        if (comment.content === editedComment) {
           alert('수정된 내용이 없습니다.');
+          return;
         }
+
+        const confirmToSave = window.confirm('변경된 내용을 저장하시겠습니까?');
+        if (!confirmToSave) return;
+
+        updateComment({
+          id: commentId,
+          content: editedComment,
+          type: comment.type,
+          userId: user.id
+        });
+
+        setEditedComments(deleteComment(commentId));
       }
     }
   };
 
   const handleCancel = (commentId: string) => {
-    setEditedComments((prevComments) => {
-      const { [commentId]: deletedKey, ...rest } = prevComments;
-      return rest;
-    });
+    setEditedComments(deleteComment(commentId));
   };
 
   const handleInputChange = (commentId: string, content: string) => {
-    setEditedComments((prevComments) => ({
-      ...prevComments,
-      [commentId]: content
-    }));
+    setEditedComments(addComment(commentId, content));
   };
 
   return (
     <div>
-      <div>
-        <h2>댓글</h2>
-        {comments
-          ?.filter((comment: CommentType) => comment.type === 0)
-          .map((comment: CommentType) => {
-            const isEdited = !!editedComments[comment.id];
-            const isOwner = comment.userId === userId;
-            return (
-              <div key={comment.id}>
-                <p>Nickname: {comment.nickname}</p>
-                {isEdited ? (
-                  <div>
-                    <input
-                      type="text"
-                      value={editedComments[comment.id] || ''}
-                      onChange={(e) =>
-                        handleInputChange(comment.id, e.target.value)
-                      }
-                    />
-                    <button onClick={() => handleEdit(comment.id)}>저장</button>
-                    <button onClick={() => handleCancel(comment.id)}>
-                      취소
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    <p>Content: {comment.content}</p>
-                    {isOwner && (
-                      <>
-                        <button
-                          onClick={() =>
-                            handleInputChange(comment.id, comment.content)
-                          }
-                        >
-                          수정
-                        </button>
-                        <button onClick={() => handleDelete(comment.id)}>
-                          삭제
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-      </div>
-
-      {(post?.author === user?.id ||
-        comments?.some((comment) => comment.userId === user?.id)) && (
-        <div>
-          <h2>코멘트 리뷰</h2>
-          {comments
-            ?.filter((comment: CommentType) => comment.type === 1)
-            .map((comment: CommentType) => {
-              const isEdited = !!editedComments[comment.id];
-              const isOwner = comment.userId === userId;
-              return (
-                <div key={comment.id}>
-                  <p>Nickname: {comment.nickname}</p>
-                  {isEdited ? (
-                    <div>
-                      <input
-                        type="text"
-                        value={editedComments[comment.id] || ''}
-                        onChange={(e) =>
-                          handleInputChange(comment.id, e.target.value)
+      <h2>댓글</h2>
+      {comments
+        ?.filter((comment: CommentType) => comment.type === 0)
+        .map((comment: CommentType) => {
+          const isEdited = !!editedComments[comment.id];
+          const isOwner = comment.userId === userId;
+          return (
+            <div key={comment.id}>
+              <img src={comment.avatar_url} alt="Avatar" />
+              <p>Nickname: {comment.nickname}</p>
+              {isEdited ? (
+                <div>
+                  <input
+                    type="text"
+                    value={editedComments[comment.id] || ''}
+                    onChange={(e) =>
+                      handleInputChange(comment.id, e.target.value)
+                    }
+                  />
+                  <button onClick={() => handleEdit(comment.id)}>저장</button>
+                  <button onClick={() => handleCancel(comment.id)}>취소</button>
+                </div>
+              ) : (
+                <div>
+                  <p>Content: {comment.content}</p>
+                  {isOwner && (
+                    <>
+                      <button
+                        onClick={() =>
+                          handleInputChange(comment.id, comment.content)
                         }
-                      />
-                      <button onClick={() => handleEdit(comment.id)}>
-                        저장
+                      >
+                        수정
                       </button>
-                      <button onClick={() => handleCancel(comment.id)}>
-                        취소
+                      <button onClick={() => handleDelete(comment.id)}>
+                        삭제
                       </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <p>Content: {comment.content}</p>
-                      {isOwner && (
-                        <>
-                          <button
-                            onClick={() =>
-                              handleInputChange(comment.id, comment.content)
-                            }
-                          >
-                            수정
-                          </button>
-                          <button onClick={() => handleDelete(comment.id)}>
-                            삭제
-                          </button>
-                        </>
-                      )}
-                    </div>
+                    </>
                   )}
                 </div>
-              );
-            })}
-        </div>
-      )}
+              )}
+            </div>
+          );
+        })}
     </div>
   );
 }
+const deleteComment =
+  (commentId: string) => (comments: Record<string, string>) =>
+    dissoc(commentId, comments);
+const addComment =
+  (commentId: string, content: string) => (comments: Record<string, string>) =>
+    assoc(commentId, content, comments);
 export default DetailComment;
