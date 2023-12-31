@@ -1,18 +1,13 @@
 import React from 'react';
-import {
-  useFilteredPosts,
-  useQueryMYPostsByPage
-} from '../../hooks/query/useSupabase';
+import { useQueryMYPostsByPage } from '../../hooks/query/useSupabase';
 import { List, Skeleton } from 'antd';
 import Post from '../homepage/Post';
 
 interface Props {
-  db: string;
-  filterKey: string;
-  filterValue: string;
+  userId: string;
 }
 
-function FilteredPosts({ db, filterKey, filterValue }: Props) {
+function FilteredPosts({ userId }: Props) {
   const {
     data,
     fetchNextPage,
@@ -20,7 +15,7 @@ function FilteredPosts({ db, filterKey, filterValue }: Props) {
     isFetchingNextPage,
     isLoading,
     isError
-  } = useQueryMYPostsByPage(filterKey, filterValue);
+  } = useQueryMYPostsByPage(userId); // 여기랑
 
   return (
     <div>
@@ -37,7 +32,7 @@ function FilteredPosts({ db, filterKey, filterValue }: Props) {
             dataSource={posts}
             loading={isLoading}
             size="large"
-            renderItem={(post) => <Post post={post} key={idx} />}
+            renderItem={(post) => <Post post={post} key={idx} />} //여기만 다름
             key={idx}
           />
         ))}

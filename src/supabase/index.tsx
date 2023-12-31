@@ -88,18 +88,14 @@ export const fetchPostsByPage = async (
   }
 };
 
-export const fetchMyPostsByPage = async (
-  pageParam: number,
-  filterKey: string,
-  filterValue: string
-) => {
+export const fetchMyPostsByPage = async (pageParam: number, userId: string) => {
   const from = pageParam * 3;
   const to = from + 2;
 
   const { data, error } = await db
     .from('posts')
     .select('*, likes(*), bookmarks(*)')
-    .eq(filterKey, filterValue) // 포스트 -> 북마크 -> userID
+    .eq('author', userId)
     .range(from, to)
     .order('created_at', { ascending: false });
   if (error) return Promise.reject(error);
@@ -108,17 +104,15 @@ export const fetchMyPostsByPage = async (
 
 export const fetchMyBookmarkPostsByPage = async (
   pageParam: number,
-  filterKey: string,
-  filterValue: string
+  userId: string
 ) => {
   const from = pageParam * 3;
   const to = from + 2;
 
   const { data, error } = await db
     .from('bookmarks')
-    .select('*, posts(*), users(*)')
-    .eq(filterKey, filterValue) //북마크 ->  userid, (연결된 Post (연결된 likes))
-    .range(from, to);
+    .select('*, posts(*,likes(*), users(*))')
+    .eq('userId', userId);
   if (error) return Promise.reject(error);
   return data;
 };

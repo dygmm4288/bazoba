@@ -6,17 +6,22 @@ import { loginState } from '../recoil/auth';
 import FilteredPosts from '../components/Mypage/FilteredPosts';
 import FilteredBookmarkPosts from '../components/Mypage/FilteredBookmarkPosts';
 
+const enum filterKey {
+  MYPOST,
+  BOOKMARK
+}
+
 export default function Mypage() {
   const user = useRecoilValue(loginState);
-  const [filter, setFilter] = useState('myposts');
+  const [filter, setFilter] = useState(filterKey.MYPOST);
 
   const userId = user?.id!;
   const handleMyPosts = () => {
-    setFilter('myposts');
+    setFilter(filterKey.MYPOST);
   };
 
   const handleBookmarkedPosts = () => {
-    setFilter('bookmarks');
+    setFilter(filterKey.BOOKMARK);
   };
 
   return (
@@ -32,20 +37,10 @@ export default function Mypage() {
           </Card>
         </div>
 
-        {filter === 'bookmarks' && (
-          <FilteredBookmarkPosts
-            db={'bookmarks'}
-            filterKey={'userId'}
-            filterValue={userId}
-          />
+        {filter === filterKey.BOOKMARK && (
+          <FilteredBookmarkPosts userId={userId} />
         )}
-        {filter === 'myposts' && (
-          <FilteredPosts
-            db={'posts'}
-            filterKey={'author'}
-            filterValue={userId}
-          />
-        )}
+        {filter === filterKey.MYPOST && <FilteredPosts userId={userId} />}
       </Flex>
     </div>
   );
