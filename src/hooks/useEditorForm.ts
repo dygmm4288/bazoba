@@ -43,8 +43,9 @@ export default function useEditorForm({ id }: EditorFormType) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!id) {
-      initializeEditor();
+    const isEditMode = !!id;
+    if (!isEditMode) {
+      initializeEditorState();
       return;
     }
     if (post) {
@@ -55,7 +56,7 @@ export default function useEditorForm({ id }: EditorFormType) {
       if (!!title || !!thumbnailUrl || !!summary) {
         return;
       }
-      initializeEditor();
+      initializeEditorState();
     };
   }, [post]);
 
@@ -86,7 +87,7 @@ export default function useEditorForm({ id }: EditorFormType) {
       };
       try {
         await addPost(newPost);
-        initializeEditor();
+        initializeEditorState();
         navigate('/');
       } catch (error) {
         console.error('등록하는 동안 에러 발생');
@@ -129,7 +130,7 @@ export default function useEditorForm({ id }: EditorFormType) {
     return data;
   };
 
-  function initializeEditor() {
+  function initializeEditorState() {
     setTitle('');
     setCategory('REACT');
     setLoading(false);
