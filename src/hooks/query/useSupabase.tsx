@@ -22,7 +22,8 @@ import {
   addLike,
   removeLike,
   addBookmark,
-  removeBookmark
+  removeBookmark,
+  fetchFilteredPostsByPage
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -93,6 +94,37 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   } = useInfiniteQuery({
     queryKey: ['posts', postCategoryFilter],
     queryFn: ({ pageParam }) => fetchPostsByPage(pageParam, postCategoryFilter),
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length + 1 : undefined,
+    initialPageParam: 0
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
+}
+
+export function useQueryFilteredPostsByPage(
+  filterKey: string,
+  filterValue: string
+) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['posts', filterKey],
+    queryFn: ({ pageParam }) => {
+      console.log('queryFn : ', pageParam);
+      return fetchFilteredPostsByPage(pageParam, filterKey, filterValue);
+    },
     getNextPageParam: (lastPage, allpages) =>
       lastPage.length ? allpages.length + 1 : undefined,
     initialPageParam: 0

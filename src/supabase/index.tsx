@@ -88,6 +88,31 @@ export const fetchPostsByPage = async (
   }
 };
 
+/**
+ * @param pageParam page 정보
+ * @param filterKey 'author' , 'bookmarks'
+ * @param filterValue 'userId'
+ * @returns
+ */
+export const fetchFilteredPostsByPage = async (
+  pageParam: number,
+  filterKey: string,
+  filterValue: string
+) => {
+  const from = pageParam * 3;
+  const to = from + 2;
+
+  const { data, error } = await db
+    .from('posts')
+    .select('*, likes(*), bookmarks(*)')
+    // .in(filterKey, postCategoryFilter)
+    .eq(filterKey, filterValue)
+    .range(from, to)
+    .order('created_at', { ascending: false });
+  if (error) return Promise.reject(error);
+  return data;
+};
+
 export const fetchUser = async (id: string) => {
   const { data, error } = await db.from('users').select('*').eq('id', id);
   if (error) return Promise.reject(error);

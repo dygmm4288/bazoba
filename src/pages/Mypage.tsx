@@ -27,8 +27,8 @@ export default function Mypage() {
           </Card>
         </div>
         <FilteredPosts
-          optionKey={'author'}
-          optionValue={userId}
+          filterKey={'author'}
+          filterValue={userId}
           refetchTrigger={enableRefetch}
         />
       </Flex>
