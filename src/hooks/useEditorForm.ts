@@ -49,8 +49,14 @@ export default function useEditorForm({ id }: EditorFormType) {
       return;
     }
     if (post) {
+      if (!post.author || !auth || post?.author !== auth?.id) {
+        message.error('권한이 없습니다.');
+        navigate('/');
+        return;
+      }
       setTitle(post?.title);
       setCategory(post?.category as CategoryType);
+      setThumbnailUrl(post?.thumbnail_url);
     }
     return () => {
       if (!!title || !!thumbnailUrl || !!summary) {
