@@ -8,22 +8,22 @@ import {
 } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
 import {
+  addBookmark,
   addComment,
+  addLike,
   addUser,
   fetchComment,
+  fetchFilteredPostsByPage,
   fetchPost,
   fetchPosts,
-  fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
-  removeComment,
-  updateComment,
-  updateUser,
-  addLike,
-  removeLike,
-  addBookmark,
+  fetchfilteredPosts,
   removeBookmark,
-  fetchFilteredPostsByPage
+  removeComment,
+  removeLike,
+  updateComment,
+  updateUser
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -95,7 +95,7 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
     queryKey: ['posts', postCategoryFilter],
     queryFn: ({ pageParam }) => fetchPostsByPage(pageParam, postCategoryFilter),
     getNextPageParam: (lastPage, allpages) =>
-      lastPage.length ? allpages.length + 1 : undefined,
+      lastPage.length ? allpages.length : undefined,
     initialPageParam: 0
   });
   return {
