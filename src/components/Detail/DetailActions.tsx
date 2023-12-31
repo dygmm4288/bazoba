@@ -33,7 +33,6 @@ function DetailActions({ id }: DetailActionsProps) {
   const { user } = useQueryUser(userId);
   const isLogin = !!userLoginState;
 
-  // ? : 서버에서 모든 데이터를 가져오는 것이 아닌 데이터는 필요한 부분만 가져오고 (여기에서는 좋아요, 북마크 카운트.) 현재 유저가 좋아요를 눌렀는지, 북마크를 눌렀는지도 서버에서 확인하는 것이 낫지 않나?
   useEffect(() => {
     if (post?.likes && user) {
       const userLiked = post.likes.some((like) => like.userId === user.id);

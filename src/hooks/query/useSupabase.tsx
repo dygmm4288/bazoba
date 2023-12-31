@@ -37,6 +37,7 @@ import {
 
 const client = new QueryClient();
 
+/* Post */
 export function useQueryPost(postId: string) {
   const { data, error } = useQuery({
     queryKey: POST_QUERY_KEY(postId),
@@ -90,14 +91,7 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   };
 }
 
-export function useQueryComment(postId: string) {
-  const { data: comments, error } = useQuery({
-    queryKey: COMMENT_QUERY_KEY(postId),
-    queryFn: ({ queryKey }) => fetchComment(queryKey[1])
-  });
-  return { comments, error };
-}
-
+/* User */
 export function useQueryUser(userId: string) {
   const {
     data: user,
@@ -142,6 +136,14 @@ export function useUpdateUser(userId: string) {
 }
 
 /* Comment */
+export function useQueryComment(postId: string) {
+  const { data: comments, error } = useQuery({
+    queryKey: COMMENT_QUERY_KEY(postId),
+    queryFn: ({ queryKey }) => fetchComment(queryKey[1])
+  });
+  return { comments, error };
+}
+
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (newComment: Omit<TablesInsert<'comments'>, 'postId'>) =>
