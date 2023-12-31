@@ -11,7 +11,6 @@ import { Flex, Input } from 'antd';
 import styled from 'styled-components';
 
 import { assoc, dissoc } from 'ramda';
-import type { CommentType } from '../../supabase/supabase.types';
 
 interface DetailCommentProps {
   id: string;
@@ -79,16 +78,20 @@ function DetailComment({ id }: DetailCommentProps) {
     <Container>
       <CommentTitle>댓글</CommentTitle>
       {comments
-        ?.filter((comment: CommentType) => comment.type === 0)
-        .map((comment: CommentType) => {
-          const isEdited = !!editedComments[comment.id];
-          const isOwner = comment.userId === userId;
+        ?.filter((comment) => comment.type === 0)
+        .map((comment) => {
+          const { id: commentId, userId: commentUserId, content } = comment;
+          const { avatar_url, nickname } = comment.users!;
+
+          const isEdited = !!editedComments[commentId];
+          const isOwner = commentUserId === userId;
+
           return (
-            <CommentContainer key={comment.id}>
+            <CommentContainer key={commentId}>
               <CommentContent>
-                <Avatar src={comment.avatar_url} alt="Avatar" />
+                <Avatar src={avatar_url} alt="Avatar" />
                 <CommentInfo>
-                  <NicknameText>{comment.nickname}</NicknameText>
+                  <NicknameText>{nickname}</NicknameText>
                   {isEdited ? (
                     <div>
                       <Flex vertical gap={32}>
@@ -102,30 +105,26 @@ function DetailComment({ id }: DetailCommentProps) {
                           }
                         />
                       </Flex>
-                      <ActionButtonsContainer>
-                        <EditButton onClick={() => handleEdit(comment.id)}>
-                          저장
-                        </EditButton>
-                        <DeleteButton onClick={() => handleCancel(comment.id)}>
-                          취소
-                        </DeleteButton>
-                      </ActionButtonsContainer>
+                      <EditButton onClick={() => handleEdit(commentId)}>
+                        저장
+                      </EditButton>
+                      <DeleteButton onClick={() => handleCancel(commentId)}>
+                        취소
+                      </DeleteButton>
                     </div>
                   ) : (
                     <div>
-                      <ContentText>{comment.content}</ContentText>
+                      <ContentText>{content}</ContentText>
                       {isOwner && (
                         <ActionButtonsContainer>
                           <EditButton
                             onClick={() =>
-                              handleInputChange(comment.id, comment.content)
+                              handleInputChange(commentId, content)
                             }
                           >
                             수정
                           </EditButton>
-                          <DeleteButton
-                            onClick={() => handleDelete(comment.id)}
-                          >
+                          <DeleteButton onClick={() => handleDelete(commentId)}>
                             삭제
                           </DeleteButton>
                         </ActionButtonsContainer>
@@ -140,7 +139,6 @@ function DetailComment({ id }: DetailCommentProps) {
     </Container>
   );
 }
-
 const deleteComment =
   (commentId: string) => (comments: Record<string, string>) =>
     dissoc(commentId, comments);
@@ -169,7 +167,7 @@ const Avatar = styled.img`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  padding: 5px;
+  padding: 3px;
   margin: 15px;
   border: 2px solid #134f2c;
 `;
