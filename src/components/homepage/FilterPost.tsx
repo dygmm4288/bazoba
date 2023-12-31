@@ -1,9 +1,80 @@
 import { Button, ButtonProps } from 'antd';
-import { useState } from 'react';
+import {
+  complement,
+  concat,
+  curry,
+  equals,
+  filter,
+  flip,
+  includes
+} from 'ramda';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { postCategoryFilterState } from '../../recoil/filter';
 import { CategoryType } from '../../supabase/supabase.types';
+
+const FilterPost = () => {
+  const [postCategoryFilter, setPostCategoryFilter] = useRecoilState(
+    postCategoryFilterState
+  );
+
+  const handleAddFilter = (category: CategoryType, index: number) => {
+    const getNextCategory = existsCategory(postCategoryFilter, category)
+      ? removeCategory
+      : addCategory;
+
+    setPostCategoryFilter(getNextCategory(postCategoryFilter, category));
+  };
+
+  const handleClearFilter = () => {
+    setPostCategoryFilter([]);
+  };
+
+  return (
+    <div>
+      <ul
+        style={{
+          listStyle: 'none',
+          display: 'flex',
+          gap: '12px',
+          margin: '0 auto',
+          width: 'fit-content',
+          padding: '0'
+        }}
+      >
+        {CATEGORIES.map((category, idx) => (
+          <li key={idx}>
+            <StFilterButton
+              onClick={() => handleAddFilter(category, idx)}
+              style={{ fontWeight: '700' }}
+              $isActive={postCategoryFilter.includes(category)}
+              $category={category}
+            >
+              {category}
+            </StFilterButton>
+          </li>
+        ))}
+        <Button
+          type={postCategoryFilter.length ? 'primary' : 'default'}
+          danger
+          onClick={handleClearFilter}
+        >
+          CLEAR
+        </Button>
+      </ul>
+    </div>
+  );
+};
+
+export default FilterPost;
+
+const existsCategory = curry(flip(includes));
+const addCategory = curry((categories, category) =>
+  concat(categories, [category])
+);
+const removeCategory = curry((categories, category) =>
+  filter(complement(equals(category)), categories)
+);
 
 const CATEGORIES: CategoryType[] = [
   'REACT',
@@ -27,83 +98,11 @@ const CATEGORY_COLOR_MAP: { [key in CategoryType]: string } = {
   IOS: '#e5ebf9',
   ETC: '#color1'
 };
+
 interface StFilterButtonProps extends ButtonProps {
   $isActive?: boolean;
   $category?: CategoryType;
 }
-
-const FilterPost = () => {
-  const [postCategoryFilter, setPostCategoryFilter] = useRecoilState(
-    postCategoryFilterState
-  );
-  const [activeButtons, setActiveButtons] = useState<boolean[]>(
-    Array(CATEGORIES.length).fill(false)
-  );
-
-  const onFilterBtnClickHandler = (category: CategoryType, index: number) => {
-    // setFilter(category);
-    setActiveButtons((prevState) => {
-      const newState = [...prevState];
-      newState[index] = !newState[index];
-      return newState;
-    });
-    if (postCategoryFilter.includes(category)) {
-      setPostCategoryFilter(
-        postCategoryFilter.filter((item) => item !== category)
-      );
-    } else {
-      setPostCategoryFilter([...postCategoryFilter, category]);
-    }
-    console.log(postCategoryFilter);
-  };
-
-  const onFilterClearBtnClickHandler = () => {
-    setActiveButtons((prevState) => {
-      const newState = prevState.map((state) => (state = false));
-      return newState;
-    });
-    setPostCategoryFilter([]);
-  };
-
-  return (
-    <div>
-      <ul
-        style={{
-          listStyle: 'none',
-          display: 'flex',
-          gap: '12px',
-          margin: '0 auto',
-          width: 'fit-content',
-          padding: '0'
-        }}
-      >
-        {CATEGORIES.map((category, idx) => (
-          <li key={idx}>
-            <StFilterButton
-              key={idx}
-              onClick={() => onFilterBtnClickHandler(category, idx)}
-              style={{ fontWeight: '700' }}
-              $isActive={postCategoryFilter.includes(category)}
-              $category={category}
-            >
-              {category}
-            </StFilterButton>
-          </li>
-        ))}
-        <Button
-          type={postCategoryFilter.length ? 'primary' : 'default'}
-          danger
-          onClick={onFilterClearBtnClickHandler}
-        >
-          CLEAR
-        </Button>
-      </ul>
-    </div>
-  );
-};
-
-export default FilterPost;
-
 const StFilterButton = styled(Button)<StFilterButtonProps>`
   ${(props) =>
     props.$isActive
