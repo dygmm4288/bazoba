@@ -88,53 +88,31 @@ export const fetchPostsByPage = async (
   }
 };
 
-export async function getBookmarkedPosts(userId: string) {
-  const { data, error } = await db
-    .from('bookmarks')
-    .select('postId')
-    .eq('userId', userId);
-
-  if (error) {
-    console.error('Error fetching bookmarks:', error);
-    return;
-  }
-
-  const postIds = data.map((bookmark) => bookmark.postId);
-
-  const { data: posts, error: postsError } = await db
-    .from('posts')
-    .select('*')
-    .in('id', postIds);
-
-  if (postsError) {
-    console.error('Error fetching posts:', postsError);
-    return;
-  }
-
-  return posts;
-}
-
-/**
- * @param pageParam page 정보
- * @param filterKey 'author' , 'bookmarks'
- * @param filterValue 'userId'
- * @returns
- */
-export const fetchFilteredPostsByPage = async (
-  pageParam: number,
-  filterKey: string,
-  filterValue: string
-) => {
+export const fetchMyPostsByPage = async (pageParam: number, userId: string) => {
   const from = pageParam * 3;
   const to = from + 2;
 
   const { data, error } = await db
     .from('posts')
     .select('*, likes(*), bookmarks(*)')
-    // .in(filterKey, postCategoryFilter)
-    .eq(filterKey, filterValue)
+    .eq('author', userId)
     .range(from, to)
     .order('created_at', { ascending: false });
+  if (error) return Promise.reject(error);
+  return data;
+};
+
+export const fetchMyBookmarkPostsByPage = async (
+  pageParam: number,
+  userId: string
+) => {
+  const from = pageParam * 3;
+  const to = from + 2;
+
+  const { data, error } = await db
+    .from('bookmarks')
+    .select('*, posts(*,likes(*), users(*))')
+    .eq('userId', userId);
   if (error) return Promise.reject(error);
   return data;
 };

@@ -13,12 +13,12 @@ import {
   addLike,
   addUser,
   fetchComment,
-  fetchFilteredPostsByPage,
+  fetchMyBookmarkPostsByPage,
+  fetchMyPostsByPage,
   fetchPost,
   fetchPosts,
   fetchPostsByPage,
   fetchUser,
-  fetchfilteredPosts,
   removeBookmark,
   removeComment,
   removeLike,
@@ -67,22 +67,6 @@ export function useQueryPosts(option?: string) {
   return { posts, error, isLoading, isError, refetchPosts };
 }
 
-export function useFilteredPosts(optionKey: string, optionValue: string) {
-  const {
-    data: posts,
-    error,
-    isLoading,
-    isError,
-    refetch: refetchPosts
-  } = useQuery({
-    queryKey: ['post', optionKey, optionValue],
-    queryFn: () => fetchfilteredPosts(optionKey, optionValue),
-    enabled: false
-  });
-
-  return { posts, error, isLoading, isError, refetchPosts };
-}
-
 export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   const {
     data,
@@ -108,10 +92,7 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   };
 }
 
-export function useQueryFilteredPostsByPage(
-  filterKey: string,
-  filterValue: string
-) {
+export function useQueryMYPostsByPage(userId: string) {
   const {
     data,
     fetchNextPage,
@@ -120,13 +101,39 @@ export function useQueryFilteredPostsByPage(
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ['posts', filterKey],
+    queryKey: ['posts'],
     queryFn: ({ pageParam }) => {
-      console.log('queryFn : ', pageParam);
-      return fetchFilteredPostsByPage(pageParam, filterKey, filterValue);
+      return fetchMyPostsByPage(pageParam, userId); //이것만 다름
     },
     getNextPageParam: (lastPage, allpages) =>
-      lastPage.length ? allpages.length + 1 : undefined,
+      lastPage.length ? allpages.length : undefined,
+    initialPageParam: 0
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
+}
+
+export function useQueryBookmarkPostsByPage(userId: string) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['posts'], //쿼리키는 뭘줘야함..?
+    queryFn: ({ pageParam }) => {
+      return fetchMyBookmarkPostsByPage(pageParam, userId); //이것만 다름
+    },
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length : undefined,
     initialPageParam: 0
   });
   return {

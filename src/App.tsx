@@ -15,12 +15,12 @@ function App() {
     const subscribe = db.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN') {
         setAuth(session?.user!);
-        const { id, email } = session?.user!;
+        const { id, email, user_metadata } = session?.user!;
         const user: UserType = {
           id,
           email: email || 'default@email.com',
-          nickname: 'default nickname',
-          avatar_url: `https://robohash.org/${id}`
+          nickname: user_metadata.name || 'default nickname',
+          avatar_url: user_metadata.avatar_url || `https://robohash.org/${id}`
         };
         addUser(user);
       } else if (event === 'SIGNED_OUT') {
