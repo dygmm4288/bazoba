@@ -1,4 +1,5 @@
 import { List, Skeleton } from 'antd';
+import { useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useQueryPostsByPage } from '../../hooks/query/useSupabase';
 import { postCategoryFilterState } from '../../recoil/filter';
@@ -8,6 +9,24 @@ const PostList = () => {
   const postCategoryFilter = useRecoilValue(postCategoryFilterState);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useQueryPostsByPage(postCategoryFilter);
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    { threshold: 1 }
+  );
+
+  const anchorRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (anchorRef.current) {
+      console.log(anchorRef.current);
+      observer.observe(anchorRef.current);
+    }
+    return () => observer.disconnect();
+  }, [anchorRef.current, observer]);
 
   return (
     <Skeleton
@@ -27,16 +46,7 @@ const PostList = () => {
           key={idx}
         />
       ))}
-      <button
-        onClick={() => fetchNextPage()}
-        disabled={!hasNextPage || isFetchingNextPage}
-      >
-        {isFetchingNextPage
-          ? '불러오는 중...'
-          : hasNextPage
-          ? '더 보기'
-          : '더 불러올 문서가 없습니다'}
-      </button>
+      <div id="scroll-anchor" ref={anchorRef} />
     </Skeleton>
   );
 };
