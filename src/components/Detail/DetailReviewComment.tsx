@@ -83,7 +83,7 @@ function DetailReviewComment({ id }: DetailReviewCommentProps) {
         <div>
           <CommentTitle>코멘트 리뷰</CommentTitle>
           {comments
-            ?.filter((comment) => comment.type === 0)
+            ?.filter((comment) => comment.type === 1)
             .map((comment) => {
               const { id: commentId, userId: commentUserId, content } = comment;
               const { avatar_url, nickname } = comment.users!;
