@@ -32,7 +32,7 @@ const PostList = () => {
       observer.observe(anchorRef.current);
     }
     return () => observer.disconnect();
-  }, [anchorRef.current]);
+  }, [anchorRef.current, observer]);
 
   return (
     <Skeleton
