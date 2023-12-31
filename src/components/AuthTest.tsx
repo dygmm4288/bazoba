@@ -32,5 +32,5 @@ const StHeader = styled(Header)`
 
 const StContent = styled(Content)`
   background-color: #eee;
-  padding: 0 48px;
+  padding: 48px 48px;
 `;
