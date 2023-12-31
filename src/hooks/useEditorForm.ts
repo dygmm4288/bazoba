@@ -59,6 +59,8 @@ export default function useEditorForm({ id }: EditorFormType) {
       }
       setTitle(post?.title);
       setCategory(post?.category as CategoryType);
+      setSummary(post?.summary);
+      editorRef.current?.getInstance().setHTML(post?.contents);
       setThumbnailUrl(post?.thumbnail_url);
     }
     return () => {
@@ -122,7 +124,6 @@ export default function useEditorForm({ id }: EditorFormType) {
       setPostMode(!isPostMode);
       return;
     }
-
     setPostMode(nextPostMode);
   };
 

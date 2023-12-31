@@ -31,7 +31,6 @@ export default function EditorHeader({ handleCategory, handleTitle }: Props) {
         bordered={false}
         onChange={handleTitle}
         value={title}
-        required
         placeholder="제목을 입력하세요."
         size="large"
       />
