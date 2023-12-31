@@ -33,7 +33,8 @@ function DetailFormComment({ id }: DetailFormContentProps) {
       content: commentContent,
       type: parseInt(commentType),
       userId: user.id,
-      nickname: user.nickname
+      nickname: user.nickname,
+      avatar_url: user.avatar_url
     };
 
     addComment(newComment);

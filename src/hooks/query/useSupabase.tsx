@@ -13,6 +13,7 @@ import {
   fetchComment,
   fetchPost,
   fetchPosts,
+  fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
   removeComment,
@@ -21,7 +22,8 @@ import {
   addLike,
   removeLike,
   addBookmark,
-  removeBookmark
+  removeBookmark,
+  fetchFilteredPostsByPage
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -66,6 +68,22 @@ export function useQueryPosts(option?: string) {
   return { posts, error, isLoading, isError, refetchPosts };
 }
 
+export function useFilteredPosts(optionKey: string, optionValue: string) {
+  const {
+    data: posts,
+    error,
+    isLoading,
+    isError,
+    refetch: refetchPosts
+  } = useQuery({
+    queryKey: ['post', optionKey, optionValue],
+    queryFn: () => fetchfilteredPosts(optionKey, optionValue),
+    enabled: false
+  });
+
+  return { posts, error, isLoading, isError, refetchPosts };
+}
+
 export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   const {
     data,
@@ -91,6 +109,37 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   };
 }
 
+export function useQueryFilteredPostsByPage(
+  filterKey: string,
+  filterValue: string
+) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['posts', filterKey],
+    queryFn: ({ pageParam }) => {
+      console.log('queryFn : ', pageParam);
+      return fetchFilteredPostsByPage(pageParam, filterKey, filterValue);
+    },
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length + 1 : undefined,
+    initialPageParam: 0
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
+}
+
 /* User */
 export function useQueryUser(userId: string) {
   const {
@@ -99,7 +148,7 @@ export function useQueryUser(userId: string) {
     isLoading,
     isError
   } = useQuery({
-    queryKey: ['users', userId],
+    queryKey: USER_QUERY_KEY(userId),
     queryFn: () => fetchUser(userId)
   });
 

@@ -49,6 +49,18 @@ export const fetchPosts = async (option?: string) => {
   return data;
 };
 
+export const fetchfilteredPosts = async (
+  optionKey: string,
+  optionVaule: string
+) => {
+  const { data, error } = await db
+    .from('posts')
+    .select(`*, likes(*), bookmarks(*)`)
+    .eq(optionKey, optionVaule);
+  if (error) return Promise.reject(error);
+  return data;
+};
+
 export const fetchPostsByPage = async (
   pageParam: number,
   postCategoryFilter: CategoryType[]
@@ -74,6 +86,31 @@ export const fetchPostsByPage = async (
     if (error) return Promise.reject(error);
     return data;
   }
+};
+
+/**
+ * @param pageParam page 정보
+ * @param filterKey 'author' , 'bookmarks'
+ * @param filterValue 'userId'
+ * @returns
+ */
+export const fetchFilteredPostsByPage = async (
+  pageParam: number,
+  filterKey: string,
+  filterValue: string
+) => {
+  const from = pageParam * 3;
+  const to = from + 2;
+
+  const { data, error } = await db
+    .from('posts')
+    .select('*, likes(*), bookmarks(*)')
+    // .in(filterKey, postCategoryFilter)
+    .eq(filterKey, filterValue)
+    .range(from, to)
+    .order('created_at', { ascending: false });
+  if (error) return Promise.reject(error);
+  return data;
 };
 
 export const fetchUser = async (id: string) => {
@@ -135,5 +172,15 @@ export const uploadImage = async (blob: Blob | File) => {
   const { data, error } = await db.storage
     .from(BUCKET_NAME)
     .upload(window.URL.createObjectURL(blob), blob);
+  return { data: BASE_URL + data?.path, error };
+};
+
+/** strorage에 본인 userId 폴더만 접근 가능하게 함*/
+export const uploadUserImage = async (subUrl: string, file: File) => {
+  const BASE_URL = `https://borxwimnmhmdodedkkpv.supabase.co/storage/v1/object/public/user_images/`;
+
+  const { data, error } = await db.storage
+    .from('user_images')
+    .upload(`${subUrl}`, file, { upsert: true });
   return { data: BASE_URL + data?.path, error };
 };
