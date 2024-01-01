@@ -17,6 +17,8 @@ import {
   fetchMyPostsByPage,
   fetchPost,
   fetchPosts,
+  removePost,
+  fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
   removeBookmark,
@@ -36,9 +38,11 @@ import {
   POST_QUERY_KEY,
   USER_QUERY_KEY
 } from './query.keys';
+import { useNavigate } from 'react-router-dom';
 
 const client = new QueryClient();
 
+/* Post */
 export function useQueryPost(postId: string) {
   const { data, error } = useQuery({
     queryKey: POST_QUERY_KEY(postId),
@@ -62,6 +66,43 @@ export function useQueryPosts(option?: string) {
     queryKey: ['posts', option],
     queryFn: () => fetchPosts(option)
     // enabled: false
+  });
+
+  return { posts, error, isLoading, isError, refetchPosts };
+}
+
+export function useRemovePost(postId: string) {
+  const navigate = useNavigate();
+  const { mutate: deletePost } = useMutation({
+    mutationFn: async (likeId: string) => {
+      const result = await removePost(likeId);
+      return result;
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
+      navigate('/');
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+
+  return {
+    removePost: deletePost
+  };
+}
+
+export function useFilteredPosts(optionKey: string, optionValue: string) {
+  const {
+    data: posts,
+    error,
+    isLoading,
+    isError,
+    refetch: refetchPosts
+  } = useQuery({
+    queryKey: ['post', optionKey, optionValue],
+    queryFn: () => fetchfilteredPosts(optionKey, optionValue),
+    enabled: false
   });
 
   return { posts, error, isLoading, isError, refetchPosts };
@@ -146,14 +187,7 @@ export function useQueryBookmarkPostsByPage(userId: string) {
   };
 }
 
-export function useQueryComment(postId: string) {
-  const { data: comments, error } = useQuery({
-    queryKey: COMMENT_QUERY_KEY(postId),
-    queryFn: ({ queryKey }) => fetchComment(queryKey[1])
-  });
-  return { comments, error };
-}
-
+/* User */
 export function useQueryUser(userId: string) {
   const {
     data: user,
@@ -198,6 +232,14 @@ export function useUpdateUser(userId: string) {
 }
 
 /* Comment */
+export function useQueryComment(postId: string) {
+  const { data: comments, error } = useQuery({
+    queryKey: COMMENT_QUERY_KEY(postId),
+    queryFn: ({ queryKey }) => fetchComment(queryKey[1])
+  });
+  return { comments, error };
+}
+
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (newComment: Omit<TablesInsert<'comments'>, 'postId'>) =>

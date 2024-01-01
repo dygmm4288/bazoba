@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import FilteredBookmarkPosts from '../components/Mypage/FilteredBookmarkPosts';
 import FilteredPosts from '../components/Mypage/FilteredPosts';
 import Profile from '../components/Mypage/Profile';
+import { loginState } from '../recoil/auth';
 
 const enum filterKey {
   MYPOST,
