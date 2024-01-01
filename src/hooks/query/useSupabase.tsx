@@ -8,22 +8,22 @@ import {
 } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
 import {
+  addBookmark,
   addComment,
+  addLike,
   addUser,
   fetchComment,
+  fetchFilteredPostsByPage,
   fetchPost,
   fetchPosts,
-  fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
-  removeComment,
-  updateComment,
-  updateUser,
-  addLike,
-  removeLike,
-  addBookmark,
+  fetchfilteredPosts,
   removeBookmark,
-  fetchFilteredPostsByPage
+  removeComment,
+  removeLike,
+  updateComment,
+  updateUser
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -310,6 +310,8 @@ export function useRemoveBookmark(postId: string) {
     removeBookmark: deleteBookmark
   };
 }
+
+export function useQueryUsersBy() {}
 
 export function SupabaseQueryProvider({ children }: PropsWithChildren) {
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;

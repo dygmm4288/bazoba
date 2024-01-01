@@ -131,14 +131,20 @@ export const addUser: (user: UserType) => Promise<void> = async (
 /* Create */
 export const add =
   (from: TableKeys) => async (data: TablesInsert<TableKeys>) => {
-    const { error } = await db.from(from).insert(data);
+    const { data: response, error } = await db
+      .from(from)
+      .insert(data)
+      .select('*');
+
     if (error) return Promise.reject(error);
-    return data;
+    return response[0];
   };
 export const addPost = add('posts');
 export const addBookmark = add('bookmarks');
 export const addLike = add('likes');
 export const addComment = add('comments');
+//@ts-ignore
+export const addCoAuthor = add('co_authors');
 
 /* Delete */
 export const remove = (from: TableKeys) => async (id: string) => {
@@ -183,4 +189,14 @@ export const uploadUserImage = async (subUrl: string, file: File) => {
     .from('user_images')
     .upload(`${subUrl}`, file, { upsert: true });
   return { data: BASE_URL + data?.path, error };
+};
+
+export const fetchUserBy = async (searchStr: string) => {
+  const { data, error } = await db
+    .from('users')
+    .select('*')
+    // .like('nickname', `%${searchStr}%`)
+    .like('email', `%${searchStr}%`);
+  if (error) return Promise.reject(error);
+  return data;
 };

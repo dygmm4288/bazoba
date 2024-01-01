@@ -3,6 +3,7 @@ import { ChangeEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 import { categoryState, titleState } from '../../recoil/editor';
 import { CategoryType } from '../../supabase/supabase.types';
+import EditorMention from './mention/EditorMention';
 
 interface Props {
   handleTitle: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -44,6 +45,7 @@ export default function EditorHeader({ handleCategory, handleTitle }: Props) {
         }))}
         size="large"
       />
+      <EditorMention />
     </Space>
   );
 }

@@ -8,11 +8,12 @@ import { loginState } from '../recoil/auth';
 import {
   categoryState,
   isLoadingState,
+  mentionedUserState,
   summaryState,
   thumbnailUrlState,
   titleState
 } from '../recoil/editor';
-import { addPost, uploadImage } from '../supabase';
+import { addCoAuthor, addPost, uploadImage } from '../supabase';
 import { getDefaultImage } from '../supabase/data';
 import { CategoryType } from '../supabase/supabase.types';
 import { TablesInsert } from '../supabase/supabaseSchema.types';
@@ -35,6 +36,7 @@ export default function useEditorForm({ id }: EditorFormType) {
   const setLoading = useSetRecoilState(isLoadingState);
   const [summary, setSummary] = useRecoilState(summaryState);
   const auth = useRecoilValue(loginState);
+  const [selectedUsers, setSelectedUsers] = useRecoilState(mentionedUserState);
 
   const { post, error } = useQueryPost(id || '');
 
@@ -62,6 +64,9 @@ export default function useEditorForm({ id }: EditorFormType) {
       setSummary(post?.summary);
       editorRef.current?.getInstance().setHTML(post?.contents);
       setThumbnailUrl(post?.thumbnail_url);
+      // TODO : db 연동하고 채워 넣어야 함, 현재는 타입이 제대로 설정이 돼있지 않음
+      //@ts-ignore
+      setSelectedUsers(post?.co_authors || []);
     }
     return () => {
       if (isWorkingEdit) {
@@ -96,12 +101,22 @@ export default function useEditorForm({ id }: EditorFormType) {
         summary: summary || extractText(contents).slice(0, 150),
         thumbnail_url: thumbnailUrl || getDefaultImage(category)!
       };
+
       try {
-        await addPost(newPost);
+        const post = await addPost(newPost);
+        //TODO : database 연동 후에 타입스크립트 변경 해야 함
+        const newCoAuthors = selectedUsers.map((user) => ({
+          postId: post.id,
+          userId: user.id
+        }));
+        await addCoAuthor(
+          //@ts-ignore
+          newCoAuthors
+        );
         initializeEditorState();
         navigate('/');
       } catch (error) {
-        console.error('등록하는 동안 에러 발생');
+        console.error('등록하는 동안 에러 발생', error);
       }
 
       return;
