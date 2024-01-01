@@ -83,7 +83,7 @@ const slideDown = keyframes`
 
 const StEditorOverlay = styled.div<{ isUp: boolean }>`
   box-sizing: border-box;
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 100;
   background-color: lightblue;

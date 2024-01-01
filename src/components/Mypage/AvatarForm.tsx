@@ -1,15 +1,7 @@
 import { message } from 'antd';
-import Upload, {
-  RcFile,
-  UploadChangeParam,
-  UploadFile,
-  UploadProps
-} from 'antd/es/upload';
 import React, { ChangeEvent, useState } from 'react';
-import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useRecoilValue } from 'recoil';
 import { loginState } from '../../recoil/auth';
-import { useQueryUser, useUpdateUser } from '../../hooks/query/useSupabase';
 import styled from 'styled-components';
 
 function AvatarForm() {
@@ -23,7 +15,6 @@ function AvatarForm() {
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
-      // 선택한 파일의 미리보기를 생성
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {

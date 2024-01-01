@@ -8,23 +8,24 @@ import {
 } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
 import {
+  addBookmark,
   addComment,
+  addLike,
   addUser,
   fetchComment,
+  fetchMyBookmarkPostsByPage,
+  fetchMyPostsByPage,
   fetchPost,
   fetchPosts,
   removePost,
   fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
-  removeComment,
-  updateComment,
-  updateUser,
-  addLike,
-  removeLike,
-  addBookmark,
   removeBookmark,
-  fetchFilteredPostsByPage
+  removeComment,
+  removeLike,
+  updateComment,
+  updateUser
 } from '../../supabase';
 import { SupabaseErrorTypes } from '../../supabase/error.types';
 import { CategoryType } from '../../supabase/supabase.types';
@@ -119,7 +120,7 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
     queryKey: ['posts', postCategoryFilter],
     queryFn: ({ pageParam }) => fetchPostsByPage(pageParam, postCategoryFilter),
     getNextPageParam: (lastPage, allpages) =>
-      lastPage.length ? allpages.length + 1 : undefined,
+      lastPage.length ? allpages.length : undefined,
     initialPageParam: 0
   });
   return {
@@ -132,10 +133,7 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   };
 }
 
-export function useQueryFilteredPostsByPage(
-  filterKey: string,
-  filterValue: string
-) {
+export function useQueryMYPostsByPage(userId: string) {
   const {
     data,
     fetchNextPage,
@@ -144,13 +142,39 @@ export function useQueryFilteredPostsByPage(
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ['posts', filterKey],
+    queryKey: ['posts'],
     queryFn: ({ pageParam }) => {
-      console.log('queryFn : ', pageParam);
-      return fetchFilteredPostsByPage(pageParam, filterKey, filterValue);
+      return fetchMyPostsByPage(pageParam, userId); //이것만 다름
     },
     getNextPageParam: (lastPage, allpages) =>
-      lastPage.length ? allpages.length + 1 : undefined,
+      lastPage.length ? allpages.length : undefined,
+    initialPageParam: 0
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
+}
+
+export function useQueryBookmarkPostsByPage(userId: string) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['posts'], //쿼리키는 뭘줘야함..?
+    queryFn: ({ pageParam }) => {
+      return fetchMyBookmarkPostsByPage(pageParam, userId); //이것만 다름
+    },
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length : undefined,
     initialPageParam: 0
   });
   return {
