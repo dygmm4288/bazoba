@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
 import { Card, Flex } from 'antd';
-import Profile from '../components/Mypage/Profile';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { loginState } from '../recoil/auth';
-import FilteredPosts from '../components/Mypage/FilteredPosts';
 import FilteredBookmarkPosts from '../components/Mypage/FilteredBookmarkPosts';
+import FilteredPosts from '../components/Mypage/FilteredPosts';
+import Profile from '../components/Mypage/Profile';
 
 const enum filterKey {
   MYPOST,
