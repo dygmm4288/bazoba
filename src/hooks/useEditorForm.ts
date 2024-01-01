@@ -38,7 +38,7 @@ export default function useEditorForm({ id }: EditorFormType) {
   const auth = useRecoilValue(loginState);
   const [selectedUsers, setSelectedUsers] = useRecoilState(mentionedUserState);
 
-  const { post, error } = useQueryPost(id || '');
+  const { post, error: errorForPost } = useQueryPost(id || '');
 
   const [isPostMode, setPostMode] = useState(false);
 
@@ -64,9 +64,9 @@ export default function useEditorForm({ id }: EditorFormType) {
       setSummary(post?.summary);
       editorRef.current?.getInstance().setHTML(post?.contents);
       setThumbnailUrl(post?.thumbnail_url);
-      // TODO : db 연동하고 채워 넣어야 함, 현재는 타입이 제대로 설정이 돼있지 않음
-      //@ts-ignore
-      setSelectedUsers(post?.co_authors || []);
+      setSelectedUsers(
+        post?.co_authors.map((coAuthor) => coAuthor.users!) || []
+      );
     }
     return () => {
       if (isWorkingEdit) {
@@ -77,10 +77,10 @@ export default function useEditorForm({ id }: EditorFormType) {
   }, [post]);
 
   useEffect(() => {
-    if (error) {
+    if (errorForPost) {
       navigate('/write');
     }
-  }, [error]);
+  }, [errorForPost]);
 
   const handleForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -104,15 +104,11 @@ export default function useEditorForm({ id }: EditorFormType) {
 
       try {
         const post = await addPost(newPost);
-        //TODO : database 연동 후에 타입스크립트 변경 해야 함
         const newCoAuthors = selectedUsers.map((user) => ({
           postId: post.id,
           userId: user.id
         }));
-        await addCoAuthor(
-          //@ts-ignore
-          newCoAuthors
-        );
+        await addCoAuthor(newCoAuthors);
         initializeEditorState();
         navigate('/');
       } catch (error) {

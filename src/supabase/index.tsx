@@ -16,7 +16,7 @@ export const db = createClient<Database>(
 export const fetchPost = async (id: string) => {
   const { data, error } = await db
     .from('posts')
-    .select(`*, likes(*), bookmarks(*)`)
+    .select(`*, likes(*), bookmarks(*), co_authors(users(*))`)
     .eq('id', id);
   if (error) return Promise.reject(error);
   return data;
@@ -134,10 +134,11 @@ export const addUser: (user: UserType) => Promise<void> = async (
 
 /* Create */
 export const add =
-  (from: TableKeys) => async (data: TablesInsert<TableKeys>) => {
+  (from: TableKeys) =>
+  async (data: TablesInsert<TableKeys> | TablesInsert<TableKeys>[]) => {
     const { data: response, error } = await db
       .from(from)
-      .insert(data)
+      .insert(data as TablesInsert<TableKeys>)
       .select('*');
 
     if (error) return Promise.reject(error);
@@ -147,7 +148,6 @@ export const addPost = add('posts');
 export const addBookmark = add('bookmarks');
 export const addLike = add('likes');
 export const addComment = add('comments');
-//@ts-ignore
 export const addCoAuthor = add('co_authors');
 
 /* Delete */

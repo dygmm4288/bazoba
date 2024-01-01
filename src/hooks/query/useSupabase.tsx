@@ -65,7 +65,6 @@ export function useQueryPosts(option?: string) {
   } = useQuery({
     queryKey: ['posts', option],
     queryFn: () => fetchPosts(option)
-    // enabled: false
   });
 
   return { posts, error, isLoading, isError, refetchPosts };
@@ -359,8 +358,6 @@ export function useRemoveBookmark(postId: string) {
     removeBookmark: deleteBookmark
   };
 }
-
-export function useQueryUsersBy() {}
 
 export function SupabaseQueryProvider({ children }: PropsWithChildren) {
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
