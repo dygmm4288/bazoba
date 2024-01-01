@@ -142,7 +142,7 @@ export function useQueryMYPostsByPage(userId: string) {
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ['posts'],
+    queryKey: ['my-posts'],
     queryFn: ({ pageParam }) => {
       return fetchMyPostsByPage(pageParam, userId); //이것만 다름
     },
@@ -169,7 +169,7 @@ export function useQueryBookmarkPostsByPage(userId: string) {
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ['posts'], //쿼리키는 뭘줘야함..?
+    queryKey: ['bookmark-posts'],
     queryFn: ({ pageParam }) => {
       return fetchMyBookmarkPostsByPage(pageParam, userId); //이것만 다름
     },
