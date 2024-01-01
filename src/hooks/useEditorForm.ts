@@ -3,6 +3,7 @@ import { message } from 'antd';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import addUniqItemById from '../lib/addUniqItemByCondition';
 import { extractText } from '../lib/extractText';
 import { loginState } from '../recoil/auth';
 import {
@@ -104,10 +105,18 @@ export default function useEditorForm({ id }: EditorFormType) {
 
       try {
         const post = await addPost(newPost);
-        const newCoAuthors = selectedUsers.map((user) => ({
-          postId: post.id,
-          userId: user.id
-        }));
+        const currentAuthor = {
+          id: auth.id,
+          avatar_url: auth.user_metadata.avatar_url,
+          nickname: auth.user_metadata?.nickname || '',
+          email: auth.email
+        };
+        const newCoAuthors = addUniqItemById(selectedUsers, currentAuthor).map(
+          (user) => ({
+            postId: post.id,
+            userId: user.id
+          })
+        );
         await addCoAuthor(newCoAuthors);
         initializeEditorState();
         navigate('/');
@@ -130,6 +139,7 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
     setCategory(e.target.value as CategoryType);
   };
+
   const handleTogglePostMode = (nextPostMode?: boolean) => () => {
     if (nextPostMode === undefined) {
       setPostMode(!isPostMode);
@@ -157,6 +167,7 @@ export default function useEditorForm({ id }: EditorFormType) {
     setLoading(false);
     setThumbnailUrl(null);
     setSummary('');
+    setSelectedUsers([]);
   }
 
   return {
