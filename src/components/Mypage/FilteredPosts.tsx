@@ -23,11 +23,11 @@ function FilteredPosts({ userId }: Props) {
         loading={isLoading}
         active
         paragraph={{ rows: 10 }}
-        style={{ width: '800px', margin: '0 auto' }}
+        style={{ width: '600px', margin: '0 auto' }}
       >
         {data?.pages.map((posts, idx) => (
           <List
-            style={{ width: '800px', margin: '0 auto' }}
+            style={{ width: '600px', margin: '0 auto' }}
             itemLayout="vertical"
             dataSource={posts}
             loading={isLoading}
