@@ -7,13 +7,15 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   addBookmark,
   addComment,
   addLike,
   addUser,
   fetchComment,
-  fetchFilteredPostsByPage,
+  fetchMyBookmarkPostsByPage,
+  fetchMyPostsByPage,
   fetchPost,
   fetchPosts,
   fetchPostsByPage,
@@ -22,6 +24,7 @@ import {
   removeBookmark,
   removeComment,
   removeLike,
+  removePost,
   updateComment,
   updateUser
 } from '../../supabase';
@@ -39,6 +42,7 @@ import {
 
 const client = new QueryClient();
 
+/* Post */
 export function useQueryPost(postId: string) {
   const { data, error } = useQuery({
     queryKey: POST_QUERY_KEY(postId),
@@ -65,6 +69,27 @@ export function useQueryPosts(option?: string) {
   });
 
   return { posts, error, isLoading, isError, refetchPosts };
+}
+
+export function useRemovePost(postId: string) {
+  const navigate = useNavigate();
+  const { mutate: deletePost } = useMutation({
+    mutationFn: async (likeId: string) => {
+      const result = await removePost(likeId);
+      return result;
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
+      navigate('/');
+    },
+    onError: (error) => {
+      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+    }
+  });
+
+  return {
+    removePost: deletePost
+  };
 }
 
 export function useFilteredPosts(optionKey: string, optionValue: string) {
@@ -95,7 +120,7 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
     queryKey: ['posts', postCategoryFilter],
     queryFn: ({ pageParam }) => fetchPostsByPage(pageParam, postCategoryFilter),
     getNextPageParam: (lastPage, allpages) =>
-      lastPage.length ? allpages.length + 1 : undefined,
+      lastPage.length ? allpages.length : undefined,
     initialPageParam: 0
   });
   return {
@@ -108,10 +133,7 @@ export function useQueryPostsByPage(postCategoryFilter: CategoryType[]) {
   };
 }
 
-export function useQueryFilteredPostsByPage(
-  filterKey: string,
-  filterValue: string
-) {
+export function useQueryMYPostsByPage(userId: string) {
   const {
     data,
     fetchNextPage,
@@ -120,13 +142,12 @@ export function useQueryFilteredPostsByPage(
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ['posts', filterKey],
+    queryKey: ['posts'],
     queryFn: ({ pageParam }) => {
-      console.log('queryFn : ', pageParam);
-      return fetchFilteredPostsByPage(pageParam, filterKey, filterValue);
+      return fetchMyPostsByPage(pageParam, userId); //이것만 다름
     },
     getNextPageParam: (lastPage, allpages) =>
-      lastPage.length ? allpages.length + 1 : undefined,
+      lastPage.length ? allpages.length : undefined,
     initialPageParam: 0
   });
   return {
@@ -139,14 +160,34 @@ export function useQueryFilteredPostsByPage(
   };
 }
 
-export function useQueryComment(postId: string) {
-  const { data: comments, error } = useQuery({
-    queryKey: COMMENT_QUERY_KEY(postId),
-    queryFn: ({ queryKey }) => fetchComment(queryKey[1])
+export function useQueryBookmarkPostsByPage(userId: string) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['posts'], //쿼리키는 뭘줘야함..?
+    queryFn: ({ pageParam }) => {
+      return fetchMyBookmarkPostsByPage(pageParam, userId); //이것만 다름
+    },
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length : undefined,
+    initialPageParam: 0
   });
-  return { comments, error };
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
 }
 
+/* User */
 export function useQueryUser(userId: string) {
   const {
     data: user,
@@ -191,6 +232,14 @@ export function useUpdateUser(userId: string) {
 }
 
 /* Comment */
+export function useQueryComment(postId: string) {
+  const { data: comments, error } = useQuery({
+    queryKey: COMMENT_QUERY_KEY(postId),
+    queryFn: ({ queryKey }) => fetchComment(queryKey[1])
+  });
+  return { comments, error };
+}
+
 export function useAddComment(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (newComment: Omit<TablesInsert<'comments'>, 'postId'>) =>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQueryMYPostsByPage } from '../../hooks/query/useSupabase';
+import { useQueryBookmarkPostsByPage } from '../../hooks/query/useSupabase';
 import { List, Skeleton } from 'antd';
 import Post from '../homepage/Post';
 
@@ -7,7 +7,7 @@ interface Props {
   userId: string;
 }
 
-function FilteredPosts({ userId }: Props) {
+function FilteredBookmarkPosts({ userId }: Props) {
   const {
     data,
     fetchNextPage,
@@ -15,7 +15,7 @@ function FilteredPosts({ userId }: Props) {
     isFetchingNextPage,
     isLoading,
     isError
-  } = useQueryMYPostsByPage(userId); // 여기랑
+  } = useQueryBookmarkPostsByPage(userId); // 여기랑
 
   return (
     <div>
@@ -32,7 +32,7 @@ function FilteredPosts({ userId }: Props) {
             dataSource={posts}
             loading={isLoading}
             size="large"
-            renderItem={(post) => <Post post={post} key={idx} />} //여기만 다름
+            renderItem={(item) => <Post post={item.posts} key={idx} />} //여기만 다름
             key={idx}
           />
         ))}
@@ -51,4 +51,4 @@ function FilteredPosts({ userId }: Props) {
   );
 }
 
-export default FilteredPosts;
+export default FilteredBookmarkPosts;
