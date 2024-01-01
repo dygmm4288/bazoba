@@ -6,13 +6,15 @@ import {
   useQueryPost,
   useQueryUser,
   useRemoveBookmark,
-  useRemoveLike
+  useRemoveLike,
+  useRemovePost
 } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
 import { IoIosHeart, IoIosHeartDislike } from 'react-icons/io';
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6';
-import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
+import styled from 'styled-components';
 
 interface DetailActionsProps {
   id: string;
@@ -20,10 +22,13 @@ interface DetailActionsProps {
 
 function DetailActions({ id }: DetailActionsProps) {
   const { post } = useQueryPost(id);
+  const { removePost } = useRemovePost(id);
   const { addLike } = useAddLike(id);
   const { removeLike } = useRemoveLike(id);
   const { addBookmark } = useAddBookmark(id);
   const { removeBookmark } = useRemoveBookmark(id);
+
+  const navigate = useNavigate();
 
   const [isLiked, setLiked] = useState(false);
   const [isBookmarked, setBookmarked] = useState(false);
@@ -33,7 +38,6 @@ function DetailActions({ id }: DetailActionsProps) {
   const { user } = useQueryUser(userId);
   const isLogin = !!userLoginState;
 
-  // ? : 서버에서 모든 데이터를 가져오는 것이 아닌 데이터는 필요한 부분만 가져오고 (여기에서는 좋아요, 북마크 카운트.) 현재 유저가 좋아요를 눌렀는지, 북마크를 눌렀는지도 서버에서 확인하는 것이 낫지 않나?
   useEffect(() => {
     if (post?.likes && user) {
       const userLiked = post.likes.some((like) => like.userId === user.id);
@@ -94,25 +98,62 @@ function DetailActions({ id }: DetailActionsProps) {
     message.info('내 북마크에 추가되었습니다.');
   };
 
+  const handleDeletePost = () => {
+    if (user && post && user.id === post.author) {
+      const confirmDelete = window.confirm(
+        '정말 이 게시물을 삭제하시겠습니까?'
+      );
+      if (confirmDelete) {
+        removePost(id);
+      }
+    } else {
+      alert('삭제할 수 있는 권한이 없습니다.');
+    }
+  };
+
+  const handleNavigateToEditor = (id: string) => {
+    navigate(`/write/${id}`);
+  };
+
   return (
     <ActionButtonsContainer>
-      <StLikeButton onClick={handleClickLike} disabled={!userLoginState}>
-        {isLiked ? <StHeartDislike /> : <StHeartLike />}
-      </StLikeButton>
-      {!userLoginState && <span>로그인 후에 좋아요를 누르실 수 있습니다.</span>}
+      <PostEditDeleteWrapper>
+        {user && post && user.id === post.author && (
+          <PostEditButton onClick={() => handleNavigateToEditor(id)}>
+            수정하기
+          </PostEditButton>
+        )}
+        {user && post && user.id === post.author && (
+          <PostDeleteButton
+            onClick={handleDeletePost}
+            disabled={!userLoginState}
+          >
+            게시물 삭제
+          </PostDeleteButton>
+        )}
+      </PostEditDeleteWrapper>
+      <div>
+        <StLikeButton onClick={handleClickLike} disabled={!userLoginState}>
+          {isLiked ? <StHeartDislike /> : <StHeartLike />}
+        </StLikeButton>
+        {!userLoginState && (
+          <span>로그인 후에 좋아요를 누르실 수 있습니다.</span>
+        )}
 
-      <StBookmarkButton
-        onClick={handleClickBookmark}
-        disabled={!userLoginState}
-      >
-        {isBookmarked ? <StDisBookmark /> : <StBookmark />}
-      </StBookmarkButton>
-      {!userLoginState && (
-        <span>로그인 후에 북마크를 사용 할 수 있습니다.</span>
-      )}
+        <StBookmarkButton
+          onClick={handleClickBookmark}
+          disabled={!userLoginState}
+        >
+          {isBookmarked ? <StDisBookmark /> : <StBookmark />}
+        </StBookmarkButton>
+        {!userLoginState && (
+          <span>로그인 후에 북마크를 사용 할 수 있습니다.</span>
+        )}
+      </div>
     </ActionButtonsContainer>
   );
 }
+
 export default DetailActions;
 
 const StLikeButton = styled.button`
@@ -123,12 +164,22 @@ const StHeartDislike = styled(IoIosHeartDislike)`
   font-size: 40px;
   cursor: pointer;
   color: #f70d1a;
+  transition: color 0.3s ease;
+  &:hover {
+    color: #ff5c62;
+    transform: scale(1.05);
+  }
 `;
 
 const StHeartLike = styled(IoIosHeart)`
   font-size: 40px;
   cursor: pointer;
   color: #f70d1a;
+  transition: color 0.3s ease;
+  &:hover {
+    color: #ff5c62;
+    transform: scale(1.05);
+  }
 `;
 
 const StBookmarkButton = styled.button`
@@ -136,21 +187,65 @@ const StBookmarkButton = styled.button`
 `;
 
 const StBookmark = styled(FaRegBookmark)`
-  font-size: 30px;
+  font-size: 35px;
   cursor: pointer;
   color: #6c2dc7;
+  transition: color 0.3s ease;
+  &:hover {
+    color: #8e44ad;
+    transform: scale(1.05);
+  }
 `;
 
 const StDisBookmark = styled(FaBookmark)`
-  font-size: 30px;
+  font-size: 35px;
   cursor: pointer;
   color: #6c2dc7;
+  transition: color 0.3s ease;
+  &:hover {
+    color: #8e44ad;
+    transform: scale(1.05);
+  }
+`;
+
+const PostEditDeleteWrapper = styled.div``;
+
+const PostDeleteButton = styled.button`
+  border: none;
+  background-color: #ff4d4f;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+
+  &:hover {
+    background-color: #ff6666;
+    transform: scale(1.05);
+  }
+`;
+const PostEditButton = styled.button`
+  border: none;
+  background-color: #3498db;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+
+  &:hover {
+    background-color: #45aaf2;
+    transform: scale(1.05);
+  }
 `;
 
 const ActionButtonsContainer = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   margin-top: 10px;
-  gap: 10px;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  width: 100%;
 `;
