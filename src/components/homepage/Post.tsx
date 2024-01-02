@@ -114,7 +114,7 @@ const Post = ({ id }: Props) => {
           }
         >
           <StBookmarkButton onClick={handleClickBookmark}>
-            {isBookmarked ? <StBookmark /> : <StDisBookmark />}
+            {isBookmarked ? <StDisBookmark /> : <StBookmark />}
           </StBookmarkButton>
           <Meta
             title={user?.nickname!}
