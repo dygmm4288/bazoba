@@ -17,6 +17,7 @@ import {
   fetchComment,
   fetchMyBookmarkPostsByPage,
   fetchMyPostsByPage,
+  fetchMyProjectByPage,
   fetchNotifications,
   fetchPost,
   fetchPosts,
@@ -145,7 +146,7 @@ export function useQueryMYPostsByPage(userId: string) {
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ['posts'],
+    queryKey: ['my-posts'],
     queryFn: ({ pageParam }) => {
       return fetchMyPostsByPage(pageParam, userId); //이것만 다름
     },
@@ -172,9 +173,37 @@ export function useQueryBookmarkPostsByPage(userId: string) {
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ['posts'], //쿼리키는 뭘줘야함..?
+    queryKey: ['bookmark-posts'],
     queryFn: ({ pageParam }) => {
+      console.log(pageParam);
       return fetchMyBookmarkPostsByPage(pageParam, userId); //이것만 다름
+    },
+    getNextPageParam: (lastPage, allpages) =>
+      lastPage.length ? allpages.length : undefined,
+    initialPageParam: 0
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  };
+}
+
+export function useQueryMyProjectsByPage(userId: string) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
+    queryKey: ['cowork-posts'],
+    queryFn: ({ pageParam }) => {
+      return fetchMyProjectByPage(pageParam, userId); //이것만 다름
     },
     getNextPageParam: (lastPage, allpages) =>
       lastPage.length ? allpages.length : undefined,

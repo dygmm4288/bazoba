@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useQueryMYPostsByPage } from '../../hooks/query/useSupabase';
+import { useQueryMyProjectsByPage } from '../../hooks/query/useSupabase';
 import { List, Skeleton } from 'antd';
 import Post from '../homepage/Post';
 
@@ -7,9 +7,10 @@ interface Props {
   userId: string;
 }
 
-function FilteredPosts({ userId }: Props) {
+function FilteredProjects({ userId }: Props) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useQueryMYPostsByPage(userId); // 여기랑
+    useQueryMyProjectsByPage(userId); // 여기랑
+
   const observer = new IntersectionObserver(
     (entries) => {
       if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -44,7 +45,7 @@ function FilteredPosts({ userId }: Props) {
             dataSource={posts}
             loading={isLoading}
             size="large"
-            renderItem={(post) => <Post post={post} key={idx} />} //여기만 다름
+            renderItem={(post) => <Post post={post.posts} key={idx} />} //여기만 다름
             key={idx}
           />
         ))}
@@ -54,4 +55,4 @@ function FilteredPosts({ userId }: Props) {
   );
 }
 
-export default FilteredPosts;
+export default FilteredProjects;
