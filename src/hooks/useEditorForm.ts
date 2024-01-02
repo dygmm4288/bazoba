@@ -1,5 +1,6 @@
 import { Editor } from '@toast-ui/react-editor';
 import { message } from 'antd';
+import { assoc } from 'ramda';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -17,7 +18,7 @@ import {
 import {
   addCoAuthor,
   addPost,
-  updateCoAuthor,
+  removeCoAuthor,
   updatePost,
   uploadImage
 } from '../supabase';
@@ -100,8 +101,9 @@ export default function useEditorForm({ id }: EditorFormType) {
         return;
       }
 
-      const postAction = post?.id ? addPost : updatePost;
-      const coAuthorAction = post?.id ? addCoAuthor : updateCoAuthor;
+      const postAction = !!!post?.id ? addPost : updatePost;
+      const assocId = post?.id ? assoc('id', post?.id) : (a: any) => a;
+
       const newPost: TablesInsert<'posts'> = {
         author: auth.id,
         category,
@@ -109,25 +111,27 @@ export default function useEditorForm({ id }: EditorFormType) {
         title,
         email: auth.email,
         summary: summary || extractText(contents).slice(0, 150),
-        thumbnail_url: thumbnailUrl || getDefaultImage(category)!,
-        id: post?.id
+        thumbnail_url: thumbnailUrl || getDefaultImage(category)!
       };
 
       try {
-        const post = await postAction(newPost);
+        const newPostResponse = await postAction(assocId(newPost));
         const currentAuthor = {
           id: auth.id,
           avatar_url: auth.user_metadata.avatar_url,
           nickname: auth.user_metadata?.nickname || '',
           email: auth.email
         };
+
         const newCoAuthors = addUniqItemById(selectedUsers, currentAuthor).map(
           (user) => ({
-            postId: post.id,
+            postId: newPostResponse.id,
             userId: user.id
           })
         );
-        await coAuthorAction(newCoAuthors);
+
+        await syncCoAuthor(newCoAuthors, post?.id);
+
         initializeEditorState();
         navigate('/');
       } catch (error) {
@@ -189,4 +193,17 @@ export default function useEditorForm({ id }: EditorFormType) {
     handleTogglePostMode,
     handleAction
   };
+}
+
+async function syncCoAuthor(
+  newCoAuthors: TablesInsert<'co_authors'>[],
+  postId?: string
+) {
+  console.log('here');
+  if (postId) {
+    console.log(postId);
+    await removeCoAuthor(postId);
+  }
+  console.log(newCoAuthors);
+  await addCoAuthor(newCoAuthors);
 }

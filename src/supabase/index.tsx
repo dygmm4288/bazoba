@@ -161,6 +161,10 @@ export const removeLike = remove('likes');
 export const removeBookmark = remove('bookmarks');
 export const removeComment = remove('comments');
 
+export const removeCoAuthor = async (postId: string) => {
+  return await db.from('co_authors').delete().eq('postId', postId);
+};
+
 /* Update */
 export const update =
   (from: TableKeys) => async (data: TablesUpdate<TableKeys>) => {
