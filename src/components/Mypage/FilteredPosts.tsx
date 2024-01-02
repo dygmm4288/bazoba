@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useQueryMYPostsByPage } from '../../hooks/query/useSupabase';
 import { List, Skeleton } from 'antd';
 import Post from '../homepage/Post';
@@ -8,14 +8,27 @@ interface Props {
 }
 
 function FilteredPosts({ userId }: Props) {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError
-  } = useQueryMYPostsByPage(userId); // 여기랑
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useQueryMYPostsByPage(userId); // 여기랑
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    { threshold: 1 }
+  );
+
+  const anchorRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (anchorRef.current) {
+      // console.log(anchorRef.current);
+      observer.observe(anchorRef.current);
+    }
+    return () => observer.disconnect();
+  }, [anchorRef.current, observer]);
 
   return (
     <div>
@@ -23,7 +36,7 @@ function FilteredPosts({ userId }: Props) {
         loading={isLoading}
         active
         paragraph={{ rows: 10 }}
-        style={{ width: '600px', margin: '0 auto' }}
+        style={{ width: '1200px', margin: '0 auto' }}
       >
         {data?.pages.map((posts, idx) => (
           <List
@@ -36,16 +49,7 @@ function FilteredPosts({ userId }: Props) {
             key={idx}
           />
         ))}
-        <button
-          onClick={() => fetchNextPage()}
-          disabled={!hasNextPage || isFetchingNextPage}
-        >
-          {isFetchingNextPage
-            ? '불러오는 중...'
-            : hasNextPage
-            ? '더 보기'
-            : '더 불러올 문서가 없습니다'}
-        </button>
+        <div id="scroll-anchor" ref={anchorRef} />
       </Skeleton>
     </div>
   );
