@@ -61,8 +61,8 @@ function DetailContent({ id }: DetailContentProps) {
           </div>
 
           {/* TODO Cannot read properties of undefined -> reading user */}
-          {coAuthorsAvatars.length > 0 && (
-            <div>
+          {post.co_authors && coAuthorsAvatars.length > 0 && (
+            <StCoAuthorWrapper>
               <h2>Project Members</h2>
 
               <Avatar.Group>
@@ -79,7 +79,7 @@ function DetailContent({ id }: DetailContentProps) {
                   </Tooltip>
                 ))}
               </Avatar.Group>
-            </div>
+            </StCoAuthorWrapper>
           )}
           <Category>Category: {post.category}</Category>
           <CreatedDate>{createdDate}</CreatedDate>
@@ -152,6 +152,16 @@ const WritersList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+`;
+
+const StCoAuthorWrapper = styled.div`
+  h2 {
+    font-size: 2rem;
+  }
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: center;
 `;
 
 const CustomAvatar = styled(Avatar)`
