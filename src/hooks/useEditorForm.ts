@@ -199,11 +199,8 @@ async function syncCoAuthor(
   newCoAuthors: TablesInsert<'co_authors'>[],
   postId?: string
 ) {
-  console.log('here');
   if (postId) {
-    console.log(postId);
     await removeCoAuthor(postId);
   }
-  console.log(newCoAuthors);
   await addCoAuthor(newCoAuthors);
 }
