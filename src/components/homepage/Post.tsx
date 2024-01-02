@@ -138,6 +138,7 @@ const Post = ({ id }: Props) => {
     </List.Item>
   );
 };
+const err = (e: never) => {};
 export const getStyleByCategory = (category: CategoryType) => {
   const style = {
     fontWeight: '700',
@@ -160,7 +161,10 @@ export const getStyleByCategory = (category: CategoryType) => {
       return { ...style, backgroundColor: '#6443d0' };
     case 'UNITY':
       return { ...style, backgroundColor: '#0e2230' };
+    case 'ETC':
+      return { ...style, backgroundColor: '#3b8c79' };
     default:
+      err(category);
       break;
   }
 };

@@ -131,48 +131,60 @@ function DetailActions({ id }: DetailActionsProps) {
 
   const handleDeletePost = () => {
     if (user && post && user.id === post.author) {
-      const confirmDelete = window.confirm(
-        '정말 이 게시물을 삭제하시겠습니까?'
-      );
-      if (confirmDelete) {
-        removePost(id);
-      }
+      Modal.confirm({
+        title: '게시물 삭제',
+        content: '정말 이 게시물을 삭제하시겠습니까?',
+        onOk() {
+          removePost(id);
+        },
+        onCancel() {}
+      });
     } else {
-      alert('삭제할 수 있는 권한이 없습니다.');
+      Modal.error({
+        title: '권한 없음',
+        content: '삭제할 수 있는 권한이 없습니다.'
+      });
     }
   };
-
   const handleNavigateToEditor = (id: string) => {
     navigate(`/write/${id}`);
   };
 
   return (
-    <ActionButtonsContainer>
-      <div>
-        {user && post && user.id === post.author && (
-          <PostEditButton onClick={() => handleNavigateToEditor(id)}>
-            수정하기
-          </PostEditButton>
-        )}
-        {user && post && user.id === post.author && (
-          <PostDeleteButton
-            onClick={handleDeletePost}
-            disabled={!userLoginState}
-          >
-            게시물 삭제
-          </PostDeleteButton>
-        )}
-      </div>
-      <ButtonSection>
-        <StLikeButton onClick={handleClickLike}>
-          {isLiked ? <StHeartDislike /> : <StHeartLike />}
-        </StLikeButton>
+    <>
+      <ActionButtonsContainer>
+        <div>
+          {user && post && user.id === post.author && (
+            <PostEditButton onClick={() => handleNavigateToEditor(id)}>
+              수정하기
+            </PostEditButton>
+          )}
+          {user && post && user.id === post.author && (
+            <PostDeleteButton
+              onClick={handleDeletePost}
+              disabled={!userLoginState}
+            >
+              게시물 삭제
+            </PostDeleteButton>
+          )}
+        </div>
+        <ButtonSection>
+          <StLikeButton onClick={handleClickLike}>
+            {isLiked ? <StHeartDislike /> : <StHeartLike />}
+          </StLikeButton>
 
-        <StBookmarkButton onClick={handleClickBookmark}>
-          {isBookmarked ? <StDisBookmark /> : <StBookmark />}
-        </StBookmarkButton>
-      </ButtonSection>
-    </ActionButtonsContainer>
+          <StBookmarkButton onClick={handleClickBookmark}>
+            {isBookmarked ? <StDisBookmark /> : <StBookmark />}
+          </StBookmarkButton>
+        </ButtonSection>
+      </ActionButtonsContainer>
+      <div>
+        <LikesCount>좋아요: {post?.likes ? post.likes.length : 0}개</LikesCount>
+        <BookmarksCount>
+          북마크: {post?.bookmarks ? post.bookmarks.length : 0}개
+        </BookmarksCount>
+      </div>
+    </>
   );
 }
 
@@ -274,4 +286,12 @@ const ActionButtonsContainer = styled.div`
   margin: 0 auto;
   margin-bottom: 20px;
   width: 100%;
+`;
+
+const LikesCount = styled.p`
+  font-size: 20px;
+`;
+
+const BookmarksCount = styled.p`
+  font-size: 20px;
 `;
