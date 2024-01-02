@@ -127,7 +127,8 @@ export const fetchNotifications = async (id: string) => {
   const { data, error } = await db
     .from('notifications')
     .select('*')
-    .eq('recipientUserId', id);
+    .eq('recipientUserId', id)
+    .order('created_at', { ascending: false });
   if (error) return Promise.reject(error);
   return data;
 };
@@ -201,6 +202,7 @@ export const uploadUserImage = async (subUrl: string, file: File) => {
   return { data: BASE_URL + data?.path, error };
 };
 
+/* Realtime */
 export const handleNotification = (callback: Function) => {
   db.channel('notifications')
     .on(

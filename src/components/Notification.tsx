@@ -1,62 +1,24 @@
-import { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
-import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import styled from 'styled-components';
-import { useQueryNotifications } from '../hooks/query/useSupabase';
-import { loginState } from '../recoil/auth';
-import { notificationListState } from '../recoil/notification';
-import { db, handleNotification } from '../supabase';
+import { useNavigate } from 'react-router-dom';
+import { useRemoveNotification } from '../hooks/query/useSupabase';
 import { NotificationType } from '../supabase/supabase.types';
 
-const Notification = () => {
-  const auth = useRecoilValue(loginState);
-  const [notificationList, setNotificationList] = useRecoilState(
-    notificationListState
-  );
-  const { notifications, isLoading, isError } = useQueryNotifications(
-    auth?.id!
-  );
+interface Props {
+  notification: NotificationType;
+}
 
-  useEffect(() => {
-    if (notifications && !isLoading && !isError) {
-      setNotificationList((oldList) => [...notifications, ...oldList]);
-    }
-
-    return () => {
-      db.removeAllChannels();
-    };
-  }, []);
-
-  handleNotification(
-    (payload: RealtimePostgresInsertPayload<NotificationType>) => {
-      console.log(payload);
-      const newItem = payload.new;
-      setNotificationList((oldList) => [newItem, ...oldList]);
-    }
-  );
-
-  console.log(notificationList);
+const Notification = ({ notification }: Props) => {
+  const navigate = useNavigate();
+  const { removeNotification } = useRemoveNotification(notification.id);
+  const onNotificationClickHandler = (postId: string) => {
+    removeNotification(notification.id);
+    navigate(`/detail/${postId}`);
+  };
 
   return (
-    <StNotificationList>
-      {notificationList.map((item) => (
-        <li key={item.id}>
-          {item.actionUserNickname} + {item.postId}
-        </li>
-      ))}
-    </StNotificationList>
+    <div onClick={() => onNotificationClickHandler(notification.postId)}>
+      {notification.actionUserNickname} 님이 {notification.type} 을 남겼습니다
+    </div>
   );
 };
 
 export default Notification;
-
-const StNotificationList = styled.ul`
-  position: absolute;
-  top: 0%;
-  left: 50%;
-  background-color: #eee;
-
-  li {
-    height: 24px;
-  }
-`;

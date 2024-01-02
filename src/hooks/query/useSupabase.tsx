@@ -26,6 +26,7 @@ import {
   removeBookmark,
   removeComment,
   removeLike,
+  removeNotification,
   removePost,
   updateComment,
   updateUser
@@ -369,14 +370,14 @@ export function useQueryNotifications(id: string) {
   const {
     data: notifications,
     isLoading,
-    isError
+    isError,
+    refetch
   } = useQuery({
     queryKey: NOTIFICATION_QUERY_KEY(id),
     queryFn: () => fetchNotifications(id),
-    enabled: !!id,
-    staleTime: Infinity
+    enabled: !!id
   });
-  return { notifications, isLoading, isError };
+  return { notifications, isLoading, isError, refetch };
 }
 
 export function useAddNotification(id: string) {
@@ -397,7 +398,23 @@ export function useAddNotification(id: string) {
   };
 }
 
-export function useRemoveNotification() {}
+export function useRemoveNotification(id: string) {
+  const { mutate: deleteNotification } = useMutation({
+    mutationFn: async (id: string) => {
+      const result = await removeNotification(id);
+      return result;
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEY(id) });
+    },
+    onError: (error) => {
+      console.error(error);
+    }
+  });
+  return {
+    removeNotification: deleteNotification
+  };
+}
 
 export function SupabaseQueryProvider({ children }: PropsWithChildren) {
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;

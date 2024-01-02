@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { useQueryUser } from '../hooks/query/useSupabase';
 import { loginState } from '../recoil/auth';
-import Notification from './Notification';
+import Notification from './NotificationList';
 
 export default function AuthTest() {
   const isLogin = useRecoilValue(loginState);
@@ -28,12 +28,12 @@ export default function AuthTest() {
               children={<StLink to="/write"> 내 프로젝트 게시하기 </StLink>}
             />
           )}
+          {isLogin && <Notification />}
           {isLogin && (
             <StUserAvatarLink $avatarUrl={user?.avatar_url!} to="/mypage">
               My Page
             </StUserAvatarLink>
           )}
-          {isLogin && <Notification />}
         </Space>
       </StHeader>
       <StContent>
