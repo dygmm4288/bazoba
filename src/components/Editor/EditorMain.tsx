@@ -2,6 +2,7 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { HookCallback } from '@toast-ui/editor/types/editor';
 import { Editor } from '@toast-ui/react-editor';
 import { Content } from 'antd/es/layout/layout';
+import styled from 'styled-components';
 import { EditorRefType } from '../../hooks/useEditorForm';
 import { uploadImage } from '../../supabase';
 
@@ -21,15 +22,23 @@ export default function EditorMain({ editorRef }: Props) {
 
   return (
     <Content style={{ margin: 0 }}>
-      <Editor
-        initialEditType="wysiwyg"
-        hideModeSwitch={true}
-        ref={editorRef}
-        height={'80vh'}
-        hooks={{
-          addImageBlobHook: handleImageUpload
-        }}
-      />
+      <StCustomEditorWrapper>
+        <Editor
+          initialEditType="wysiwyg"
+          hideModeSwitch={true}
+          ref={editorRef}
+          height={'80vh'}
+          hooks={{
+            addImageBlobHook: handleImageUpload
+          }}
+        />
+      </StCustomEditorWrapper>
     </Content>
   );
 }
+const IMG_MAX_PIXEL = '1200px';
+const StCustomEditorWrapper = styled.div`
+  img {
+    max-width: ${IMG_MAX_PIXEL};
+  }
+`;

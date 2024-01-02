@@ -52,7 +52,7 @@ export default function EditorPost({
   };
 
   return (
-    <Flex vertical gap="large">
+    <Flex vertical gap="large" style={{ color: 'white' }}>
       <StInputWrapper>
         <input
           type="file"
