@@ -14,6 +14,7 @@ interface DetailFormContentProps {
 function DetailFormComment({ id }: DetailFormContentProps) {
   const [commentContent, setCommentContent] = useState('');
   const [commentType, setCommentType] = useState('0');
+
   const { addComment } = useAddComment(id);
 
   const userLoginState = useRecoilValue(loginState);
@@ -21,6 +22,11 @@ function DetailFormComment({ id }: DetailFormContentProps) {
   const { user } = useQueryUser(userId);
 
   const { TextArea } = Input;
+
+  const commentTypeLabels: Record<string, string> = {
+    '0': '댓글 작성하기',
+    '1': '코멘트 리뷰 작성하기'
+  };
 
   const handleAddComment = () => {
     if (commentContent.trim() === '') {
@@ -50,7 +56,7 @@ function DetailFormComment({ id }: DetailFormContentProps) {
 
   return (
     <CommentFormContainer>
-      <h2>댓글 작성하기</h2>
+      <h2>{commentTypeLabels[commentType]}</h2>
       <Flex vertical gap={32}>
         <TextArea
           showCount
@@ -59,7 +65,9 @@ function DetailFormComment({ id }: DetailFormContentProps) {
           maxLength={100}
           onChange={(e) => setCommentContent(e.target.value)}
           placeholder={
-            '내용을 입력해 주세요.\n댓글을 입력하려면 로그인해 주세요.'
+            isDisabled
+              ? '댓글을 입력하려면 로그인해 주세요.'
+              : '내용을 입력해 주세요.'
           }
           disabled={isDisabled}
         />
@@ -108,15 +116,15 @@ const CommentTypeSelect = styled.select`
 const CommentSubmitButton = styled.button`
   padding: 8px 16px;
   border-radius: 5px;
-  background-color: #5f85bb;
-  color: white;
+  background-color: ${({ disabled }) => (disabled ? '#ccc' : '#5f85bb')};
+  color: ${({ disabled }) => (disabled ? '#666' : 'white')};
   border: none;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #436094;
-    transform: scale(1.05);
+    background-color: ${({ disabled }) => (disabled ? '#ccc' : '#436094')};
+    transform: ${({ disabled }) => (disabled ? 'none' : 'scale(1.05)')};
   }
 `;
 

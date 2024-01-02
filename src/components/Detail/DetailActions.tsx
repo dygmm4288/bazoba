@@ -10,10 +10,10 @@ import {
   useRemovePost
 } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
-import { IoIosHeart, IoIosHeartDislike } from 'react-icons/io';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import styled from 'styled-components';
 
 interface DetailActionsProps {
@@ -54,8 +54,18 @@ function DetailActions({ id }: DetailActionsProps) {
 
   const handleClickLike = () => {
     if (!user) {
-      // TODO : 로그인 페이지로 이동하겠냐는 메시지가 있으면 좋겠다.
-      alert('사용자가 로그인되지 않았습니다.');
+      Modal.confirm({
+        title: '로그인 필요',
+        content: (
+          <div>
+            <span>로그인 후에 좋아요를 누르실 수 있습니다.</span>
+            <p>로그인 페이지로 이동하시겠습니까?</p>
+          </div>
+        ),
+        onOk: () => {
+          navigate('/login');
+        }
+      });
       return;
     }
 
@@ -77,8 +87,18 @@ function DetailActions({ id }: DetailActionsProps) {
 
   const handleClickBookmark = () => {
     if (!user) {
-      // TODO : 로그인 페이지로 이동하겠냐는 메시지가 있으면 좋겠다.
-      alert('사용자가 로그인되지 않았습니다.');
+      Modal.confirm({
+        title: '로그인 필요',
+        content: (
+          <div>
+            <span>로그인 후에 북마크기능을 사용하실 수 있습니다.</span>
+            <p>로그인 페이지로 이동하시겠습니까?</p>
+          </div>
+        ),
+        onOk: () => {
+          navigate('/login');
+        }
+      });
       return;
     }
 
@@ -117,7 +137,7 @@ function DetailActions({ id }: DetailActionsProps) {
 
   return (
     <ActionButtonsContainer>
-      <PostEditDeleteWrapper>
+      <div>
         {user && post && user.id === post.author && (
           <PostEditButton onClick={() => handleNavigateToEditor(id)}>
             수정하기
@@ -131,25 +151,16 @@ function DetailActions({ id }: DetailActionsProps) {
             게시물 삭제
           </PostDeleteButton>
         )}
-      </PostEditDeleteWrapper>
-      <div>
-        <StLikeButton onClick={handleClickLike} disabled={!userLoginState}>
+      </div>
+      <ButtonSection>
+        <StLikeButton onClick={handleClickLike}>
           {isLiked ? <StHeartDislike /> : <StHeartLike />}
         </StLikeButton>
-        {!userLoginState && (
-          <span>로그인 후에 좋아요를 누르실 수 있습니다.</span>
-        )}
 
-        <StBookmarkButton
-          onClick={handleClickBookmark}
-          disabled={!userLoginState}
-        >
+        <StBookmarkButton onClick={handleClickBookmark}>
           {isBookmarked ? <StDisBookmark /> : <StBookmark />}
         </StBookmarkButton>
-        {!userLoginState && (
-          <span>로그인 후에 북마크를 사용 할 수 있습니다.</span>
-        )}
-      </div>
+      </ButtonSection>
     </ActionButtonsContainer>
   );
 }
@@ -160,8 +171,8 @@ const StLikeButton = styled.button`
   border: none;
 `;
 
-const StHeartDislike = styled(IoIosHeartDislike)`
-  font-size: 40px;
+const StHeartDislike = styled(FaHeart)`
+  font-size: 35px;
   cursor: pointer;
   color: #f70d1a;
   transition: color 0.3s ease;
@@ -171,8 +182,8 @@ const StHeartDislike = styled(IoIosHeartDislike)`
   }
 `;
 
-const StHeartLike = styled(IoIosHeart)`
-  font-size: 40px;
+const StHeartLike = styled(FaRegHeart)`
+  font-size: 35px;
   cursor: pointer;
   color: #f70d1a;
   transition: color 0.3s ease;
@@ -208,7 +219,11 @@ const StDisBookmark = styled(FaBookmark)`
   }
 `;
 
-const PostEditDeleteWrapper = styled.div``;
+const ButtonSection = styled.div`
+  button {
+    background-color: #fff;
+  }
+`;
 
 const PostDeleteButton = styled.button`
   border: none;
