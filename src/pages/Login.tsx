@@ -10,6 +10,10 @@ export default function Login() {
         supabaseClient={db}
         appearance={{ theme: ThemeSupa }}
         providers={['google', 'github']}
+        queryParams={{
+          access_type: 'offline',
+          prompt: 'consent'
+        }}
       />
     </LoginContainer>
   );
