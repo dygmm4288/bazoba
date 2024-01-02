@@ -1,10 +1,15 @@
+import { Flex, Input } from 'antd';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useAddComment, useQueryUser } from '../../hooks/query/useSupabase';
-import { loginState } from '../../recoil/auth';
-import { Flex, Input } from 'antd';
 import styled from 'styled-components';
+import {
+  useAddComment,
+  useQueryPost,
+  useQueryUser
+} from '../../hooks/query/useSupabase';
+import { loginState } from '../../recoil/auth';
 
+import { addNotification } from '../../supabase';
 import type { TablesInsert } from '../../supabase/supabaseSchema.types';
 
 interface DetailFormContentProps {
@@ -16,6 +21,7 @@ function DetailFormComment({ id }: DetailFormContentProps) {
   const [commentType, setCommentType] = useState('0');
 
   const { addComment } = useAddComment(id);
+  const { post } = useQueryPost(id);
 
   const userLoginState = useRecoilValue(loginState);
   const userId = userLoginState?.id || '';
@@ -46,8 +52,15 @@ function DetailFormComment({ id }: DetailFormContentProps) {
       nickname: user.nickname,
       avatar_url: user.avatar_url
     };
+    const newNotification: TablesInsert<'notifications'> = {
+      actionUserNickname: user.nickname,
+      recipientUserId: post?.author!,
+      type: commentType === '0' ? 'comment' : 'review',
+      postId: post?.id
+    };
 
     addComment(newComment);
+    addNotification(newNotification);
     setCommentContent('');
     setCommentType('0');
   };

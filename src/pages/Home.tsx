@@ -1,3 +1,4 @@
+import { FloatButton } from 'antd';
 import CarouselWrapper from '../components/homepage/CarouselWrapper';
 import FilterPost from '../components/homepage/FilterPost';
 import PostList from '../components/homepage/PostList';
@@ -8,6 +9,7 @@ const Home = () => {
       <CarouselWrapper />
       <FilterPost />
       <PostList />
+      <FloatButton.BackTop />
     </>
   );
 };

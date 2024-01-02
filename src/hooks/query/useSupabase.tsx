@@ -12,11 +12,13 @@ import {
   addBookmark,
   addComment,
   addLike,
+  addNotification,
   addUser,
   fetchComment,
   fetchMyBookmarkPostsByPage,
   fetchMyPostsByPage,
   fetchMyProjectByPage,
+  fetchNotifications,
   fetchPost,
   fetchPosts,
   fetchPostsByPage,
@@ -25,6 +27,7 @@ import {
   removeBookmark,
   removeComment,
   removeLike,
+  removeNotification,
   removePost,
   updateComment,
   updateUser
@@ -37,6 +40,7 @@ import {
 } from '../../supabase/supabaseSchema.types';
 import {
   COMMENT_QUERY_KEY,
+  NOTIFICATION_QUERY_KEY,
   POST_QUERY_KEY,
   USER_QUERY_KEY
 } from './query.keys';
@@ -385,6 +389,56 @@ export function useRemoveBookmark(postId: string) {
 
   return {
     removeBookmark: deleteBookmark
+  };
+}
+
+/* Notifications */
+
+export function useQueryNotifications(id: string) {
+  const {
+    data: notifications,
+    isLoading,
+    isError
+  } = useQuery({
+    queryKey: NOTIFICATION_QUERY_KEY(id),
+    queryFn: () => fetchNotifications(id)
+  });
+  return { notifications, isLoading, isError };
+}
+
+export function useAddNotification(id: string) {
+  const { mutate: insert } = useMutation({
+    mutationFn: (newNotification: TablesInsert<'notifications'>) =>
+      addNotification(newNotification),
+    onSuccess: () => {
+      client.invalidateQueries({
+        queryKey: NOTIFICATION_QUERY_KEY(id)
+      });
+    },
+    onError: (error) => {
+      console.error('error :', error);
+    }
+  });
+  return {
+    addNotification: insert
+  };
+}
+
+export function useRemoveNotification(id: string) {
+  const { mutate: deleteNotification } = useMutation({
+    mutationFn: async (id: string) => {
+      const result = await removeNotification(id);
+      return result;
+    },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEY(id) });
+    },
+    onError: (error) => {
+      console.error(error);
+    }
+  });
+  return {
+    removeNotification: deleteNotification
   };
 }
 

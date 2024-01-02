@@ -1,6 +1,7 @@
 import { Flex, Input, Select } from 'antd';
 import { ChangeEvent } from 'react';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 import { categoryState, titleState } from '../../recoil/editor';
 import { CategoryType } from '../../supabase/supabase.types';
 
@@ -47,3 +48,7 @@ export default function EditorHeader({ handleCategory, handleTitle }: Props) {
     </Flex>
   );
 }
+
+const StHeaderWrapper = styled.div`
+  width: 100%;
+`;
