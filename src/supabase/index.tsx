@@ -31,20 +31,11 @@ export const fetchComment = async (postId: string) => {
   return data;
 };
 
-export const fetchPosts = async (option?: string) => {
-  if (option) {
-    const { data, error } = await db
-      .from('posts')
-      .select(`*, likes(*), bookmarks(*)`)
-      .eq('category', option);
-    if (error) return Promise.reject(error);
-    return data;
-  }
-
+export const fetchMostLikedPost = async () => {
   const { data, error } = await db
     .from('posts')
-    .select(`*, likes(*), bookmarks(*)`);
-
+    .select(`*, likes(*)`)
+    .order('likes', { ascending: false });
   if (error) return Promise.reject(error);
   return data;
 };
