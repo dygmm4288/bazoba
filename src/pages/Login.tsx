@@ -22,4 +22,8 @@ export default function Login() {
 const LoginContainer = styled.div`
   max-width: 600px;
   margin: auto;
+  height: 100vh;
+  & > * {
+    margin-top: 50%;
+  }
 `;
