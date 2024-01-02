@@ -18,11 +18,12 @@ export default function EditorMentionSearchResult({
 const StMentionResultWrapper = styled.div`
   position: absolute;
   bottom: calc(100% + 1rem);
+  right: 0;
   height: 20rem;
   overflow-y: auto;
   z-index: 20;
   padding: 1rem;
-  min-width: 250px;
+  min-width: 300px;
   background-color: white;
   border-radius: 1rem;
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);

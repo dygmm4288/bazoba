@@ -65,16 +65,23 @@ export default function EditorMention() {
     };
   }, []);
 
+  const isExistsFindedUsers = findedUsers && findedUsers?.length !== 0;
+
   return (
-    <div>
+    <StMentionWrapper>
       <StMentionInputWrapper>
-        <StInput
-          type="text"
-          className="mention-input"
-          onChange={handleChangeSearchValue}
-          value={searchValue}
-          onFocus={() => setShowResult(true)}
-        />
+        <Flex gap="small" align="center">
+          <label htmlFor="mention-input">Contributors</label>
+          <StInput
+            type="text"
+            className="mention-input"
+            id="mention-input"
+            onChange={handleChangeSearchValue}
+            value={searchValue}
+            onFocus={() => setShowResult(true)}
+            placeholder="이메일을 통해 유저를 검색할 수 있습니다!"
+          />
+        </Flex>
         {isShowResult && (
           <EditorMentionSearchResult loading={isFetching}>
             {findedUsers?.map((user) => (
@@ -84,7 +91,7 @@ export default function EditorMention() {
                 handleAddUser={handleAddUser}
               />
             ))}
-            {findedUsers?.length === 0 && (
+            {!isExistsFindedUsers && (
               <Flex
                 vertical={false}
                 gap="small"
@@ -113,15 +120,20 @@ export default function EditorMention() {
           </StMentionSelectedUserWrapper>
         ))}
       </StMentionSelectedUserContainer>
-    </div>
+    </StMentionWrapper>
   );
 }
+const StMentionWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
 const StMentionInputWrapper = styled.div`
   position: relative;
 `;
 const StInput = styled.input`
   box-sizing: border-box;
-  min-width: 250px;
+  min-width: 300px;
   margin: 0;
   padding: 4px 11px;
   color: rgba(0, 0, 0, 0.88);
@@ -151,7 +163,7 @@ const StMentionSelectedUserContainer = styled.div`
   gap: 1rem;
   max-width: 510px;
   flex-wrap: wrap;
-  padding: 1rem;
+  padding: 1rem 0;
   box-sizing: border-box;
 `;
 
