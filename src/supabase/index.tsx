@@ -112,7 +112,24 @@ export const fetchMyBookmarkPostsByPage = async (
   const { data, error } = await db
     .from('bookmarks')
     .select('*, posts(*,likes(*), users(*))')
-    .eq('userId', userId);
+    .eq('userId', userId)
+    .range(from, to);
+  if (error) return Promise.reject(error);
+  return data;
+};
+
+export const fetchMyProjectByPage = async (
+  pageParam: number,
+  userId: string
+) => {
+  const from = pageParam * 3;
+  const to = from + 2;
+
+  const { data, error } = await db
+    .from('co_authors')
+    .select('*, posts(*,likes(*), users(*))')
+    .eq('userId', userId)
+    .range(from, to);
   if (error) return Promise.reject(error);
   return data;
 };

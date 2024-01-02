@@ -17,7 +17,6 @@ function Profile() {
   const [nickname, setNickname] = useState(user?.nickname);
 
   useEffect(() => {
-    console.log('1', user);
     setNickname(user?.nickname);
   }, [user]);
 
@@ -112,6 +111,8 @@ const StProfileDiv = styled.div`
   display: flex;
   flex-direction: row;
 `;
+
+/* Avatar */
 
 const StProfileText = styled.div`
   display: flex;

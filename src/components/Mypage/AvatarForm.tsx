@@ -30,7 +30,6 @@ function AvatarForm() {
 
   const uploadImageToDB = async () => {
     if (selectedFile) {
-      // supabase 코드 참고, 얘네도 랜덤으로 하네
       const fileExt = selectedFile.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const subUrl = `${userId}/${fileName}`;
@@ -54,7 +53,6 @@ function AvatarForm() {
       }
       setSelectedFile(e.target.files[0]);
       const imgUrl = URL.createObjectURL(e.target.files[0]);
-      console.log('이미지 선택됨', imgUrl);
       setPreviewURL(imgUrl);
     } else {
       message.error('선택된 파일이 없습니다.');
@@ -182,7 +180,7 @@ const StFigureWrapper = styled.div`
   position: relative;
   margin-left: 30px;
   top: -70px;
-  width: 180px;
+  min-width: 180px;
   height: 180px;
   border-radius: 50%;
   background-color: white;

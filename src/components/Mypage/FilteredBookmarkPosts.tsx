@@ -8,14 +8,8 @@ interface Props {
 }
 
 function FilteredBookmarkPosts({ userId }: Props) {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError
-  } = useQueryBookmarkPostsByPage(userId); // 여기랑
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useQueryBookmarkPostsByPage(userId); // 여기랑
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -30,7 +24,6 @@ function FilteredBookmarkPosts({ userId }: Props) {
 
   useEffect(() => {
     if (anchorRef.current) {
-      // console.log(anchorRef.current);
       observer.observe(anchorRef.current);
     }
     return () => observer.disconnect();

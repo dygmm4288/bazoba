@@ -5,6 +5,7 @@ import FilteredBookmarkPosts from '../components/Mypage/FilteredBookmarkPosts';
 import FilteredPosts from '../components/Mypage/FilteredPosts';
 import Profile from '../components/Mypage/Profile';
 import { loginState } from '../recoil/auth';
+import FilteredProjects from '../components/Mypage/FilteredProjects';
 
 const enum filterKey {
   MYPOST,
@@ -24,6 +25,11 @@ export default function Mypage() {
     },
     {
       key: '2',
+      label: '내가 참여한 프로젝트',
+      content: <FilteredProjects userId={userId} />
+    },
+    {
+      key: '3',
       label: '찜한 프로젝트',
       content: <FilteredBookmarkPosts userId={userId} />
     }
