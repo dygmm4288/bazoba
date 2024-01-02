@@ -7,6 +7,7 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   addBookmark,
   addComment,
@@ -17,13 +18,13 @@ import {
   fetchMyPostsByPage,
   fetchPost,
   fetchPosts,
-  removePost,
-  fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
+  fetchfilteredPosts,
   removeBookmark,
   removeComment,
   removeLike,
+  removePost,
   updateComment,
   updateUser
 } from '../../supabase';
@@ -38,7 +39,6 @@ import {
   POST_QUERY_KEY,
   USER_QUERY_KEY
 } from './query.keys';
-import { useNavigate } from 'react-router-dom';
 
 const client = new QueryClient();
 
@@ -65,7 +65,6 @@ export function useQueryPosts(option?: string) {
   } = useQuery({
     queryKey: ['posts', option],
     queryFn: () => fetchPosts(option)
-    // enabled: false
   });
 
   return { posts, error, isLoading, isError, refetchPosts };

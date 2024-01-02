@@ -6,6 +6,7 @@ import styled, { keyframes } from 'styled-components';
 import EditorHeader from '../components/Editor/EditorHeader';
 import EditorMain from '../components/Editor/EditorMain';
 import EditorPost from '../components/Editor/EditorPost';
+import EditorMention from '../components/Editor/mention/EditorMention';
 import useAnimated from '../hooks/useAnimated';
 import useEditorForm from '../hooks/useEditorForm';
 
@@ -37,17 +38,20 @@ export default function Editor() {
           />
           <EditorMain editorRef={editorRef} />
           <Footer>
-            <Flex justify="flex-end" align="center" gap="large">
-              <Button size="large" danger onClick={handleGoHome}>
-                취소하기
-              </Button>
-              <Button
-                type="primary"
-                size="large"
-                onClick={handleTogglePostMode(true)}
-              >
-                게시하기
-              </Button>
+            <Flex justify="space-between" align="center" gap="large">
+              <EditorMention />
+              <Flex justify="flex-end" align="center" gap="large">
+                <Button size="large" danger onClick={handleGoHome}>
+                  취소하기
+                </Button>
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={handleTogglePostMode(true)}
+                >
+                  게시하기
+                </Button>
+              </Flex>
             </Flex>
           </Footer>
           {shouldRenderPostMode && (
