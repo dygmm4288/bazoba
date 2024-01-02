@@ -1,5 +1,4 @@
 import { Carousel } from 'antd';
-import { CATEGORIES } from './FilterPost';
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -11,13 +10,12 @@ const contentStyle: React.CSSProperties = {
 };
 
 const CarouselWrapper = () => {
+  // likes 많은 게시물 뽑아서 보여주면 좋을 듯!
   return (
     <Carousel autoplay style={{ marginBottom: '24px' }}>
-      {CATEGORIES.map((category, idx) => (
-        <div key={idx}>
-          <h3 style={contentStyle}>{category}</h3>
-        </div>
-      ))}
+      <div>
+        <h3 style={contentStyle}>업데이트 예정!</h3>
+      </div>
     </Carousel>
   );
 };

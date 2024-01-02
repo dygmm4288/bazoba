@@ -229,6 +229,44 @@ export interface Database {
           }
         ];
       };
+      notifications: {
+        Row: {
+          id: string;
+          recipientUserId: string;
+          type: string;
+          checked: boolean;
+          createdAt: string;
+          actionUserNickname: string;
+          postId: string;
+        };
+        Insert: {
+          id?: string;
+          recipientUserId: string;
+          type: string;
+          checked?: boolean;
+          createdAt?: string;
+          actionUserNickname: string;
+          postId?: string;
+        };
+        Update: {
+          id?: string;
+          recipientUserId?: string;
+          type?: string;
+          checked?: boolean;
+          createdAt?: string;
+          actionUserNickname?: string;
+          postId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'notifications_recipientUserId_fkey';
+            columns: ['recipientUserId'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
