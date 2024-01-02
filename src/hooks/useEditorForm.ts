@@ -3,16 +3,24 @@ import { message } from 'antd';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import addUniqItemById from '../lib/addUniqItemByCondition';
 import { extractText } from '../lib/extractText';
 import { loginState } from '../recoil/auth';
 import {
   categoryState,
   isLoadingState,
+  mentionedUserState,
   summaryState,
   thumbnailUrlState,
   titleState
 } from '../recoil/editor';
-import { addPost, uploadImage } from '../supabase';
+import {
+  addCoAuthor,
+  addPost,
+  updateCoAuthor,
+  updatePost,
+  uploadImage
+} from '../supabase';
 import { getDefaultImage } from '../supabase/data';
 import { CategoryType } from '../supabase/supabase.types';
 import { TablesInsert } from '../supabase/supabaseSchema.types';
@@ -35,8 +43,9 @@ export default function useEditorForm({ id }: EditorFormType) {
   const setLoading = useSetRecoilState(isLoadingState);
   const [summary, setSummary] = useRecoilState(summaryState);
   const auth = useRecoilValue(loginState);
+  const [selectedUsers, setSelectedUsers] = useRecoilState(mentionedUserState);
 
-  const { post, error } = useQueryPost(id || '');
+  const { post, error: errorForPost } = useQueryPost(id || '');
 
   const [isPostMode, setPostMode] = useState(false);
 
@@ -62,6 +71,9 @@ export default function useEditorForm({ id }: EditorFormType) {
       setSummary(post?.summary);
       editorRef.current?.getInstance().setHTML(post?.contents);
       setThumbnailUrl(post?.thumbnail_url);
+      setSelectedUsers(
+        post?.co_authors.map((coAuthor) => coAuthor.users!) || []
+      );
     }
     return () => {
       if (isWorkingEdit) {
@@ -72,13 +84,14 @@ export default function useEditorForm({ id }: EditorFormType) {
   }, [post]);
 
   useEffect(() => {
-    if (error) {
+    if (errorForPost) {
       navigate('/write');
     }
-  }, [error]);
+  }, [errorForPost]);
 
   const handleForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (editorRef.current && auth) {
       const contents = editorRef.current.getInstance().getHTML();
       if (!extractText(contents).trim() || !title) {
@@ -87,6 +100,8 @@ export default function useEditorForm({ id }: EditorFormType) {
         return;
       }
 
+      const postAction = post?.id ? addPost : updatePost;
+      const coAuthorAction = post?.id ? addCoAuthor : updateCoAuthor;
       const newPost: TablesInsert<'posts'> = {
         author: auth.id,
         category,
@@ -94,14 +109,29 @@ export default function useEditorForm({ id }: EditorFormType) {
         title,
         email: auth.email,
         summary: summary || extractText(contents).slice(0, 150),
-        thumbnail_url: thumbnailUrl || getDefaultImage(category)!
+        thumbnail_url: thumbnailUrl || getDefaultImage(category)!,
+        id: post?.id
       };
+
       try {
-        await addPost(newPost);
+        const post = await postAction(newPost);
+        const currentAuthor = {
+          id: auth.id,
+          avatar_url: auth.user_metadata.avatar_url,
+          nickname: auth.user_metadata?.nickname || '',
+          email: auth.email
+        };
+        const newCoAuthors = addUniqItemById(selectedUsers, currentAuthor).map(
+          (user) => ({
+            postId: post.id,
+            userId: user.id
+          })
+        );
+        await coAuthorAction(newCoAuthors);
         initializeEditorState();
         navigate('/');
       } catch (error) {
-        console.error('등록하는 동안 에러 발생');
+        console.error('등록하는 동안 에러 발생', error);
       }
 
       return;
@@ -119,6 +149,7 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
     setCategory(e.target.value as CategoryType);
   };
+
   const handleTogglePostMode = (nextPostMode?: boolean) => () => {
     if (nextPostMode === undefined) {
       setPostMode(!isPostMode);
@@ -146,6 +177,7 @@ export default function useEditorForm({ id }: EditorFormType) {
     setLoading(false);
     setThumbnailUrl(null);
     setSummary('');
+    setSelectedUsers([]);
   }
 
   return {

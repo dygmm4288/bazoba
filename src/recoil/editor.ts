@@ -1,9 +1,10 @@
 import { atom } from 'recoil';
-import { CategoryType } from '../supabase/supabase.types';
+import { CategoryType, UserType } from '../supabase/supabase.types';
 import {
   EDIT_INPUT_CATEGORY,
   EDIT_INPUT_TITLE,
   EDIT_LOADING,
+  EDIT_MENTION,
   EDIT_SUMMARY,
   EDIT_THUMBNAIL_URL
 } from './keys';
@@ -28,4 +29,8 @@ export const thumbnailUrlState = atom<string | null>({
 export const summaryState = atom<string>({
   key: EDIT_SUMMARY,
   default: ''
+});
+export const mentionedUserState = atom<UserType[]>({
+  key: EDIT_MENTION,
+  default: []
 });
