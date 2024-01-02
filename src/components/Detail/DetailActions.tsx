@@ -1,7 +1,7 @@
-import { message } from 'antd';
+import { Modal, message } from 'antd';
 import { useEffect, useState } from 'react';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { FaBookmark, FaRegBookmark } from 'react-icons/fa6';
-import { IoIosHeart, IoIosHeartDislike } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -17,11 +17,6 @@ import {
 import { loginState } from '../../recoil/auth';
 import { addNotification } from '../../supabase';
 import { TablesInsert } from '../../supabase/supabaseSchema.types';
-import { FaRegHeart, FaHeart } from 'react-icons/fa';
-import { FaRegBookmark, FaBookmark } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
-import { message, Modal } from 'antd';
-import styled from 'styled-components';
 
 interface DetailActionsProps {
   id: string;

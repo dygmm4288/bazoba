@@ -1,14 +1,14 @@
 import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import DetailActions from '../components/Detail/DetailActions';
+import DetailComment from '../components/Detail/DetailComment';
 import DetailContent from '../components/Detail/DetailContent';
 import DetailFormComment from '../components/Detail/DetailFormComment';
-import DetailComment from '../components/Detail/DetailComment';
 import DetailReviewComment from '../components/Detail/DetailReviewComment';
-import DetailActions from '../components/Detail/DetailActions';
-import styled from 'styled-components';
 
-import { VscFeedback } from 'react-icons/vsc';
-import { FaRegCommentDots } from 'react-icons/fa';
 import { Tabs } from 'antd';
+import { FaRegCommentDots } from 'react-icons/fa';
+import { VscFeedback } from 'react-icons/vsc';
 
 function Detail() {
   const { id } = useParams<{ id?: string }>();
