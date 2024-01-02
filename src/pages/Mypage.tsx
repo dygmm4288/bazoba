@@ -1,5 +1,4 @@
-import { Card, Flex, Tabs } from 'antd';
-import { useState } from 'react';
+import { Flex, Tabs } from 'antd';
 import { useRecoilValue } from 'recoil';
 import FilteredBookmarkPosts from '../components/Mypage/FilteredBookmarkPosts';
 import FilteredPosts from '../components/Mypage/FilteredPosts';
@@ -7,15 +6,8 @@ import Profile from '../components/Mypage/Profile';
 import { loginState } from '../recoil/auth';
 import FilteredProjects from '../components/Mypage/FilteredProjects';
 
-const enum filterKey {
-  MYPOST,
-  BOOKMARK
-}
-
 export default function Mypage() {
   const user = useRecoilValue(loginState);
-  const [filter, setFilter] = useState(filterKey.MYPOST);
-
   const userId = user?.id!;
   const tabs = [
     {
@@ -37,7 +29,6 @@ export default function Mypage() {
 
   return (
     <div>
-      {/* //   <Flex justify='center'> */}
       <Flex
         vertical={true}
         justify={'center'}
