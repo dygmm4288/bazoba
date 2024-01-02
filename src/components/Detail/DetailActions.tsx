@@ -1,6 +1,7 @@
 import { Modal, message } from 'antd';
 import { useEffect, useState } from 'react';
-import { FaBookmark, FaHeart, FaRegBookmark, FaRegHeart } from 'react-icons/fa';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';

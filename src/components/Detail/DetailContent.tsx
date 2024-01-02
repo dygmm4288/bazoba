@@ -3,6 +3,8 @@ import { useQueryPost } from '../../hooks/query/useSupabase';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 
+import { Avatar, Tooltip } from 'antd';
+
 interface DetailContentProps {
   id: string;
 }
@@ -12,8 +14,6 @@ function DetailContent({ id }: DetailContentProps) {
   const [createdDate, setCreatedDate] = useState('');
   const [coAuthorsAvatars, setCoAuthorsAvatars] = useState<string[]>([]);
   const [coAuthorsIds, setCoAuthorsIds] = useState<string[]>([]);
-
-  console.log(post?.co_authors.map((coAuthor) => coAuthor.users!.id));
 
   useEffect(() => {
     if (post && post.created_at) {
@@ -43,43 +43,56 @@ function DetailContent({ id }: DetailContentProps) {
     <Container>
       {post && (
         <div>
-          <CreatedDate>{createdDate}</CreatedDate>
+          <Title>{post.title}</Title>
           {coAuthorsIds.length > 0 && (
             <div>
-              <h3>작성자</h3>
-              <CoAuthorsIdsList>
+              <WritersList>
                 {post.co_authors.map((coAuthor) => {
                   if (coAuthor.users?.id === post.author) {
                     return (
-                      <div key={coAuthor.users?.id}>
-                        <img src={coAuthor.users?.avatar_url} alt="Avatar" />
-                        <p>{coAuthor.users?.nickname}</p>
-                      </div>
+                      <WriterContainer key={coAuthor.users?.id}>
+                        <h2>작성자</h2>
+                        <WriterSection>
+                          <WriterAvatar
+                            src={coAuthor.users?.avatar_url}
+                            alt="Avatar"
+                          />
+                          <WriterNickname>
+                            {coAuthor.users?.nickname}
+                          </WriterNickname>
+                        </WriterSection>
+                      </WriterContainer>
                     );
                   }
                   return null;
                 })}
-              </CoAuthorsIdsList>
+              </WritersList>
             </div>
           )}
-          <Title>{post.title}</Title>
-          <Category>Category: {post.category}</Category>
-          <Thumbnail src={post.thumbnail_url} alt="Thumbnail" />
-          <Viewer initialValue={post.contents} />
+
           {coAuthorsAvatars.length > 0 && (
             <div>
-              <h3>Co-Authors' Avatars:</h3>
-              <AvatarList>
+              <h2>Member</h2>
+              <Avatar.Group>
                 {coAuthorsAvatars.map((avatarUrl, index) => (
-                  <Avatar
+                  <Tooltip
                     key={index}
-                    src={avatarUrl}
-                    alt={`Co-Author ${index + 1}`}
-                  />
+                    title={
+                      post.co_authors[index].users?.nickname ||
+                      `Writer ${index + 1}`
+                    }
+                    placement="top"
+                  >
+                    <CustomAvatar src={avatarUrl} alt={`Writer ${index + 1}`} />
+                  </Tooltip>
                 ))}
-              </AvatarList>
+              </Avatar.Group>
             </div>
           )}
+          <Category>Category: {post.category}</Category>
+          <CreatedDate>{createdDate}</CreatedDate>
+          <Thumbnail src={post.thumbnail_url} alt="Thumbnail" />
+          <Viewer initialValue={post.contents} />
         </div>
       )}
     </Container>
@@ -92,6 +105,31 @@ const Container = styled.div`
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+`;
+
+const WriterSection = styled.div`
+  display: flex;
+`;
+
+const WriterContainer = styled.div`
+  align-items: center;
+  padding: 5px;
+  margin-bottom: 10px;
+  width: 100%;
+`;
+
+const WriterAvatar = styled.img`
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  border-radius: 50%;
+`;
+
+const WriterNickname = styled.p`
+  font-size: 25px;
+  color: #555;
+  margin-left: 10px;
+  margin-top: 10px;
 `;
 
 const Title = styled.h2`
@@ -118,27 +156,14 @@ const Thumbnail = styled.img`
   margin-bottom: 20px;
 `;
 
-const CoAuthorsIdsList = styled.div`
+const WritersList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 `;
 
-const CoAuthorId = styled.p`
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 5px;
-`;
-
-const AvatarList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-`;
-
-const Avatar = styled.img`
+const CustomAvatar = styled(Avatar)`
   width: 50px;
   height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
+  margin-bottom: 10px;
 `;
