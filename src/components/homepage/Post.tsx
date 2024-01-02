@@ -1,7 +1,7 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Avatar, Badge, Card, List } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useQueryUser } from '../../hooks/query/useSupabase';
+import { useQueryUser, useAddBookmark } from '../../hooks/query/useSupabase';
 import {
   CategoryType,
   FetchPostsResultType
@@ -84,6 +84,9 @@ const Post = ({ post }: Props) => {
     </List.Item>
   );
 };
+
+const error = (e: never) => {};
+
 export const getStyleByCategory = (category: CategoryType) => {
   const style = {
     fontWeight: '700',
@@ -106,7 +109,10 @@ export const getStyleByCategory = (category: CategoryType) => {
       return { ...style, backgroundColor: '#6443d0' };
     case 'UNITY':
       return { ...style, backgroundColor: '#0e2230' };
+    case 'ETC':
+      return {};
     default:
+      error(category);
       break;
   }
 };
