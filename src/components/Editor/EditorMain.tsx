@@ -20,7 +20,7 @@ export default function EditorMain({ editorRef }: Props) {
   };
 
   return (
-    <Content>
+    <Content style={{ margin: 0 }}>
       <Editor
         initialEditType="wysiwyg"
         hideModeSwitch={true}
