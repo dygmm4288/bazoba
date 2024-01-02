@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Editor } from '@toast-ui/react-editor';
 import { message } from 'antd';
 import { assoc } from 'ramda';
@@ -25,6 +26,7 @@ import {
 import { getDefaultImage } from '../supabase/data';
 import { CategoryType } from '../supabase/supabase.types';
 import { TablesInsert } from '../supabase/supabaseSchema.types';
+import { POST_QUERY_KEY } from './query/query.keys';
 import { useQueryPost } from './query/useSupabase';
 
 export type EditorRefType = {
@@ -47,6 +49,7 @@ export default function useEditorForm({ id }: EditorFormType) {
   const [selectedUsers, setSelectedUsers] = useRecoilState(mentionedUserState);
 
   const { post, error: errorForPost } = useQueryPost(id || '');
+  const client = useQueryClient();
 
   const [isPostMode, setPostMode] = useState(false);
 
@@ -116,6 +119,9 @@ export default function useEditorForm({ id }: EditorFormType) {
 
       try {
         const newPostResponse = await postAction(assocId(newPost));
+        client.invalidateQueries({
+          queryKey: POST_QUERY_KEY(newPostResponse.id)
+        });
         const currentAuthor = {
           id: auth.id,
           avatar_url: auth.user_metadata.avatar_url,
