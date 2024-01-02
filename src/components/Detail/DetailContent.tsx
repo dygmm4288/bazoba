@@ -48,19 +48,7 @@ function DetailContent({ id }: DetailContentProps) {
       {post && (
         <div>
           <Title>{post.title}</Title>
-          <div>
-            <WritersList>
-              <WriterContainer>
-                <h2>작성자</h2>
-                <WriterSection>
-                  <WriterAvatar src={user?.avatar_url} alt="Avatar" />
-                  <WriterNickname>{user?.nickname}</WriterNickname>
-                </WriterSection>
-              </WriterContainer>
-            </WritersList>
-          </div>
-
-          {/* TODO Cannot read properties of undefined -> reading user */}
+          <Category>Category: {post.category}</Category>
           {post.co_authors && coAuthorsAvatars.length > 0 && (
             <StCoAuthorWrapper>
               <h2>Project Members</h2>
@@ -81,8 +69,20 @@ function DetailContent({ id }: DetailContentProps) {
               </Avatar.Group>
             </StCoAuthorWrapper>
           )}
-          <Category>Category: {post.category}</Category>
-          <CreatedDate>{createdDate}</CreatedDate>
+          {/* TODO Cannot read properties of undefined -> reading user */}
+          <StHeaderWrapper>
+            <WritersList>
+              <WriterContainer>
+                {/* <h2>작성자</h2> */}
+                <WriterSection>
+                  <WriterAvatar src={user?.avatar_url} alt="Avatar" />
+                  <WriterNickname>{user?.nickname}</WriterNickname>
+                </WriterSection>
+              </WriterContainer>
+            </WritersList>
+            <CreatedDate>{createdDate}</CreatedDate>
+          </StHeaderWrapper>
+          <hr />
           <Thumbnail src={post.thumbnail_url} alt="Thumbnail" />
           <Viewer initialValue={post.contents} />
         </div>
@@ -104,12 +104,24 @@ const WriterSection = styled.div`
 `;
 
 const WriterContainer = styled.div`
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
   padding: 5px;
-  margin-bottom: 10px;
+  margin-bottom: -4px;
   width: 100%;
+  * {
+    margin: 0;
+  }
 `;
 
+const StHeaderWrapper = styled.div`
+  display: flex;
+
+  justify-content: space-between;
+  align-items: end;
+`;
 const WriterAvatar = styled.img`
   width: 35px;
   height: 35px;
@@ -118,19 +130,20 @@ const WriterAvatar = styled.img`
 `;
 
 const WriterNickname = styled.p`
-  font-size: 25px;
+  font-size: 1.8rem;
   color: #555;
   margin-left: 10px;
   margin-top: 10px;
 `;
 
 const Title = styled.h2`
+  margin: 24px 0;
   font-size: 30px;
   color: #333;
 `;
 
 const Category = styled.p`
-  font-size: 20px;
+  font-size: 1.6rem;
   font-style: italic;
   color: #888;
 `;
@@ -139,7 +152,7 @@ const CreatedDate = styled.p`
   font-size: 15px;
   text-align: right;
   color: #555;
-  margin-bottom: 10px;
+  margin-bottom: 2px;
 `;
 
 const Thumbnail = styled.img`
@@ -149,19 +162,20 @@ const Thumbnail = styled.img`
 `;
 
 const WritersList = styled.div`
-  display: flex;
   flex-wrap: wrap;
   gap: 10px;
 `;
 
 const StCoAuthorWrapper = styled.div`
   h2 {
-    font-size: 2rem;
+    font-size: 1.6rem;
+    font-weight: 700;
   }
   display: flex;
   flex-direction: column;
   align-items: end;
   justify-content: center;
+  margin-top: -24px;
 `;
 
 const CustomAvatar = styled(Avatar)`

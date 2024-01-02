@@ -5,11 +5,11 @@ import { IoIosNotifications } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useQueryNotifications } from '../hooks/query/useSupabase';
-import { loginState } from '../recoil/auth';
-import { notificationListState } from '../recoil/notification';
-import { db, handleNotification } from '../supabase';
-import { NotificationType } from '../supabase/supabase.types';
+import { useQueryNotifications } from '../../hooks/query/useSupabase';
+import { loginState } from '../../recoil/auth';
+import { notificationListState } from '../../recoil/notification';
+import { db, handleNotification } from '../../supabase';
+import { NotificationType } from '../../supabase/supabase.types';
 import Notification from './Notification';
 
 const NotificationList = () => {

@@ -1,47 +1,43 @@
 import { Button, Space } from 'antd';
-import { Content, Header } from 'antd/es/layout/layout';
-import { Outlet } from 'react-router';
+import { Header } from 'antd/es/layout/layout';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useQueryUser } from '../hooks/query/useSupabase';
-import { loginState } from '../recoil/auth';
-import Notification from './NotificationList';
+import { useQueryUser } from '../../hooks/query/useSupabase';
+import { loginState } from '../../recoil/auth';
+import NotificationList from './NotificationList';
 
-export default function AuthTest() {
+const HeaderWrapper = () => {
   const isLogin = useRecoilValue(loginState);
   const userId = isLogin?.id ? isLogin.id : '';
   const { user } = useQueryUser(userId);
 
   return (
-    <>
-      {/* header 임시 */}
-      <StHeader>
-        <div>
-          <StLogoLink to="/">home</StLogoLink>
-        </div>
-        <Space align="center">
-          {/* {<StLink to="/write">게시하기</StLink>} */}
-          {!isLogin && <StLink to="/login">Sign In</StLink>}
-          {isLogin && (
-            <Button
-              children={<StLink to="/write"> 내 프로젝트 게시하기 </StLink>}
-            />
-          )}
-          {isLogin && <Notification />}
-          {isLogin && (
-            <StUserAvatarLink $avatarUrl={user?.avatar_url!} to="/mypage">
-              My Page
-            </StUserAvatarLink>
-          )}
-        </Space>
-      </StHeader>
-      <StContent>
-        <Outlet />
-      </StContent>
-    </>
+    <StHeader>
+      <div>
+        <StLogoLink to="/">home</StLogoLink>
+      </div>
+      <Space align="center">
+        {/* {<StLink to="/write">게시하기</StLink>} */}
+        {!isLogin && <StLink to="/login">Sign In</StLink>}
+        {isLogin && (
+          <Button
+            children={<StLink to="/write"> 내 프로젝트 게시하기 </StLink>}
+          />
+        )}
+        {isLogin && <NotificationList />}
+        {isLogin && (
+          <StUserAvatarLink $avatarUrl={user?.avatar_url!} to="/mypage">
+            My Page
+          </StUserAvatarLink>
+        )}
+      </Space>
+    </StHeader>
   );
-}
+};
+
+export default HeaderWrapper;
+
 interface StUserAvatarLinkProps {
   $avatarUrl?: string;
 }
@@ -54,12 +50,8 @@ const StHeader = styled(Header)`
   justify-content: space-between;
   width: 100%;
   height: 64px;
-  z-index: 3;
+  z-index: 103;
   background-color: #fff;
-`;
-
-const StContent = styled(Content)`
-  /* background-color: #eee; */
 `;
 
 const StLogoLink = styled(Link)`

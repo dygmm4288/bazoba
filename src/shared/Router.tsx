@@ -1,10 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import AuthTest from '../components/AuthTest';
 import Detail from '../pages/Detail';
 import Editor from '../pages/Editor';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Mypage from '../pages/Mypage';
+import Layout from './Layout';
 interface Props {
   isLogin: boolean;
 }
@@ -19,7 +19,7 @@ export default function Router({ isLogin }: Props) {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AuthTest />}>
+        <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/detail/:id" element={<Detail />} />
           <Route path="/login" element={ifLogout(<Login />)} />

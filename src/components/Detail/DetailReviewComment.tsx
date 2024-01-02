@@ -1,5 +1,7 @@
+import { Flex, Input, Modal } from 'antd';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 import {
   useQueryComment,
   useQueryPost,
@@ -8,8 +10,6 @@ import {
   useUpdateComment
 } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
-import { Flex, Input, Modal } from 'antd';
-import styled from 'styled-components';
 
 import { assoc, dissoc } from 'ramda';
 
@@ -208,8 +208,8 @@ const CommentContainer = styled.div`
 `;
 
 const CommentTitle = styled.h2`
-  font-size: 30px;
-  margin-bottom: 20px;
+  font-size: 1.8rem;
+  margin-bottom: 48px;
   text-align: center;
 `;
 
