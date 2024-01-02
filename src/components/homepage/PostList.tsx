@@ -11,28 +11,21 @@ const PostList = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useQueryPostsByPage(postCategoryFilter);
 
-  // useEffect(() => {
-  //   getBookmarkedPosts('b2b4e958-d3f5-42dd-bca6-a5eef785c8c9').then((posts) =>
-  //     console.log(posts)
-  //   );
-  // }, []);s
-
-  const anchorRef = useRef<HTMLDivElement | null>(null);
+  const anchorRef_main = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    const observer_main = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
         }
       },
-      { threshold: 1 }
+      { threshold: 0.5 }
     );
-    if (anchorRef.current) {
-      // console.log(anchorRef.current);
-      observer.observe(anchorRef.current);
+    if (anchorRef_main.current) {
+      observer_main.observe(anchorRef_main.current);
     }
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage, anchorRef]);
+    return () => observer_main.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, anchorRef_main]);
 
   return (
     <StSection>
@@ -46,8 +39,8 @@ const PostList = () => {
             key={idx}
           />
         ))}
-        <div id="scroll-anchor" ref={anchorRef} />
       </Skeleton>
+      <div id="scroll-anchor" ref={anchorRef_main} style={{ height: '50px' }} />
     </StSection>
   );
 };

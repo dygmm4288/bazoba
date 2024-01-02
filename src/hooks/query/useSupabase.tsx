@@ -15,11 +15,11 @@ import {
   addNotification,
   addUser,
   fetchComment,
+  fetchMostLikedPost,
   fetchMyBookmarkPostsByPage,
   fetchMyPostsByPage,
   fetchNotifications,
   fetchPost,
-  fetchPosts,
   fetchPostsByPage,
   fetchUser,
   fetchfilteredPosts,
@@ -59,7 +59,7 @@ export function useQueryPost(postId: string) {
   return { post: data && data[0], error };
 }
 
-export function useQueryPosts(option?: string) {
+export function useQueryMostLikedPost() {
   const {
     data: posts,
     error,
@@ -67,8 +67,8 @@ export function useQueryPosts(option?: string) {
     isError,
     refetch: refetchPosts
   } = useQuery({
-    queryKey: ['posts', option],
-    queryFn: () => fetchPosts(option)
+    queryKey: ['posts'],
+    queryFn: () => fetchMostLikedPost()
   });
 
   return { posts, error, isLoading, isError, refetchPosts };

@@ -1,6 +1,6 @@
 import { RealtimePostgresInsertPayload } from '@supabase/supabase-js';
 import { Button, Dropdown, MenuProps } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { IoIosNotifications } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -21,7 +21,6 @@ const NotificationList = () => {
   const { notifications, isLoading, isError } = useQueryNotifications(
     auth?.id!
   );
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (notifications && !isLoading && !isError) {
