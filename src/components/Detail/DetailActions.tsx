@@ -151,44 +151,55 @@ function DetailActions({ id }: DetailActionsProps) {
   };
 
   return (
-    <>
-      <ActionButtonsContainer>
-        <div>
-          {user && post && user.id === post.author && (
-            <PostEditButton onClick={() => handleNavigateToEditor(id)}>
-              수정하기
-            </PostEditButton>
-          )}
-          {user && post && user.id === post.author && (
-            <PostDeleteButton
-              onClick={handleDeletePost}
-              disabled={!userLoginState}
-            >
-              게시물 삭제
-            </PostDeleteButton>
-          )}
-        </div>
-        <ButtonSection>
+    <ActionButtonsContainer>
+      <div>
+        {user && post && user.id === post.author && (
+          <PostEditButton onClick={() => handleNavigateToEditor(id)}>
+            수정하기
+          </PostEditButton>
+        )}
+        {user && post && user.id === post.author && (
+          <PostDeleteButton
+            onClick={handleDeletePost}
+            disabled={!userLoginState}
+          >
+            게시물 삭제
+          </PostDeleteButton>
+        )}
+      </div>
+      <ButtonSection>
+        <StButtonWrapper>
+          <p>{post?.likes ? post.likes.length : 0}</p>
           <StLikeButton onClick={handleClickLike}>
             {isLiked ? <StHeartDislike /> : <StHeartLike />}
           </StLikeButton>
+        </StButtonWrapper>
 
+        <StButtonWrapper>
+          <p>{post?.bookmarks ? post.bookmarks.length : 0}</p>
           <StBookmarkButton onClick={handleClickBookmark}>
             {isBookmarked ? <StDisBookmark /> : <StBookmark />}
           </StBookmarkButton>
-        </ButtonSection>
-      </ActionButtonsContainer>
-      <div>
-        <LikesCount>좋아요: {post?.likes ? post.likes.length : 0}개</LikesCount>
-        <BookmarksCount>
-          북마크: {post?.bookmarks ? post.bookmarks.length : 0}개
-        </BookmarksCount>
-      </div>
-    </>
+        </StButtonWrapper>
+      </ButtonSection>
+    </ActionButtonsContainer>
   );
 }
 
 export default DetailActions;
+
+const StButtonWrapper = styled.div`
+  width: 70px;
+  display: flex;
+  align-items: end;
+  justify-content: end;
+  p {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 6px;
+    margin-right: -4px;
+  }
+`;
 
 const StLikeButton = styled.button`
   border: none;
@@ -243,8 +254,11 @@ const StDisBookmark = styled(FaBookmark)`
 `;
 
 const ButtonSection = styled.div`
+  width: 200px;
+  display: flex;
+  justify-content: end;
   button {
-    background-color: #fff;
+    background-color: #ffffff00;
   }
 `;
 

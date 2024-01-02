@@ -35,7 +35,7 @@ const PostList = () => {
             itemLayout="vertical"
             dataSource={posts}
             loading={isLoading}
-            renderItem={(post) => <Post post={post} key={idx} />}
+            renderItem={(post) => <Post id={post.id} key={idx} />}
             key={idx}
           />
         ))}
