@@ -36,6 +36,98 @@ Detail : 각게시물 상세 페이지
 4) toast ui editor
 5) react query (Infinite query)
 
+### File Structure
+```
+📦src
+ ┣ 📂assets
+ ┃ ┗ 📂images
+ ┃   ┗ 📜logo.svg
+ ┃ 
+ ┣ 📂components
+ ┃ ┣ 📂Detail
+ ┃ ┃ ┣ 📜DetailActions.tsx
+ ┃ ┃ ┣ 📜DetailComment.tsx
+ ┃ ┃ ┣ 📜DetailContent.tsx
+ ┃ ┃ ┣ 📜DetailFormComment.tsx
+ ┃ ┃ ┗ 📜DetailReviewComment.tsx
+ ┃ ┃
+ ┃ ┣ 📂Editor
+ ┃ ┃ ┣ 📂mention
+ ┃ ┃ ┃ ┣ 📜EditorMention.tsx
+ ┃ ┃ ┃ ┣ 📜EditorMentionLabel.tsx
+ ┃ ┃ ┃ ┗ 📜EditorMentionSearchResult.tsx
+ ┃ ┃ ┃ 
+ ┃ ┃ ┣ 📜EditorHeader.tsx
+ ┃ ┃ ┣ 📜EditorMain.tsx
+ ┃ ┃ ┣ 📜EditorPost.tsx
+ ┃ ┃ ┗ 📜EditorUploadLoading.tsx
+ ┃ ┃ 
+ ┃ ┣ 📂Header
+ ┃ ┃ ┣ 📜HeaderWrapper.tsx
+ ┃ ┃ ┣ 📜Notification.tsx
+ ┃ ┃ ┗ 📜NotificationList.tsx
+ ┃ ┃ 
+ ┃ ┣ 📂Mypage
+ ┃ ┃ ┣ 📜AvatarForm.tsx
+ ┃ ┃ ┣ 📜FilteredBookmarkPosts.tsx
+ ┃ ┃ ┣ 📜FilteredPosts.tsx
+ ┃ ┃ ┣ 📜FilteredProjects.tsx
+ ┃ ┃ ┗ 📜Profile.tsx
+ ┃ ┃ 
+ ┃ ┣ 📂homepage
+ ┃ ┃ ┣ 📜CarouselWrapper.tsx
+ ┃ ┃ ┣ 📜FilterPost.tsx
+ ┃ ┃ ┣ 📜Post.tsx
+ ┃ ┃ ┗ 📜PostList.tsx
+ ┃ ┃ 
+ ┃ ┗ 📂layout
+ ┃   ┗ 📜Header.tsx
+ ┃ 
+ ┣ 📂hooks
+ ┃ ┣ 📂query
+ ┃ ┃ ┣ 📜query.keys.ts
+ ┃ ┃ ┗ 📜useSupabase.tsx
+ ┃ ┃
+ ┃ ┣ 📜useAnimated.ts
+ ┃ ┣ 📜useCarousel.ts
+ ┃ ┣ 📜useDebounce.ts
+ ┃ ┣ 📜useEditorForm.ts
+ ┃ ┗ 📜useEditorQuery.tsx
+ ┃
+ ┣ 📂lib
+ ┃ ┣ 📜addUniqItemByCondition.ts
+ ┃ ┗ 📜extractText.ts
+ ┃
+ ┣ 📂pages
+ ┃ ┣ 📜Detail.tsx
+ ┃ ┣ 📜Editor.tsx
+ ┃ ┣ 📜Home.tsx
+ ┃ ┣ 📜Login.tsx
+ ┃ ┗ 📜Mypage.tsx
+ ┃
+ ┣ 📂recoil
+ ┃ ┣ 📜auth.ts
+ ┃ ┣ 📜editor.ts
+ ┃ ┣ 📜filter.ts
+ ┃ ┣ 📜keys.ts
+ ┃ ┗ 📜notification.ts
+ ┃
+ ┣ 📂shared
+ ┃ ┣ 📜Layout.tsx
+ ┃ ┗ 📜Router.tsx
+ ┃
+ ┣ 📂supabase
+ ┃ ┣ 📜data.ts
+ ┃ ┣ 📜error.types.ts
+ ┃ ┣ 📜index.tsx
+ ┃ ┣ 📜supabase.types.ts
+ ┃ ┗ 📜supabaseSchema.types.ts
+ ┃
+ ┣ 📜App.tsx
+ ┣ 📜GlobalStyle.tsx
+ ┗ 📜index.tsx
+```
+
 ### 담당자
 
 코드 문의와 유지보수 문의는 아래 각 파트 담당자에게 부탁드립니다.
