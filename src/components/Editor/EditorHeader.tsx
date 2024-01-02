@@ -1,9 +1,8 @@
-import { Input, Select, Space } from 'antd';
+import { Flex, Input, Select } from 'antd';
 import { ChangeEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 import { categoryState, titleState } from '../../recoil/editor';
 import { CategoryType } from '../../supabase/supabase.types';
-import EditorMention from './mention/EditorMention';
 
 interface Props {
   handleTitle: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -26,7 +25,7 @@ export default function EditorHeader({ handleCategory, handleTitle }: Props) {
   const category = useRecoilValue(categoryState);
 
   return (
-    <Space>
+    <Flex style={{ padding: '0px 50px' }}>
       <Input
         style={{ fontWeight: 'bold', fontSize: '1.75rem' }}
         bordered={false}
@@ -45,7 +44,6 @@ export default function EditorHeader({ handleCategory, handleTitle }: Props) {
         }))}
         size="large"
       />
-      <EditorMention />
-    </Space>
+    </Flex>
   );
 }

@@ -14,7 +14,13 @@ import {
   thumbnailUrlState,
   titleState
 } from '../recoil/editor';
-import { addCoAuthor, addPost, uploadImage } from '../supabase';
+import {
+  addCoAuthor,
+  addPost,
+  updateCoAuthor,
+  updatePost,
+  uploadImage
+} from '../supabase';
 import { getDefaultImage } from '../supabase/data';
 import { CategoryType } from '../supabase/supabase.types';
 import { TablesInsert } from '../supabase/supabaseSchema.types';
@@ -85,6 +91,7 @@ export default function useEditorForm({ id }: EditorFormType) {
 
   const handleForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (editorRef.current && auth) {
       const contents = editorRef.current.getInstance().getHTML();
       if (!extractText(contents).trim() || !title) {
@@ -93,6 +100,8 @@ export default function useEditorForm({ id }: EditorFormType) {
         return;
       }
 
+      const postAction = post?.id ? addPost : updatePost;
+      const coAuthorAction = post?.id ? addCoAuthor : updateCoAuthor;
       const newPost: TablesInsert<'posts'> = {
         author: auth.id,
         category,
@@ -100,11 +109,12 @@ export default function useEditorForm({ id }: EditorFormType) {
         title,
         email: auth.email,
         summary: summary || extractText(contents).slice(0, 150),
-        thumbnail_url: thumbnailUrl || getDefaultImage(category)!
+        thumbnail_url: thumbnailUrl || getDefaultImage(category)!,
+        id: post?.id
       };
 
       try {
-        const post = await addPost(newPost);
+        const post = await postAction(newPost);
         const currentAuthor = {
           id: auth.id,
           avatar_url: auth.user_metadata.avatar_url,
@@ -117,7 +127,7 @@ export default function useEditorForm({ id }: EditorFormType) {
             userId: user.id
           })
         );
-        await addCoAuthor(newCoAuthors);
+        await coAuthorAction(newCoAuthors);
         initializeEditorState();
         navigate('/');
       } catch (error) {

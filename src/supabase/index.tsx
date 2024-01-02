@@ -16,7 +16,7 @@ export const db = createClient<Database>(
 export const fetchPost = async (id: string) => {
   const { data, error } = await db
     .from('posts')
-    .select(`*, likes(*), bookmarks(*), co_authors(users(*))`)
+    .select(`*, likes(*), bookmarks(*), co_authors(*,users(*))`)
     .eq('id', id);
   if (error) return Promise.reject(error);
   return data;
@@ -164,14 +164,19 @@ export const removeComment = remove('comments');
 /* Update */
 export const update =
   (from: TableKeys) => async (data: TablesUpdate<TableKeys>) => {
-    const { error } = await db.from(from).update(data).eq('id', data.id!);
+    const { data: response, error } = await db
+      .from(from)
+      .update(data)
+      .eq('id', data.id!)
+      .select();
     if (error) return Promise.reject(error);
-    return true;
+    return response[0];
   };
 
 export const updatePost = update('posts');
 export const updateComment = update('comments');
 export const updateUser = update('users');
+export const updateCoAuthor = update('co_authors');
 
 /* Storage */
 export const uploadImage = async (blob: Blob | File) => {
