@@ -370,14 +370,12 @@ export function useQueryNotifications(id: string) {
   const {
     data: notifications,
     isLoading,
-    isError,
-    refetch
+    isError
   } = useQuery({
     queryKey: NOTIFICATION_QUERY_KEY(id),
-    queryFn: () => fetchNotifications(id),
-    enabled: !!id
+    queryFn: () => fetchNotifications(id)
   });
-  return { notifications, isLoading, isError, refetch };
+  return { notifications, isLoading, isError };
 }
 
 export function useAddNotification(id: string) {

@@ -18,13 +18,14 @@ const NotificationList = () => {
   const [notificationList, setNotificationList] = useRecoilState(
     notificationListState
   );
-  const { notifications, isLoading, isError, refetch } = useQueryNotifications(
+  const { notifications, isLoading, isError } = useQueryNotifications(
     auth?.id!
   );
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (notifications && !isLoading && !isError) {
+      console.log('from query : ', notifications);
       setNotificationList((oldList) => [...notifications, ...oldList]);
     }
 

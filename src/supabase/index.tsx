@@ -212,5 +212,12 @@ export const handleNotification = (callback: Function) => {
         return callback(payload);
       }
     )
+    .on(
+      'postgres_changes',
+      { event: 'DELETE', schema: 'public', table: 'notifications' },
+      (payload) => {
+        return callback(payload);
+      }
+    )
     .subscribe();
 };
