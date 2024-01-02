@@ -42,36 +42,69 @@ export interface Database {
           }
         ];
       };
+      co_authors: {
+        Row: {
+          id: string;
+          postId: string;
+          userId: string;
+        };
+        Insert: {
+          id?: string;
+          postId: string;
+          userId: string;
+        };
+        Update: {
+          id?: string;
+          postId?: string;
+          userId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'co_authors_postId_fkey';
+            columns: ['postId'];
+            isOneToOne: false;
+            referencedRelation: 'posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'co_authors_userId_fkey';
+            columns: ['userId'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       comments: {
         Row: {
+          avatar_url: string | null;
           content: string;
           created_at: string;
           id: string;
+          nickname: string | null;
           postId: string;
           type: number;
           userId: string;
-          nickname: string;
-          avatar_url: string;
         };
         Insert: {
+          avatar_url?: string | null;
           content: string;
           created_at?: string;
           id?: string;
+          nickname?: string | null;
           postId: string;
           type: number;
           userId: string;
-          nickname?: string;
-          avatar_url?: string;
         };
         Update: {
+          avatar_url?: string | null;
           content?: string;
           created_at?: string;
           id?: string;
+          nickname?: string | null;
           postId?: string;
           type?: number;
           userId?: string;
-          nickname?: string;
-          avatar_url?: string;
         };
         Relationships: [
           {

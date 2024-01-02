@@ -16,7 +16,7 @@ export const db = createClient<Database>(
 export const fetchPost = async (id: string) => {
   const { data, error } = await db
     .from('posts')
-    .select(`*, likes(*), bookmarks(*)`)
+    .select(`*, likes(*), bookmarks(*), co_authors(*,users(*))`)
     .eq('id', id);
   if (error) return Promise.reject(error);
   return data;
@@ -144,16 +144,22 @@ export const addUser: (user: UserType) => Promise<void> = async (
 
 /* Create */
 export const add =
-  (from: TableKeys) => async (data: TablesInsert<TableKeys>) => {
-    const { error } = await db.from(from).insert(data);
+  (from: TableKeys) =>
+  async (data: TablesInsert<TableKeys> | TablesInsert<TableKeys>[]) => {
+    const { data: response, error } = await db
+      .from(from)
+      .insert(data as TablesInsert<TableKeys>)
+      .select('*');
+
     if (error) return Promise.reject(error);
-    return data;
+    return response[0];
   };
 export const addPost = add('posts');
 export const addBookmark = add('bookmarks');
 export const addLike = add('likes');
 export const addComment = add('comments');
 export const addNotification = add('notifications');
+export const addCoAuthor = add('co_authors');
 
 /* Delete */
 export const remove = (from: TableKeys) => async (id: string) => {
@@ -167,18 +173,27 @@ export const removeBookmark = remove('bookmarks');
 export const removeComment = remove('comments');
 export const removeNotification = remove('notifications');
 
+export const removeCoAuthor = async (postId: string) => {
+  return await db.from('co_authors').delete().eq('postId', postId);
+};
+
 /* Update */
 export const update =
   (from: TableKeys) => async (data: TablesUpdate<TableKeys>) => {
-    const { error } = await db.from(from).update(data).eq('id', data.id!);
+    const { data: response, error } = await db
+      .from(from)
+      .update(data)
+      .eq('id', data.id!)
+      .select();
     if (error) return Promise.reject(error);
-    return true;
+    return response[0];
   };
 
 export const updatePost = update('posts');
 export const updateComment = update('comments');
 export const updateUser = update('users');
 export const updateNotification = update('notifications');
+export const updateCoAuthor = update('co_authors');
 
 /* Storage */
 export const uploadImage = async (blob: Blob | File) => {
@@ -220,4 +235,13 @@ export const handleNotification = (callback: Function) => {
       }
     )
     .subscribe();
+};
+export const fetchUserBy = async (searchStr: string) => {
+  const { data, error } = await db
+    .from('users')
+    .select('*')
+    // .like('nickname', `%${searchStr}%`)
+    .like('email', `%${searchStr}%`);
+  if (error) return Promise.reject(error);
+  return data;
 };

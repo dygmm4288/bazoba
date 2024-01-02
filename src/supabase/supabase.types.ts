@@ -6,6 +6,7 @@ export type CommentType = Tables<'comments'>;
 export type LikeType = Tables<'likes'>;
 export type UserType = Tables<'users'>;
 export type NotificationType = Tables<'notifications'>;
+export type CoAuthorType = Tables<'co_authors'>;
 
 export type CategoryType =
   | 'REACT'

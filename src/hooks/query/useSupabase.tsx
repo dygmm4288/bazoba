@@ -69,7 +69,6 @@ export function useQueryPosts(option?: string) {
   } = useQuery({
     queryKey: ['posts', option],
     queryFn: () => fetchPosts(option)
-    // enabled: false
   });
 
   return { posts, error, isLoading, isError, refetchPosts };

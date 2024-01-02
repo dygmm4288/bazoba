@@ -1,18 +1,27 @@
 import { Editor } from '@toast-ui/react-editor';
 import { message } from 'antd';
+import { assoc } from 'ramda';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import addUniqItemById from '../lib/addUniqItemByCondition';
 import { extractText } from '../lib/extractText';
 import { loginState } from '../recoil/auth';
 import {
   categoryState,
   isLoadingState,
+  mentionedUserState,
   summaryState,
   thumbnailUrlState,
   titleState
 } from '../recoil/editor';
-import { addPost, uploadImage } from '../supabase';
+import {
+  addCoAuthor,
+  addPost,
+  removeCoAuthor,
+  updatePost,
+  uploadImage
+} from '../supabase';
 import { getDefaultImage } from '../supabase/data';
 import { CategoryType } from '../supabase/supabase.types';
 import { TablesInsert } from '../supabase/supabaseSchema.types';
@@ -35,8 +44,9 @@ export default function useEditorForm({ id }: EditorFormType) {
   const setLoading = useSetRecoilState(isLoadingState);
   const [summary, setSummary] = useRecoilState(summaryState);
   const auth = useRecoilValue(loginState);
+  const [selectedUsers, setSelectedUsers] = useRecoilState(mentionedUserState);
 
-  const { post, error } = useQueryPost(id || '');
+  const { post, error: errorForPost } = useQueryPost(id || '');
 
   const [isPostMode, setPostMode] = useState(false);
 
@@ -62,6 +72,9 @@ export default function useEditorForm({ id }: EditorFormType) {
       setSummary(post?.summary);
       editorRef.current?.getInstance().setHTML(post?.contents);
       setThumbnailUrl(post?.thumbnail_url);
+      setSelectedUsers(
+        post?.co_authors.map((coAuthor) => coAuthor.users!) || []
+      );
     }
     return () => {
       if (isWorkingEdit) {
@@ -72,13 +85,14 @@ export default function useEditorForm({ id }: EditorFormType) {
   }, [post]);
 
   useEffect(() => {
-    if (error) {
+    if (errorForPost) {
       navigate('/write');
     }
-  }, [error]);
+  }, [errorForPost]);
 
   const handleForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (editorRef.current && auth) {
       const contents = editorRef.current.getInstance().getHTML();
       if (!extractText(contents).trim() || !title) {
@@ -86,6 +100,9 @@ export default function useEditorForm({ id }: EditorFormType) {
         setPostMode(false);
         return;
       }
+
+      const postAction = !!!post?.id ? addPost : updatePost;
+      const assocId = post?.id ? assoc('id', post?.id) : (a: any) => a;
 
       const newPost: TablesInsert<'posts'> = {
         author: auth.id,
@@ -96,12 +113,29 @@ export default function useEditorForm({ id }: EditorFormType) {
         summary: summary || extractText(contents).slice(0, 150),
         thumbnail_url: thumbnailUrl || getDefaultImage(category)!
       };
+
       try {
-        await addPost(newPost);
+        const newPostResponse = await postAction(assocId(newPost));
+        const currentAuthor = {
+          id: auth.id,
+          avatar_url: auth.user_metadata.avatar_url,
+          nickname: auth.user_metadata?.nickname || '',
+          email: auth.email
+        };
+
+        const newCoAuthors = addUniqItemById(selectedUsers, currentAuthor).map(
+          (user) => ({
+            postId: newPostResponse.id,
+            userId: user.id
+          })
+        );
+
+        await syncCoAuthor(newCoAuthors, post?.id);
+
         initializeEditorState();
         navigate('/');
       } catch (error) {
-        console.error('등록하는 동안 에러 발생');
+        console.error('등록하는 동안 에러 발생', error);
       }
 
       return;
@@ -119,6 +153,7 @@ export default function useEditorForm({ id }: EditorFormType) {
     }
     setCategory(e.target.value as CategoryType);
   };
+
   const handleTogglePostMode = (nextPostMode?: boolean) => () => {
     if (nextPostMode === undefined) {
       setPostMode(!isPostMode);
@@ -146,6 +181,7 @@ export default function useEditorForm({ id }: EditorFormType) {
     setLoading(false);
     setThumbnailUrl(null);
     setSummary('');
+    setSelectedUsers([]);
   }
 
   return {
@@ -157,4 +193,17 @@ export default function useEditorForm({ id }: EditorFormType) {
     handleTogglePostMode,
     handleAction
   };
+}
+
+async function syncCoAuthor(
+  newCoAuthors: TablesInsert<'co_authors'>[],
+  postId?: string
+) {
+  console.log('here');
+  if (postId) {
+    console.log(postId);
+    await removeCoAuthor(postId);
+  }
+  console.log(newCoAuthors);
+  await addCoAuthor(newCoAuthors);
 }

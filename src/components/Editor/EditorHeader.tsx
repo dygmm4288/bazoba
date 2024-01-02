@@ -1,4 +1,4 @@
-import { Input, Select, Space } from 'antd';
+import { Flex, Input, Select } from 'antd';
 import { ChangeEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -26,28 +26,26 @@ export default function EditorHeader({ handleCategory, handleTitle }: Props) {
   const category = useRecoilValue(categoryState);
 
   return (
-    <StHeaderWrapper>
-      <Space>
-        <Input
-          style={{ fontWeight: 'bold', fontSize: '1.75rem' }}
-          bordered={false}
-          onChange={handleTitle}
-          value={title}
-          placeholder="제목을 입력하세요."
-          size="large"
-        />
-        <Select
-          onChange={handleCategory}
-          value={category as any}
-          style={{ width: 120 }}
-          options={categories.map((category) => ({
-            label: category,
-            value: category
-          }))}
-          size="large"
-        />
-      </Space>
-    </StHeaderWrapper>
+    <Flex style={{ padding: '0px 50px' }}>
+      <Input
+        style={{ fontWeight: 'bold', fontSize: '1.75rem' }}
+        bordered={false}
+        onChange={handleTitle}
+        value={title}
+        placeholder="제목을 입력하세요."
+        size="large"
+      />
+      <Select
+        onChange={handleCategory}
+        value={category as any}
+        style={{ width: 120 }}
+        options={categories.map((category) => ({
+          label: category,
+          value: category
+        }))}
+        size="large"
+      />
+    </Flex>
   );
 }
 

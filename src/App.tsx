@@ -39,7 +39,7 @@ function App() {
   return (
     <>
       <GlobalStyle />
-      <Router isLogin={!!auth} />;
+      <Router isLogin={!!auth} />
     </>
   );
 }
