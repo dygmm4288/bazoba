@@ -7,23 +7,26 @@ import {
   useQuery
 } from '@tanstack/react-query';
 import { PropsWithChildren } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   addBookmark,
   addComment,
   addLike,
+  addNotification,
   addUser,
   fetchComment,
   fetchMyBookmarkPostsByPage,
   fetchMyPostsByPage,
+  fetchNotifications,
   fetchPost,
   fetchPosts,
-  removePost,
-  fetchfilteredPosts,
   fetchPostsByPage,
   fetchUser,
+  fetchfilteredPosts,
   removeBookmark,
   removeComment,
   removeLike,
+  removePost,
   updateComment,
   updateUser
 } from '../../supabase';
@@ -35,10 +38,10 @@ import {
 } from '../../supabase/supabaseSchema.types';
 import {
   COMMENT_QUERY_KEY,
+  NOTIFICATION_QUERY_KEY,
   POST_QUERY_KEY,
   USER_QUERY_KEY
 } from './query.keys';
-import { useNavigate } from 'react-router-dom';
 
 const client = new QueryClient();
 
@@ -359,6 +362,42 @@ export function useRemoveBookmark(postId: string) {
     removeBookmark: deleteBookmark
   };
 }
+
+/* Notifications */
+
+export function useQueryNotifications(id: string) {
+  const {
+    data: notifications,
+    isLoading,
+    isError
+  } = useQuery({
+    queryKey: NOTIFICATION_QUERY_KEY(id),
+    queryFn: () => fetchNotifications(id),
+    enabled: !!id,
+    staleTime: Infinity
+  });
+  return { notifications, isLoading, isError };
+}
+
+export function useAddNotification(id: string) {
+  const { mutate: insert } = useMutation({
+    mutationFn: (newNotification: TablesInsert<'notifications'>) =>
+      addNotification(newNotification),
+    onSuccess: () => {
+      client.invalidateQueries({
+        queryKey: NOTIFICATION_QUERY_KEY(id)
+      });
+    },
+    onError: (error) => {
+      console.error('error :', error);
+    }
+  });
+  return {
+    addNotification: insert
+  };
+}
+
+export function useRemoveNotification() {}
 
 export function SupabaseQueryProvider({ children }: PropsWithChildren) {
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;

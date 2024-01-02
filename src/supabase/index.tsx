@@ -123,6 +123,15 @@ export const fetchUser = async (id: string) => {
   return data ? data[0] : null;
 };
 
+export const fetchNotifications = async (id: string) => {
+  const { data, error } = await db
+    .from('notifications')
+    .select('*')
+    .eq('recipientUserId', id);
+  if (error) return Promise.reject(error);
+  return data;
+};
+
 export type AddUserType = (user: UserType) => Promise<void>;
 
 export const addUser: (user: UserType) => Promise<void> = async (
@@ -143,6 +152,7 @@ export const addPost = add('posts');
 export const addBookmark = add('bookmarks');
 export const addLike = add('likes');
 export const addComment = add('comments');
+export const addNotification = add('notifications');
 
 /* Delete */
 export const remove = (from: TableKeys) => async (id: string) => {
@@ -154,6 +164,7 @@ export const removePost = remove('posts');
 export const removeLike = remove('likes');
 export const removeBookmark = remove('bookmarks');
 export const removeComment = remove('comments');
+export const removeNotification = remove('notifications');
 
 /* Update */
 export const update =
@@ -166,6 +177,7 @@ export const update =
 export const updatePost = update('posts');
 export const updateComment = update('comments');
 export const updateUser = update('users');
+export const updateNotification = update('notifications');
 
 /* Storage */
 export const uploadImage = async (blob: Blob | File) => {
@@ -187,4 +199,16 @@ export const uploadUserImage = async (subUrl: string, file: File) => {
     .from('user_images')
     .upload(`${subUrl}`, file, { upsert: true });
   return { data: BASE_URL + data?.path, error };
+};
+
+export const handleNotification = (callback: Function) => {
+  db.channel('notifications')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'notifications' },
+      (payload) => {
+        return callback(payload);
+      }
+    )
+    .subscribe();
 };

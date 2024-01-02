@@ -5,6 +5,7 @@ export type BookmarkType = Tables<'bookmarks'>;
 export type CommentType = Tables<'comments'>;
 export type LikeType = Tables<'likes'>;
 export type UserType = Tables<'users'>;
+export type NotificationType = Tables<'notifications'>;
 
 export type CategoryType =
   | 'REACT'
@@ -68,3 +69,17 @@ export type User = {
     user_name: string;
   };
 };
+
+export type PayloadType = {
+  schema: string;
+  table: string;
+  commit_timestamp: string;
+  eventType: string;
+  new: NotificationType;
+  old: Record<string, unknown>;
+  errors: null | string;
+};
+
+export type NewInsert = NotificationType;
+
+// export type New

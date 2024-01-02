@@ -1,5 +1,10 @@
+import { message } from 'antd';
 import { useEffect, useState } from 'react';
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa6';
+import { IoIosHeart, IoIosHeartDislike } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 import {
   useAddBookmark,
   useAddLike,
@@ -10,11 +15,8 @@ import {
   useRemovePost
 } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
-import { IoIosHeart, IoIosHeartDislike } from 'react-icons/io';
-import { FaRegBookmark, FaBookmark } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
-import { message } from 'antd';
-import styled from 'styled-components';
+import { addNotification } from '../../supabase';
+import { TablesInsert } from '../../supabase/supabaseSchema.types';
 
 interface DetailActionsProps {
   id: string;
@@ -70,7 +72,16 @@ function DetailActions({ id }: DetailActionsProps) {
       }
       return;
     }
+
+    const newNotification: TablesInsert<'notifications'> = {
+      actionUserNickname: user.nickname,
+      recipientUserId: post?.author!,
+      type: 'like',
+      postId: post?.id
+    };
+
     addLike({ userId: user.id });
+    addNotification(newNotification);
     setLiked(true);
     message.info('좋아요!');
   };

@@ -17,23 +17,22 @@ const PostList = () => {
   //   );
   // }, []);s
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    },
-    { threshold: 1 }
-  );
-
   const anchorRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 1 }
+    );
     if (anchorRef.current) {
       // console.log(anchorRef.current);
       observer.observe(anchorRef.current);
     }
     return () => observer.disconnect();
-  }, [anchorRef.current, observer]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, anchorRef]);
 
   return (
     <StSection>

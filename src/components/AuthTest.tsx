@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { useQueryUser } from '../hooks/query/useSupabase';
 import { loginState } from '../recoil/auth';
+import Notification from './Notification';
 
 export default function AuthTest() {
   const isLogin = useRecoilValue(loginState);
@@ -17,7 +18,7 @@ export default function AuthTest() {
       {/* header 임시 */}
       <StHeader>
         <div>
-          <StLogoLink href="/">home</StLogoLink>
+          <StLogoLink to="/">home</StLogoLink>
         </div>
         <Space align="center">
           {/* {<StLink to="/write">게시하기</StLink>} */}
@@ -32,6 +33,7 @@ export default function AuthTest() {
               My Page
             </StUserAvatarLink>
           )}
+          {isLogin && <Notification />}
         </Space>
       </StHeader>
       <StContent>
@@ -60,7 +62,7 @@ const StContent = styled(Content)`
   /* background-color: #eee; */
 `;
 
-const StLogoLink = styled.a`
+const StLogoLink = styled(Link)`
   display: block;
   width: 100px;
   font-size: 0;
