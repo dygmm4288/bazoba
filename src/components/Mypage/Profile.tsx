@@ -1,5 +1,5 @@
 import { Button, Input, message } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { db } from '../../supabase';
 import { useQueryUser, useUpdateUser } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
@@ -16,6 +16,11 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [nickname, setNickname] = useState(user?.nickname);
 
+  useEffect(() => {
+    console.log('1', user);
+    setNickname(user?.nickname);
+  }, [user]);
+
   const handleLogout = async () => {
     const { error } = await db.auth.signOut();
     console.log(error);
@@ -26,7 +31,6 @@ function Profile() {
   };
 
   const handleCancleEdit = () => {
-    setNickname(user?.nickname);
     setIsEditing(false);
   };
 
@@ -77,10 +81,10 @@ function Profile() {
           )}
           {isEditing && (
             <>
-              <Button onClick={handleCancleEdit}>수정 취소</Button>
               <Button type="primary" onClick={handleCompleteButton}>
                 수정 완료
               </Button>
+              <Button onClick={handleCancleEdit}>수정 취소</Button>
             </>
           )}
         </StProfileButtons>
@@ -114,7 +118,7 @@ const StProfileText = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-left: 20px;
-  width: 400px;
+  width: 290px;
 `;
 
 const StProfileButtons = styled.div`

@@ -5,7 +5,7 @@ import {
   CheckCircleOutlined,
   LoadingOutlined
 } from '@ant-design/icons';
-import React, { ChangeEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { loginState } from '../../recoil/auth';
 import styled from 'styled-components';
@@ -23,6 +23,10 @@ function AvatarForm() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isEdit, setIsEdit] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setPreviewURL(user?.avatar_url);
+  }, [user]);
 
   const uploadImageToDB = async () => {
     if (selectedFile) {
