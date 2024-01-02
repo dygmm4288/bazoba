@@ -21,8 +21,11 @@
 ### 긱 페이지 설명
 
 Home : 프로젝트 소개 게시물을 보여주고, 내배캠 트랙 카테고리 별로 필터링 할 수 있다.
+
 Login : 로그인, 회원가입 (소셜로그인 - 구글, github)
+
 Editor : 게시물 작성 (toast ui editor 사용)
+
 Detail : 각게시물 상세 페이지
 
 ### Development Environment / Library
@@ -36,7 +39,11 @@ Detail : 각게시물 상세 페이지
 ### 담당자
 
 코드 문의와 유지보수 문의는 아래 각 파트 담당자에게 부탁드립니다.
+
 이진호 - Editor  
+
 송용승 - Main
+
 정효찬 - Detail
+
 김주희 - Login, Mypage
