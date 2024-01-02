@@ -8,7 +8,7 @@ import {
   useUpdateComment
 } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
-import { Flex, Input } from 'antd';
+import { Flex, Input, Modal } from 'antd';
 import styled from 'styled-components';
 
 import { assoc, dissoc } from 'ramda';
@@ -29,16 +29,21 @@ function DetailReviewComment({ id }: DetailReviewCommentProps) {
 
   const { TextArea } = Input;
 
+  const reviewComments =
+    comments?.filter((comment) => comment.type === 1) || [];
+
   const userLoginState = useRecoilValue(loginState);
   const userId = userLoginState?.id || '';
   const user = useQueryUser(userId)?.user;
 
   const handleDelete = (commentId: string) => {
-    const confirmDelete = window.confirm('정말로 이 댓글을 삭제하시겠습니까?');
-
-    if (confirmDelete) {
-      removeComment(commentId);
-    }
+    Modal.confirm({
+      title: '알림',
+      content: '정말로 이 댓글을 삭제하시겠습니까?',
+      onOk() {
+        removeComment(commentId);
+      }
+    });
   };
 
   const handleEdit = (commentId: string) => {
@@ -49,21 +54,27 @@ function DetailReviewComment({ id }: DetailReviewCommentProps) {
 
       if (isCanEdit) {
         if (comment.content === editedComment) {
-          alert('수정된 내용이 없습니다.');
+          Modal.info({
+            title: '알림',
+            content: '수정된 내용이 없습니다.'
+          });
           return;
         }
 
-        const confirmToSave = window.confirm('변경된 내용을 저장하시겠습니까?');
-        if (!confirmToSave) return;
+        Modal.confirm({
+          title: '알림',
+          content: '이대로 변경된 내용을 저장하시겠습니까?',
+          onOk() {
+            updateComment({
+              id: commentId,
+              content: editedComment,
+              type: comment.type,
+              userId: user.id
+            });
 
-        updateComment({
-          id: commentId,
-          content: editedComment,
-          type: comment.type,
-          userId: user.id
+            setEditedComments(deleteComment(commentId));
+          }
         });
-
-        setEditedComments(deleteComment(commentId));
       }
     }
   };
@@ -78,10 +89,14 @@ function DetailReviewComment({ id }: DetailReviewCommentProps) {
 
   return (
     <Container>
+      <CommentTitle>
+        {reviewComments.length === 0
+          ? '등록된 리뷰가 없습니다.'
+          : `리뷰 ${reviewComments.length}개`}
+      </CommentTitle>
       {(post?.author === user?.id ||
         comments?.some((comment) => comment.userId === user?.id)) && (
         <div>
-          <CommentTitle>코멘트 리뷰</CommentTitle>
           {comments
             ?.filter((comment) => comment.type === 1)
             .map((comment) => {
@@ -177,11 +192,12 @@ const CommentTitle = styled.h2`
 `;
 
 const Avatar = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
   border-radius: 50%;
-  padding: 5px;
-  margin: 15px;
+  padding: 3px;
+  margin: 10px;
   border: 2px solid #134f2c;
 `;
 
@@ -195,12 +211,14 @@ const NicknameText = styled.p`
 const ContentText = styled.p`
   font-size: 15px;
   margin-left: 5px;
+  word-wrap: break-word;
+  word-break: break-all;
+  max-width: 600px;
 `;
 
 const CommentContent = styled.div`
   display: flex;
   padding: 5px;
-  align-items: center;
   border-radius: 5px;
   border: 2px solid #134f2c;
 `;
