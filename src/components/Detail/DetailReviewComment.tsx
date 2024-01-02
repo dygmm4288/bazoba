@@ -211,6 +211,9 @@ const NicknameText = styled.p`
 const ContentText = styled.p`
   font-size: 15px;
   margin-left: 5px;
+  word-wrap: break-word;
+  word-break: break-all;
+  max-width: 600px;
 `;
 
 const CommentContent = styled.div`
