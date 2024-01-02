@@ -1,7 +1,7 @@
 import { Carousel } from 'antd';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import useCarousel from '../../hooks/useCarousle';
+import useCarousel from '../../hooks/useCarousel';
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -21,7 +21,7 @@ const CarouselWrapper = () => {
         <div key={post.id + index}>
           <h3 style={contentStyle}>
             <StCarouselItem to={`/detail/${post.id}`}>
-              <img src={post.thumbnail_url} />
+              <img src={post.thumbnail_url} alt={post.title} />
               <h4>{post.title}</h4>
             </StCarouselItem>
           </h3>

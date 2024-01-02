@@ -7,13 +7,15 @@ ${reset}
 
 html {
   font-size: 62.5%;
-  *::-webkit-scrollbar {
-
-  }
 }
 
 body {
   font-size: 1.6rem;
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 body * {
