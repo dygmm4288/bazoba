@@ -49,6 +49,10 @@ h2 {
   font-size: 2.4rem;
   font-weight: 700;
 }
+
+textarea {
+  resize: none;
+}
 `;
 
 export const StSection = styled.section`
