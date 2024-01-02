@@ -23,6 +23,8 @@ function DetailReviewComment({ id }: DetailReviewCommentProps) {
   const { updateComment } = useUpdateComment(id);
   const { removeComment } = useRemoveComment(id);
 
+  // console.log(post?.co_authors.map((coAuthor) => coAuthor.users!.id));
+
   const [editedComments, setEditedComments] = useState<Record<string, string>>(
     {}
   );
@@ -35,6 +37,8 @@ function DetailReviewComment({ id }: DetailReviewCommentProps) {
   const userLoginState = useRecoilValue(loginState);
   const userId = userLoginState?.id || '';
   const user = useQueryUser(userId)?.user;
+
+  // console.log(user?.id);
 
   const handleDelete = (commentId: string) => {
     Modal.confirm({

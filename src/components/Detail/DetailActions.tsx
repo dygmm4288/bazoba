@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import {
   useAddBookmark,
   useAddLike,
@@ -17,6 +15,8 @@ import { FaRegBookmark, FaBookmark } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { message, Modal } from 'antd';
 import styled from 'styled-components';
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 
 interface DetailActionsProps {
   id: string;
