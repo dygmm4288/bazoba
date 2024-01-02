@@ -84,9 +84,7 @@ const Post = ({ post }: Props) => {
     </List.Item>
   );
 };
-
-const error = (e: never) => {};
-
+const err = (e: never) => {};
 export const getStyleByCategory = (category: CategoryType) => {
   const style = {
     fontWeight: '700',
@@ -110,9 +108,9 @@ export const getStyleByCategory = (category: CategoryType) => {
     case 'UNITY':
       return { ...style, backgroundColor: '#0e2230' };
     case 'ETC':
-      return {};
+      return { ...style, backgroundColor: '#3b8c79' };
     default:
-      error(category);
+      err(category);
       break;
   }
 };
