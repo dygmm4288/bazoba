@@ -143,6 +143,9 @@ const StAvatarImg = styled.img`
   &:hover {
     filter: brightness(0.8);
   }
+  &::after {
+    content: '🔗';
+  }
 `;
 
 const StFileInput = styled.input`

@@ -1,54 +1,133 @@
-import { Avatar, Button, Card, Input, Form } from 'antd';
-import Meta from 'antd/es/card/Meta';
-import React, { useState } from 'react';
+import { Button, Input, message } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { db } from '../../supabase';
-import { useQueryUser } from '../../hooks/query/useSupabase';
-import InputprofileForm from './InputProfileForm';
+import { useQueryUser, useUpdateUser } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+import { TablesUpdate } from '../../supabase/supabaseSchema.types';
+import AvatarForm from './AvatarForm';
 
 function Profile() {
   const loginUser = useRecoilValue(loginState);
   const userId = loginUser?.id ? loginUser.id : '';
   const { user } = useQueryUser(userId);
+  const { updateUser } = useUpdateUser(userId);
   const [isEditing, setIsEditing] = useState(false);
+  const [nickname, setNickname] = useState(user?.nickname);
+
+  useEffect(() => {
+    setNickname(user?.nickname);
+  }, [user]);
 
   const handleLogout = async () => {
     const { error } = await db.auth.signOut();
+    console.log(error);
   };
 
   const handleEditButton = () => {
     setIsEditing(true);
   };
 
+  const handleCancleEdit = () => {
+    setIsEditing(false);
+  };
+
+  const handleCompleteButton = () => {
+    if (user && nickname?.trim() === user?.nickname) {
+      message.info('수정내용이 없습니다');
+      setIsEditing(false);
+      return;
+    }
+    const newUser: TablesUpdate<'users'> = {
+      id: userId,
+      nickname
+    };
+    updateUser(newUser);
+    message.info('수정 완료!');
+    setIsEditing(false);
+  };
+
   return (
-    <div>
-      <Card style={{ width: 400 }}>
-        <h1>My Profile</h1>
-
-        {isEditing && (
-          <InputprofileForm setComplete={() => setIsEditing(false)} />
-        )}
-
-        {!isEditing && (
-          <>
-            <Meta
-              avatar={<Avatar src={`${user?.avatar_url}`} />}
-              title={user?.nickname ?? '닉네임을 입력해주세요'}
-              description={`${user?.email}`}
+    <StProfileWrapper>
+      <StProfileBackGround></StProfileBackGround>
+      <StProfileDiv>
+        <AvatarForm />
+        <StProfileText>
+          {!isEditing && <h1>{nickname}</h1>}
+          {isEditing && (
+            <Input
+              size="large"
+              defaultValue={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              count={{
+                show: true,
+                max: 10
+              }}
+              maxLength={10}
             />
-            {/* <li>{user?.email} </li> */}
-          </>
-        )}
-
-        {/* <Button onClick={handleEditButton}>
-          { ? '프로필 수정' : '수정 완료'}
-        </Button> */}
-        {!isEditing && <Button onClick={handleEditButton}>프로필 수정</Button>}
-        <Button onClick={handleLogout}>로그아웃</Button>
-      </Card>
-    </div>
+          )}
+          <p>{user?.email}</p>
+        </StProfileText>
+        <StProfileButtons>
+          {!isEditing && (
+            <>
+              <Button onClick={handleEditButton}>닉네임 수정</Button>
+              <Button danger onClick={handleLogout}>
+                로그아웃
+              </Button>
+            </>
+          )}
+          {isEditing && (
+            <>
+              <Button type="primary" onClick={handleCompleteButton}>
+                수정 완료
+              </Button>
+              <Button onClick={handleCancleEdit}>수정 취소</Button>
+            </>
+          )}
+        </StProfileButtons>
+      </StProfileDiv>
+    </StProfileWrapper>
   );
 }
 
 export default Profile;
+
+const StProfileWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  background-color: white;
+  //position: relative;
+`;
+
+const StProfileBackGround = styled.div`
+  height: 200px;
+  background-color: #2d18a0;
+`;
+const StProfileDiv = styled.div`
+  height: 150px;
+  display: flex;
+  flex-direction: row;
+`;
+
+/* Avatar */
+
+const StProfileText = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 20px;
+  width: 290px;
+`;
+
+const StProfileButtons = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  width: 200px;
+  button {
+    margin-right: 10px;
+  }
+`;

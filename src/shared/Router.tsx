@@ -11,7 +11,7 @@ interface Props {
 
 export default function Router({ isLogin }: Props) {
   function ifLogin(Element: JSX.Element) {
-    return isLogin ? Element : <Navigate replace to={'/login'} />;
+    return isLogin ? Element : <Navigate replace to={'/'} />;
   }
   function ifLogout(Element: JSX.Element) {
     return !isLogin ? Element : <Navigate replace to={'/'} />;

@@ -1,10 +1,11 @@
-import { Card, Flex } from 'antd';
+import { Card, Flex, Tabs } from 'antd';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import FilteredBookmarkPosts from '../components/Mypage/FilteredBookmarkPosts';
 import FilteredPosts from '../components/Mypage/FilteredPosts';
 import Profile from '../components/Mypage/Profile';
 import { loginState } from '../recoil/auth';
+import FilteredProjects from '../components/Mypage/FilteredProjects';
 
 const enum filterKey {
   MYPOST,
@@ -16,6 +17,23 @@ export default function Mypage() {
   const [filter, setFilter] = useState(filterKey.MYPOST);
 
   const userId = user?.id!;
+  const tabs = [
+    {
+      key: '1',
+      label: '내 프로젝트',
+      content: <FilteredPosts userId={userId} />
+    },
+    {
+      key: '2',
+      label: '내가 참여한 프로젝트',
+      content: <FilteredProjects userId={userId} />
+    },
+    {
+      key: '3',
+      label: '찜한 프로젝트',
+      content: <FilteredBookmarkPosts userId={userId} />
+    }
+  ];
   const handleMyPosts = () => {
     setFilter(filterKey.MYPOST);
   };
@@ -26,21 +44,22 @@ export default function Mypage() {
 
   return (
     <div>
-      <Flex vertical={false} justify={'center'}>
-        <div style={{ paddingTop: 16 }}>
+      {/* //   <Flex justify='center'> */}
+      <Flex
+        vertical={true}
+        justify={'center'}
+        style={{ maxWidth: '1200px', margin: 'auto' }}
+      >
+        <div>
           <Profile />
-          <Card style={{ width: 400 }}>
-            <div onClick={handleMyPosts}> 내 게시물 보기 {'=>'} </div>
-          </Card>
-          <Card style={{ width: 400 }}>
-            <div onClick={handleBookmarkedPosts}> 찜한 게시물 보기 {'=>'} </div>
-          </Card>
+          <Tabs type="card" size={'large'}>
+            {tabs.map((tab) => (
+              <Tabs.TabPane tab={<span>{tab.label}</span>} key={tab.key}>
+                {tab.content}
+              </Tabs.TabPane>
+            ))}
+          </Tabs>
         </div>
-
-        {filter === filterKey.BOOKMARK && (
-          <FilteredBookmarkPosts userId={userId} />
-        )}
-        {filter === filterKey.MYPOST && <FilteredPosts userId={userId} />}
       </Flex>
     </div>
   );
