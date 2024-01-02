@@ -139,7 +139,7 @@ export default function useEditorForm({ id }: EditorFormType) {
         await syncCoAuthor(newCoAuthors, post?.id);
 
         initializeEditorState();
-        navigate('/');
+        navigate(`/detail/${newPostResponse.id}`);
       } catch (error) {
         console.error('등록하는 동안 에러 발생', error);
       }
