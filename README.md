@@ -136,6 +136,6 @@ Detail : 각게시물 상세 페이지
 
 송용승 - Main
 
-정효찬 - Detail
+정효창 - Detail
 
 김주희 - Login, Mypage
