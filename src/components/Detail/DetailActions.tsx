@@ -1,10 +1,3 @@
-import { message } from 'antd';
-import { useEffect, useState } from 'react';
-import { FaBookmark, FaRegBookmark } from 'react-icons/fa6';
-import { IoIosHeart, IoIosHeartDislike } from 'react-icons/io';
-import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
 import {
   useAddBookmark,
   useAddLike,
@@ -22,6 +15,8 @@ import { FaRegBookmark, FaBookmark } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import { message, Modal } from 'antd';
 import styled from 'styled-components';
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 
 interface DetailActionsProps {
   id: string;
