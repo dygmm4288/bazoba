@@ -30,7 +30,7 @@ const StWrapper = styled.div`
   padding: 2rem;
 
   border-radius: 1rem;
-  border: 1px dashed black;
+  border: 1px dashed white;
 
   &:hover > :not(div) {
     transition: all 0.2s ease-in;
