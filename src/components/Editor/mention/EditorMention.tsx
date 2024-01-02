@@ -55,7 +55,10 @@ export default function EditorMention() {
         setShowResult(false);
         return;
       }
-      const isOutside = target.className?.includes('mention-input');
+
+      const isOutside =
+        typeof target.className === 'string' &&
+        target.className?.includes('mention-input');
       if (!isOutside) setShowResult(false);
       else setShowResult(true);
     };
