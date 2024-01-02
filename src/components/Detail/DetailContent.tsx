@@ -1,7 +1,7 @@
 import { Viewer } from '@toast-ui/react-editor';
-import { useQueryPost } from '../../hooks/query/useSupabase';
-import styled from 'styled-components';
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useQueryPost, useQueryUser } from '../../hooks/query/useSupabase';
 
 import { Avatar, Tooltip } from 'antd';
 
@@ -14,6 +14,7 @@ function DetailContent({ id }: DetailContentProps) {
   const [createdDate, setCreatedDate] = useState('');
   const [coAuthorsAvatars, setCoAuthorsAvatars] = useState<string[]>([]);
   const [coAuthorsIds, setCoAuthorsIds] = useState<string[]>([]);
+  const { user } = useQueryUser(post?.author!);
 
   useEffect(() => {
     if (post && post.created_at) {
@@ -25,14 +26,14 @@ function DetailContent({ id }: DetailContentProps) {
       });
       setCreatedDate(formattedDate);
     }
-
+    // optional chaining 추가
     if (post && post.co_authors) {
-      const avatars = post.co_authors.map(
+      const avatars = post.co_authors?.map(
         (coAuthor) => coAuthor.users?.avatar_url || ''
       );
       setCoAuthorsAvatars(avatars);
 
-      const coAuthorsIds = post.co_authors.map(
+      const coAuthorsIds = post.co_authors?.map(
         (coAuthor) => coAuthor.users!.id
       );
       setCoAuthorsIds(coAuthorsIds);
@@ -44,37 +45,25 @@ function DetailContent({ id }: DetailContentProps) {
       {post && (
         <div>
           <Title>{post.title}</Title>
-          {coAuthorsIds.length > 0 && (
-            <div>
-              <WritersList>
-                {post.co_authors.map((coAuthor) => {
-                  if (coAuthor.users?.id === post.author) {
-                    return (
-                      <WriterContainer key={coAuthor.users?.id}>
-                        <h2>작성자</h2>
-                        <WriterSection>
-                          <WriterAvatar
-                            src={coAuthor.users?.avatar_url}
-                            alt="Avatar"
-                          />
-                          <WriterNickname>
-                            {coAuthor.users?.nickname}
-                          </WriterNickname>
-                        </WriterSection>
-                      </WriterContainer>
-                    );
-                  }
-                  return null;
-                })}
-              </WritersList>
-            </div>
-          )}
+          <div>
+            <WritersList>
+              <WriterContainer>
+                <h2>작성자</h2>
+                <WriterSection>
+                  <WriterAvatar src={user?.avatar_url} alt="Avatar" />
+                  <WriterNickname>{user?.nickname}</WriterNickname>
+                </WriterSection>
+              </WriterContainer>
+            </WritersList>
+          </div>
 
+          {/* TODO Cannot read properties of undefined -> reading user */}
           {coAuthorsAvatars.length > 0 && (
             <div>
-              <h2>Member</h2>
+              <h2>Project Members</h2>
+
               <Avatar.Group>
-                {coAuthorsAvatars.map((avatarUrl, index) => (
+                {coAuthorsAvatars?.map((avatarUrl, index) => (
                   <Tooltip
                     key={index}
                     title={

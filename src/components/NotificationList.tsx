@@ -25,18 +25,20 @@ const NotificationList = () => {
   useEffect(() => {
     if (notifications && !isLoading && !isError) {
       console.log('from query : ', notifications);
-      setNotificationList((oldList) => [...notifications, ...oldList]);
+      setNotificationList((oldList) => [...notifications]);
     }
-
     return () => {
       db.removeAllChannels();
     };
   }, [notifications]);
+
   handleNotification(
     (payload: RealtimePostgresInsertPayload<NotificationType>) => {
-      console.log(payload);
       const newItem = payload.new;
-      setNotificationList((oldList) => [newItem, ...oldList]);
+      if (payload.new.recipientUserId === auth?.id) {
+        setNotificationList((oldList) => [newItem, ...oldList]);
+        console.log('payload: ', notificationList);
+      }
     }
   );
 
@@ -50,10 +52,12 @@ const NotificationList = () => {
     // }
   };
 
-  const items: MenuProps['items'] = notificationList.map((item) => ({
-    label: <Notification notification={item} />,
-    key: item.id
-  }));
+  const items: MenuProps['items'] =
+    // if(notificationList.length) {}
+    notificationList.map((item) => ({
+      label: <Notification notification={item} />,
+      key: item.id
+    }));
 
   return (
     <StDropdown

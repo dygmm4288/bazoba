@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { useQueryBookmarkPostsByPage } from '../../hooks/query/useSupabase';
 import { List, Skeleton } from 'antd';
+import { useEffect, useRef } from 'react';
+import { useQueryBookmarkPostsByPage } from '../../hooks/query/useSupabase';
 import Post from '../homepage/Post';
 
 interface Props {
@@ -44,7 +44,7 @@ function FilteredBookmarkPosts({ userId }: Props) {
             dataSource={posts}
             loading={isLoading}
             size="large"
-            renderItem={(item) => <Post post={item.posts} key={idx} />} //여기만 다름
+            renderItem={(item) => <Post id={item.posts?.id!} key={idx} />} //여기만 다름
             key={idx}
           />
         ))}

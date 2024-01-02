@@ -240,8 +240,9 @@ export function useAddUser() {
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ['users'] });
     },
-    onError: (error) => {
-      console.error(error);
+    onError: (error: PostgrestError) => {
+      if (error.code !== SupabaseErrorTypes.DUPLICATED_USER_ID)
+        console.error(error);
     }
   });
   return {
@@ -403,6 +404,7 @@ export function useQueryNotifications(id: string) {
     queryKey: NOTIFICATION_QUERY_KEY(id),
     queryFn: () => fetchNotifications(id)
   });
+  // console.log(notifications);
   return { notifications, isLoading, isError };
 }
 
@@ -424,14 +426,14 @@ export function useAddNotification(id: string) {
   };
 }
 
-export function useRemoveNotification(id: string) {
+export function useRemoveNotification(id: string, userId: string) {
   const { mutate: deleteNotification } = useMutation({
     mutationFn: async (id: string) => {
       const result = await removeNotification(id);
       return result;
     },
     onSuccess: () => {
-      client.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEY(id) });
+      client.invalidateQueries({ queryKey: NOTIFICATION_QUERY_KEY(userId) });
     },
     onError: (error) => {
       console.error(error);

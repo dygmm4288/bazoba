@@ -7,6 +7,9 @@ ${reset}
 
 html {
   font-size: 62.5%;
+  *::-webkit-scrollbar {
+
+  }
 }
 
 body {

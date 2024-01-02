@@ -66,7 +66,7 @@ const StLogoLink = styled(Link)`
   display: block;
   width: 100px;
   font-size: 0;
-  background-image: url('https://borxwimnmhmdodedkkpv.supabase.co/storage/v1/object/sign/assets/logo.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5zdmciLCJpYXQiOjE3MDQwMzMwMTIsImV4cCI6MTczNTU2OTAxMn0.t21wDXZH4YM4CXY3oRqAct48f9aFoiA-byIrSe71IKs&t=2023-12-31T14%3A30%3A12.961Z');
+  background-image: url('https://borxwimnmhmdodedkkpv.supabase.co/storage/v1/object/sign/assets/logo.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhc3NldHMvbG9nby5zdmciLCJpYXQiOjE3MDQxODkzMDYsImV4cCI6MTczNTcyNTMwNn0._bxQz3uQQqIpIQOYH_icLuf8UOQu3g1kXDfXzYDm_mk&t=2024-01-02T09%3A55%3A07.172Z');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;

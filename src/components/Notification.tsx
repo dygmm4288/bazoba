@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useRemoveNotification } from '../hooks/query/useSupabase';
+import { loginState } from '../recoil/auth';
 import { NotificationType } from '../supabase/supabase.types';
 
 interface Props {
@@ -7,8 +9,12 @@ interface Props {
 }
 
 const Notification = ({ notification }: Props) => {
+  const auth = useRecoilValue(loginState);
   const navigate = useNavigate();
-  const { removeNotification } = useRemoveNotification(notification.id);
+  const { removeNotification } = useRemoveNotification(
+    notification.id,
+    auth?.id!
+  );
   const onNotificationClickHandler = (postId: string) => {
     removeNotification(notification.id);
     // updateNotification 으로 하는것도 좋겠어
