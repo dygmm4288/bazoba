@@ -30,17 +30,10 @@ export default function Mypage() {
     },
     {
       key: '3',
-      label: '찜한 프로젝트',
+      label: '내 북마크',
       content: <FilteredBookmarkPosts userId={userId} />
     }
   ];
-  const handleMyPosts = () => {
-    setFilter(filterKey.MYPOST);
-  };
-
-  const handleBookmarkedPosts = () => {
-    setFilter(filterKey.BOOKMARK);
-  };
 
   return (
     <div>
