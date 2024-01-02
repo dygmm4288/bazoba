@@ -24,6 +24,10 @@ function DetailComment({ id }: DetailCommentProps) {
   const [editedComments, setEditedComments] = useState<Record<string, string>>(
     {}
   );
+  const [editedModes, setEditedModes] = useState<Record<string, boolean>>(
+    comments?.reduce((acc, comment) => ({ ...acc, [comment.id]: false }), {}) ||
+      {}
+  );
 
   const { TextArea } = Input;
 
@@ -45,44 +49,53 @@ function DetailComment({ id }: DetailCommentProps) {
   };
 
   const handleEdit = (commentId: string) => {
-    if (comments && comments.length > 0) {
-      const comment = comments.find((comment) => comment.id === commentId);
-      const editedComment = editedComments[commentId];
-      const isCanEdit = comment && user && editedComment;
+    const comment = comments?.find((comment) => comment.id === commentId);
+    const editedComment = editedComments[commentId];
+    const isCanEdit = comment && user;
 
-      if (isCanEdit) {
-        if (comment.content === editedComment) {
-          Modal.info({
-            title: '알림',
-            content: '수정된 내용이 없습니다.'
-          });
-          return;
-        }
-
-        Modal.confirm({
+    if (isCanEdit) {
+      if (!editedComment.trim()) {
+        Modal.info({
           title: '알림',
-          content: '이대로 변경된 내용을 저장하시겠습니까?',
-          onOk() {
-            updateComment({
-              id: commentId,
-              content: editedComment,
-              type: comment.type,
-              userId: user.id
-            });
-
-            setEditedComments(deleteComment(commentId));
-          }
+          content: '수정할 내용을 입력해주세요.'
         });
+        return;
       }
+
+      if (comment.content === editedComment) {
+        Modal.info({
+          title: '알림',
+          content: '수정된 내용이 없습니다.'
+        });
+        return;
+      }
+
+      Modal.confirm({
+        title: '알림',
+        content: '이대로 변경된 내용을 저장하시겠습니까?',
+        onOk() {
+          updateComment({
+            id: commentId,
+            content: editedComment,
+            type: comment.type,
+            userId: user.id
+          });
+
+          setEditedComments(deleteComment(commentId));
+          setEditedModes(assoc(commentId, false));
+        }
+      });
     }
   };
 
   const handleCancel = (commentId: string) => {
     setEditedComments(deleteComment(commentId));
+    setEditedModes(assoc(commentId, false));
   };
 
   const handleInputChange = (commentId: string, content: string) => {
     setEditedComments(addComment(commentId, content));
+    setEditedModes(assoc(commentId, true));
   };
 
   return (
@@ -98,7 +111,7 @@ function DetailComment({ id }: DetailCommentProps) {
           const { id: commentId, userId: commentUserId, content } = comment;
           const { avatar_url, nickname } = comment.users!;
 
-          const isEdited = !!editedComments[commentId];
+          const isEdited = !!editedModes[commentId];
           const isOwner = commentUserId === userId;
 
           return (

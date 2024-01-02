@@ -39,6 +39,9 @@ function DetailContent({ id }: DetailContentProps) {
     }
   }, [post]);
 
+  console.log('좋아요', post?.likes);
+  console.log('북마크', post?.bookmarks);
+
   return (
     <Container>
       {post && (
