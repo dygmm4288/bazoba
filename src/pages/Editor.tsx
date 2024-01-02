@@ -6,9 +6,9 @@ import styled, { keyframes } from 'styled-components';
 import EditorHeader from '../components/Editor/EditorHeader';
 import EditorMain from '../components/Editor/EditorMain';
 import EditorPost from '../components/Editor/EditorPost';
-import EditorMention from '../components/Editor/mention/EditorMention';
 import useAnimated from '../hooks/useAnimated';
 import useEditorForm from '../hooks/useEditorForm';
+import EditorMention from '../components/Editor/mention/EditorMention';
 
 export default function Editor() {
   const { id } = useParams();

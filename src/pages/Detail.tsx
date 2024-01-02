@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import DetailHeader from '../components/Detail/DetailHeader';
 import DetailContent from '../components/Detail/DetailContent';
 import DetailFormComment from '../components/Detail/DetailFormComment';
 import DetailComment from '../components/Detail/DetailComment';
@@ -7,7 +6,8 @@ import DetailReviewComment from '../components/Detail/DetailReviewComment';
 import DetailActions from '../components/Detail/DetailActions';
 import styled from 'styled-components';
 
-import { AndroidOutlined, AppleOutlined } from '@ant-design/icons';
+import { VscFeedback } from 'react-icons/vsc';
+import { FaRegCommentDots } from 'react-icons/fa';
 import { Tabs } from 'antd';
 
 function Detail() {
@@ -18,19 +18,18 @@ function Detail() {
       key: '1',
       label: 'Comments',
       content: <DetailComment id={id || ''} />,
-      icon: <AndroidOutlined />
+      icon: <FaRegCommentDots />
     },
     {
       key: '2',
       label: 'Review',
       content: <DetailReviewComment id={id || ''} />,
-      icon: <AppleOutlined />
+      icon: <VscFeedback />
     }
   ];
 
   return (
     <div>
-      <DetailHeader />
       <DetailContent id={id || ''} />
       <DetailActions id={id || ''} />
       <DetailFormComment id={id || ''} />
@@ -40,8 +39,8 @@ function Detail() {
             <Tabs.TabPane
               tab={
                 <span>
+                  {tab.label}&nbsp;
                   {tab.icon}
-                  {tab.label}
                 </span>
               }
               key={tab.key}
@@ -60,6 +59,7 @@ export default Detail;
 const TabsContainer = styled.div`
   justify-content: center;
   width: 100%;
-  max-width: 800px;
   margin: 0 auto;
+  max-width: 800px;
+  margin-top: 20px;
 `;
