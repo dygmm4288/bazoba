@@ -19,7 +19,7 @@ function App() {
         const user: UserType = {
           id,
           email: email || 'default@email.com',
-          nickname: user_metadata.name || 'default nickname',
+          nickname: user_metadata.name || email?.split('@').shift(),
           avatar_url: user_metadata.avatar_url || `https://robohash.org/${id}`
         };
         addUser(user);
