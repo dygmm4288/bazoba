@@ -39,8 +39,8 @@ Detail : 각게시물 상세 페이지
 - `React-router-dom`
 
 #### State Management
-- `tanstack/React Query`
-- `Recoil`
+- Server : `tanstack/React Query`
+- Client : `Recoil`, `React`
 
 #### Database
 - `supabase`
