@@ -26,7 +26,6 @@ function DetailContent({ id }: DetailContentProps) {
       });
       setCreatedDate(formattedDate);
     }
-    // optional chaining 추가
     if (post && post.co_authors) {
       const avatars = post.co_authors?.map(
         (coAuthor) => coAuthor.users?.avatar_url || ''
@@ -69,11 +68,9 @@ function DetailContent({ id }: DetailContentProps) {
               </Avatar.Group>
             </StCoAuthorWrapper>
           )}
-          {/* TODO Cannot read properties of undefined -> reading user */}
           <StHeaderWrapper>
             <WritersList>
               <WriterContainer>
-                {/* <h2>작성자</h2> */}
                 <WriterSection>
                   <WriterAvatar src={user?.avatar_url} alt="Avatar" />
                   <WriterNickname>{user?.nickname}</WriterNickname>

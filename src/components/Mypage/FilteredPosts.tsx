@@ -23,7 +23,6 @@ function FilteredPosts({ userId }: Props) {
 
   useEffect(() => {
     if (anchorRef.current) {
-      // console.log(anchorRef.current);
       observer.observe(anchorRef.current);
     }
     return () => observer.disconnect();
@@ -44,7 +43,7 @@ function FilteredPosts({ userId }: Props) {
             dataSource={posts}
             loading={isLoading}
             size="large"
-            renderItem={(post) => <Post id={post.id} key={idx} />} //여기만 다름
+            renderItem={(post) => <Post id={post.id} key={idx} />}
             key={idx}
           />
         ))}

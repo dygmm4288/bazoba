@@ -1,17 +1,17 @@
-import { Avatar, Button, Popconfirm, message } from 'antd';
 import {
-  UserOutlined,
-  CloseCircleOutlined,
   CheckCircleOutlined,
-  LoadingOutlined
+  CloseCircleOutlined,
+  LoadingOutlined,
+  UserOutlined
 } from '@ant-design/icons';
+import { Avatar, Button, Popconfirm, message } from 'antd';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { loginState } from '../../recoil/auth';
 import styled from 'styled-components';
 import { useQueryUser, useUpdateUser } from '../../hooks/query/useSupabase';
-import { TablesUpdate } from '../../supabase/supabaseSchema.types';
+import { loginState } from '../../recoil/auth';
 import { uploadUserImage } from '../../supabase';
+import { TablesUpdate } from '../../supabase/supabaseSchema.types';
 
 function AvatarForm() {
   const loginUser = useRecoilValue(loginState);
@@ -67,7 +67,6 @@ function AvatarForm() {
     }
     setLoading(true);
     const url = await uploadImageToDB();
-    // TODO : 이미지 등록 실패시 진행 안함.. 확인해보기
     if (url) {
       const newUser: TablesUpdate<'users'> = {
         id: userId,
@@ -95,7 +94,8 @@ function AvatarForm() {
   };
 
   const handleImageClicked = () => {
-    /* to confirm */
+    /* 명시적으로 선언한 함수 
+       컨펌 시 호출*/
   };
 
   const confirm = (e: React.MouseEvent<HTMLElement> | undefined) => {

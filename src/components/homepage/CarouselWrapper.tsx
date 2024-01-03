@@ -13,7 +13,6 @@ const contentStyle: React.CSSProperties = {
 };
 
 const CarouselWrapper = () => {
-  // likes 많은 게시물 뽑아서 보여주면 좋을 듯!
   const { bestPosts } = useCarousel();
   return (
     <Carousel autoplay style={{ marginBottom: '24px' }}>

@@ -9,7 +9,7 @@ interface Props {
 
 function FilteredProjects({ userId }: Props) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useQueryMyProjectsByPage(userId); // 여기랑
+    useQueryMyProjectsByPage(userId);
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -24,7 +24,6 @@ function FilteredProjects({ userId }: Props) {
 
   useEffect(() => {
     if (anchorRef.current) {
-      // console.log(anchorRef.current);
       observer.observe(anchorRef.current);
     }
     return () => observer.disconnect();
@@ -45,7 +44,7 @@ function FilteredProjects({ userId }: Props) {
             dataSource={posts}
             loading={isLoading}
             size="large"
-            renderItem={(post) => <Post id={post.posts?.id!} key={idx} />} //여기만 다름
+            renderItem={(post) => <Post id={post.posts?.id!} key={idx} />}
             key={idx}
           />
         ))}
