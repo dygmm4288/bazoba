@@ -18,7 +18,6 @@ const HeaderWrapper = () => {
         <StLogoLink to="/">home</StLogoLink>
       </div>
       <Space align="center">
-        {/* {<StLink to="/write">게시하기</StLink>} */}
         {!isLogin && <StLink to="/login">Sign In</StLink>}
         {isLogin && (
           <Button

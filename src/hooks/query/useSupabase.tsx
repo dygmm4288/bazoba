@@ -87,7 +87,7 @@ export function useRemovePost(postId: string) {
       navigate('/');
     },
     onError: (error) => {
-      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+      console.error('알 수 없는 에러 발생', error);
     }
   });
 
@@ -148,7 +148,7 @@ export function useQueryMYPostsByPage(userId: string) {
   } = useInfiniteQuery({
     queryKey: ['my-posts'],
     queryFn: ({ pageParam }) => {
-      return fetchMyPostsByPage(pageParam, userId); //이것만 다름
+      return fetchMyPostsByPage(pageParam, userId);
     },
     getNextPageParam: (lastPage, allpages) =>
       lastPage.length ? allpages.length : undefined,
@@ -175,8 +175,7 @@ export function useQueryBookmarkPostsByPage(userId: string) {
   } = useInfiniteQuery({
     queryKey: ['bookmark-posts'],
     queryFn: ({ pageParam }) => {
-      console.log(pageParam);
-      return fetchMyBookmarkPostsByPage(pageParam, userId); //이것만 다름
+      return fetchMyBookmarkPostsByPage(pageParam, userId);
     },
     getNextPageParam: (lastPage, allpages) =>
       lastPage.length ? allpages.length : undefined,
@@ -203,7 +202,7 @@ export function useQueryMyProjectsByPage(userId: string) {
   } = useInfiniteQuery({
     queryKey: ['cowork-posts'],
     queryFn: ({ pageParam }) => {
-      return fetchMyProjectByPage(pageParam, userId); //이것만 다름
+      return fetchMyProjectByPage(pageParam, userId);
     },
     getNextPageParam: (lastPage, allpages) =>
       lastPage.length ? allpages.length : undefined,
@@ -254,7 +253,6 @@ export function useUpdateUser(userId: string) {
   const { mutate: update } = useMutation({
     mutationFn: (userData: TablesUpdate<'users'>) => updateUser(userData),
     onSuccess: () => {
-      console.log('success');
       client.invalidateQueries({ queryKey: USER_QUERY_KEY(userId) });
     }
   });
@@ -264,7 +262,6 @@ export function useUpdateUser(userId: string) {
   };
 }
 
-/* Comment */
 export function useQueryComment(postId: string) {
   const { data: comments, error } = useQuery({
     queryKey: COMMENT_QUERY_KEY(postId),
@@ -281,7 +278,7 @@ export function useAddComment(postId: string) {
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
     },
     onError: (error) => {
-      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+      console.error('알 수 없는 에러 발생', error);
     }
   });
   return {
@@ -294,7 +291,6 @@ export function useUpdateComment(postId: string) {
     mutationFn: (commentContent: Omit<TablesInsert<'comments'>, 'postId'>) =>
       updateComment({ ...commentContent, postId }),
     onSuccess: () => {
-      console.log('success');
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
     }
   });
@@ -311,7 +307,6 @@ export function useRemoveComment(postId: string) {
       return result;
     },
     onSuccess: () => {
-      console.log('success');
       client.invalidateQueries({ queryKey: COMMENT_QUERY_KEY(postId) });
     }
   });
@@ -330,7 +325,7 @@ export function useAddLike(postId: string) {
       client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
     },
     onError: (error) => {
-      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+      console.error('알 수 없는 에러 발생', error);
     }
   });
   return {
@@ -348,7 +343,7 @@ export function useRemoveLike(postId: string) {
       client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
     },
     onError: (error) => {
-      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+      console.error('알 수 없는 에러 발생', error);
     }
   });
 
@@ -357,7 +352,6 @@ export function useRemoveLike(postId: string) {
   };
 }
 
-/* Bookmark */
 export function useAddBookmark(postId: string) {
   const { mutate: insert } = useMutation({
     mutationFn: (newBookmark: Omit<TablesInsert<'bookmarks'>, 'postId'>) =>
@@ -366,7 +360,7 @@ export function useAddBookmark(postId: string) {
       client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
     },
     onError: (error) => {
-      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+      console.error('알 수 없는 에러 발생', error);
     }
   });
   return {
@@ -384,7 +378,7 @@ export function useRemoveBookmark(postId: string) {
       client.invalidateQueries({ queryKey: POST_QUERY_KEY(postId) });
     },
     onError: (error) => {
-      console.error('알 수 없는 에러 발생... 일해라 개발자...', error);
+      console.error('알 수 없는 에러 발생', error);
     }
   });
 
@@ -392,8 +386,6 @@ export function useRemoveBookmark(postId: string) {
     removeBookmark: deleteBookmark
   };
 }
-
-/* Notifications */
 
 export function useQueryNotifications(id: string) {
   const {
@@ -404,7 +396,6 @@ export function useQueryNotifications(id: string) {
     queryKey: NOTIFICATION_QUERY_KEY(id),
     queryFn: () => fetchNotifications(id)
   });
-  // console.log(notifications);
   return { notifications, isLoading, isError };
 }
 

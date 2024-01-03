@@ -42,16 +42,6 @@ const NotificationList = () => {
     }
   );
 
-  const onDropdownOpenHandler = async (
-    open: boolean,
-    info: { source: string }
-  ) => {
-    // if (open) {
-    //   const { data } = await refetch();
-    //   if (data) setNotificationList((oldList) => [...data]);
-    // }
-  };
-
   const items: MenuProps['items'] =
     // if(notificationList.length) {}
     notificationList.map((item) => ({
@@ -60,11 +50,7 @@ const NotificationList = () => {
     }));
 
   return (
-    <StDropdown
-      menu={{ items }}
-      trigger={['click']}
-      onOpenChange={onDropdownOpenHandler}
-    >
+    <StDropdown menu={{ items }} trigger={['click']}>
       <Button icon={<IoIosNotifications />} />
     </StDropdown>
   );

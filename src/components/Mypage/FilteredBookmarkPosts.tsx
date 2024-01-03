@@ -9,7 +9,7 @@ interface Props {
 
 function FilteredBookmarkPosts({ userId }: Props) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useQueryBookmarkPostsByPage(userId); // 여기랑
+    useQueryBookmarkPostsByPage(userId);
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -44,7 +44,7 @@ function FilteredBookmarkPosts({ userId }: Props) {
             dataSource={posts}
             loading={isLoading}
             size="large"
-            renderItem={(item) => <Post id={item.posts?.id!} key={idx} />} //여기만 다름
+            renderItem={(item) => <Post id={item.posts?.id!} key={idx} />}
             key={idx}
           />
         ))}

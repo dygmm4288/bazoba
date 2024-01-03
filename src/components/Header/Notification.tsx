@@ -17,7 +17,6 @@ const Notification = ({ notification }: Props) => {
   );
   const onNotificationClickHandler = (postId: string) => {
     removeNotification(notification.id);
-    // updateNotification 으로 하는것도 좋겠어
     navigate(`/detail/${postId}`);
   };
 

@@ -248,7 +248,6 @@ export const fetchUserBy = async (searchStr: string) => {
   const { data, error } = await db
     .from('users')
     .select('*')
-    // .like('nickname', `%${searchStr}%`)
     .like('email', `%${searchStr}%`);
   if (error) return Promise.reject(error);
   return data;

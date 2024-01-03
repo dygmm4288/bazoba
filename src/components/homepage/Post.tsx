@@ -7,20 +7,12 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import {
   useAddBookmark,
-  useQueryComment,
   useQueryPost,
   useQueryUser,
   useRemoveBookmark
 } from '../../hooks/query/useSupabase';
 import { loginState } from '../../recoil/auth';
 import { CategoryType } from '../../supabase/supabase.types';
-
-type User = {
-  id: string;
-  nickname: string;
-  email: string;
-  avatar_url: string;
-};
 
 interface Props {
   id: string;
@@ -31,14 +23,12 @@ const Post = ({ id }: Props) => {
   const { post } = useQueryPost(id);
   const [isBookmarked, setBookmarked] = useState(false);
   const { user } = useQueryUser(post?.author!);
-  const { comments } = useQueryComment(id);
   const { addBookmark } = useAddBookmark(post?.id!);
   const { removeBookmark } = useRemoveBookmark(post?.id!);
 
   const userLoginState = useRecoilValue(loginState);
   const userId = userLoginState?.id || '';
   const { user: viewer } = useQueryUser(userId);
-  const isLogin = !!userLoginState;
 
   const { Meta } = Card;
   const onPostCardClickHandler = () => {

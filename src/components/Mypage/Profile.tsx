@@ -98,9 +98,8 @@ export default Profile;
 
 const StProfileWrapper = styled.div`
   margin-top: 125px;
-  height: 300px;
+  height: 150px;
   background-color: white;
-  //position: relative;
 `;
 
 const StProfileBackGround = styled.div`
@@ -119,8 +118,6 @@ const StProfileDiv = styled.div`
   display: flex;
   flex-direction: row;
 `;
-
-/* Avatar */
 
 const StProfileText = styled.div`
   display: flex;
