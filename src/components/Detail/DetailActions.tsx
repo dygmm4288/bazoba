@@ -178,12 +178,12 @@ function DetailActions({ id }: DetailActionsProps) {
           </StBookmarkButton>
         </ButtonSection>
       </ActionButtonsContainer>
-      <div>
+      <CountContainer>
         <LikesCount>좋아요: {post?.likes ? post.likes.length : 0}개</LikesCount>
         <BookmarksCount>
           북마크: {post?.bookmarks ? post.bookmarks.length : 0}개
         </BookmarksCount>
-      </div>
+      </CountContainer>
     </>
   );
 }
@@ -288,8 +288,20 @@ const ActionButtonsContainer = styled.div`
   width: 100%;
 `;
 
+const CountContainer = styled.div`
+  display: flex;
+  font-size: 20px;
+  margin-top: 10px;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  width: 100%;
+  justify-content: flex-end;
+`;
+
 const LikesCount = styled.p`
   font-size: 20px;
+  margin-right: 10px;
 `;
 
 const BookmarksCount = styled.p`
